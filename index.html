@@ -1,59 +1,60 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flow Tracker</title>
-<meta name="description" content="Flow: a sleek daily tracker for hydration, bathroom breaks and dry nights.">
+<title>Loop Tracker</title>
+<meta name="description" content="Loop: a sleek daily tracker for hydration, breaks and dry nights.">
+<script>
+/* Set theme and discreet mode before first paint (no flash). */
+try {
+  var t = localStorage.getItem("weeTracker.theme");
+  document.documentElement.setAttribute("data-theme", (t === "light" || t === "dark") ? t : "auto");
+  if (localStorage.getItem("weeTracker.discreet") === "1") document.documentElement.setAttribute("data-discreet", "1");
+} catch (e) {
+  document.documentElement.setAttribute("data-theme", "auto");
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ---------- design tokens (dark first) ---------- */
+/* ---------- design tokens: one block, light-dark(light, dark) ---------- */
 :root{
-  --bg:#080b16; --glow1:rgba(124,58,237,.35); --glow2:rgba(34,211,238,.22);
-  --card:rgba(19,26,44,.82); --card-solid:#131a2c; --line:#2b3658; --chip:#1b2440; --cell:#182038;
-  --ink:#eef2ff; --muted:#a8b3d4;
-  --g1:#7c3aed; --g2:#2563eb; --on-g:#ffffff;
-  --accent:#fbbf24; --accent-ink:#1a1200;
-  --dry:#34d399; --dry-bg:#0f3b30; --dry-glow:0 0 14px rgba(52,211,153,.65);
-  --nd:#a5b4fc; --nd-bg:#262d63;
-  --sel:#f472b6; --flame:#ff8a3d;
-  --c-drink:#22d3ee; --c-pee:#fbbf24;
-  --bp-bg:#3d3210; --bp-ink:#fde68a; --bd-bg:#0c3a4a; --bd-ink:#a5f3fc;
-  --shadow:0 10px 30px rgba(0,0,0,.45);
-  color-scheme: dark;
+  color-scheme: light dark;
+  --bg:light-dark(#eef1fa,#080b16);
+  --glow1:light-dark(rgba(124,58,237,.16),rgba(124,58,237,.35));
+  --glow2:light-dark(rgba(34,211,238,.18),rgba(34,211,238,.22));
+  --card:light-dark(rgba(255,255,255,.94),rgba(19,26,44,.92));
+  --card-solid:light-dark(#ffffff,#131a2c);
+  --line:light-dark(#ccd5ea,#2b3658);
+  --chip:light-dark(#edf0f9,#1b2440);
+  --cell:light-dark(#e8ecf7,#182038);
+  --ink:light-dark(#0f172a,#eef2ff);
+  --muted:light-dark(#475569,#a8b3d4);
+  --g1:light-dark(#6d28d9,#7c3aed);
+  --g2:light-dark(#1d4ed8,#2563eb);
+  --on-g:#ffffff;
+  --accent:light-dark(#f59e0b,#fbbf24);
+  --accent-ink:#1a1200;
+  --dry:light-dark(#047857,#34d399);
+  --dry-bg:light-dark(#c9f5df,#0f3b30);
+  --dry-glow-c:light-dark(rgba(16,185,129,.55),rgba(52,211,153,.65));
+  --nd:light-dark(#4338ca,#a5b4fc);
+  --nd-bg:light-dark(#dfe4ff,#262d63);
+  --sel:light-dark(#be185d,#f472b6);
+  --flame:light-dark(#e0620f,#ff8a3d);
+  --c-drink:light-dark(#0e7490,#22d3ee);
+  --c-pee:light-dark(#b45309,#fbbf24);
+  --bp-bg:light-dark(#fde9b0,#3d3210);
+  --bp-ink:light-dark(#6b3a05,#fde68a);
+  --bd-bg:light-dark(#c4f1fb,#0c3a4a);
+  --bd-ink:light-dark(#134e63,#a5f3fc);
+  --shadow-c:light-dark(rgba(40,60,120,.14),rgba(0,0,0,.45));
+  --shadow:0 10px 30px var(--shadow-c);
 }
-:root[data-theme="light"]{
-  --bg:#eef1fa; --glow1:rgba(124,58,237,.16); --glow2:rgba(34,211,238,.18);
-  --card:rgba(255,255,255,.88); --card-solid:#ffffff; --line:#ccd5ea; --chip:#edf0f9; --cell:#e8ecf7;
-  --ink:#0f172a; --muted:#475569;
-  --g1:#6d28d9; --g2:#1d4ed8; --on-g:#ffffff;
-  --accent:#f59e0b; --accent-ink:#1a1200;
-  --dry:#047857; --dry-bg:#c9f5df; --dry-glow:0 0 12px rgba(16,185,129,.55);
-  --nd:#4338ca; --nd-bg:#dfe4ff;
-  --sel:#be185d; --flame:#e0620f;
-  --c-drink:#0e7490; --c-pee:#b45309;
-  --bp-bg:#fde9b0; --bp-ink:#6b3a05; --bd-bg:#c4f1fb; --bd-ink:#134e63;
-  --shadow:0 10px 30px rgba(40,60,120,.14);
-  color-scheme: light;
-}
-@media (prefers-color-scheme: light){
-  :root[data-theme="auto"]{
-    --bg:#eef1fa; --glow1:rgba(124,58,237,.16); --glow2:rgba(34,211,238,.18);
-    --card:rgba(255,255,255,.88); --card-solid:#ffffff; --line:#ccd5ea; --chip:#edf0f9; --cell:#e8ecf7;
-    --ink:#0f172a; --muted:#475569;
-    --g1:#6d28d9; --g2:#1d4ed8; --on-g:#ffffff;
-    --accent:#f59e0b; --accent-ink:#1a1200;
-    --dry:#047857; --dry-bg:#c9f5df; --dry-glow:0 0 12px rgba(16,185,129,.55);
-    --nd:#4338ca; --nd-bg:#dfe4ff;
-    --sel:#be185d; --flame:#e0620f;
-    --c-drink:#0e7490; --c-pee:#b45309;
-    --bp-bg:#fde9b0; --bp-ink:#6b3a05; --bd-bg:#c4f1fb; --bd-ink:#134e63;
-    --shadow:0 10px 30px rgba(40,60,120,.14);
-    color-scheme: light;
-  }
-}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
 
 /* ---------- base ---------- */
 *{box-sizing:border-box}
@@ -74,14 +75,14 @@ button{cursor:pointer}
 [hidden]{display:none!important}
 .wrap{max-width:1100px;margin:0 auto;padding:14px 16px 40px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-h1{margin:0;font-size:clamp(1.5rem,6vw,2rem);letter-spacing:-.5px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+h1{margin:0;font-size:clamp(1.5rem,6vw,2rem);letter-spacing:-.5px;display:flex;align-items:center;gap:10px;white-space:nowrap}
 h1 .logo{display:inline-block;width:.8em;height:.8em;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:0 0 16px var(--g1)}
 h1 .sub{font-size:.9rem;font-weight:500;color:var(--muted);letter-spacing:0}
 h2{margin:0 0 10px;font-size:1.1rem;letter-spacing:-.2px}
-header.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 14px;flex-wrap:wrap}
-.tools{display:flex;gap:8px;flex-wrap:wrap}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 14px}
+.tools{display:flex;gap:8px}
 
-.card{background:var(--card);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:22px;padding:16px;box-shadow:var(--shadow);border:1px solid var(--line);min-width:0}
+.card{background:var(--card);border-radius:22px;padding:16px;box-shadow:var(--shadow);border:1px solid var(--line);min-width:0}
 .card.glow{box-shadow:0 0 0 3px var(--g1),0 0 28px var(--g1),var(--shadow)}
 .btn{border:0;border-radius:14px;padding:10px 18px;min-height:44px;background:linear-gradient(135deg,var(--g1),var(--g2));color:var(--on-g);font-weight:600;transition:transform .1s,filter .15s}
 .btn:hover{filter:brightness(1.1)}
@@ -89,14 +90,15 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:10p
 .btn.alt{background:var(--accent);color:var(--accent-ink)}
 .btn.ghost{background:var(--chip);color:var(--ink);border:1px solid var(--line)}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
-.tool{padding:8px 14px;font-size:.95rem}
+.tool{width:44px;padding:0;font-size:1.15rem;line-height:1}
 .tool[aria-pressed="true"]{border-color:var(--g1);box-shadow:inset 0 0 0 1px var(--g1)}
 
 .notice{background:var(--chip);border:1px solid var(--accent);border-radius:16px;padding:10px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 
 /* ---------- hero ---------- */
 .hero{display:grid;gap:14px;grid-template-columns:1fr}
-.status-card{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.status-card{display:grid;grid-template-columns:auto 1fr;gap:12px 16px;align-items:center}
+.ring-col{display:grid;gap:4px;justify-items:center}
 .ring-wrap{width:124px;height:124px;position:relative}
 .ring-wrap.ping::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid var(--sel);animation:ping .9s ease-out}
 .ring{width:100%;height:100%;display:block}
@@ -109,17 +111,22 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:10p
 .ring text{fill:var(--ink);text-anchor:middle;font-family:inherit}
 .ring .lv-l{font-size:10px;fill:var(--muted);letter-spacing:2px;font-weight:600}
 .ring .lv-n{font-size:30px;font-weight:700}
+.ring-key{display:flex;gap:10px;font-size:.6875rem;color:var(--muted)}
+.ring-key i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+.ring-key .kw{background:var(--c-drink)} .ring-key .kx{background:var(--accent)}
 .say{display:grid;gap:10px;min-width:0}
 .coach{font-size:1.2rem;font-weight:600;line-height:1.25;letter-spacing:-.2px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:3px 11px;font-size:.85rem;font-weight:500}
+.quick{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px}
+.quick .btn{flex:1 1 96px;padding:10px 12px}
 .xp-top{display:flex;justify-content:space-between;gap:8px;font-size:.85rem;color:var(--muted);font-weight:500}
 .bar{height:8px;border-radius:99px;background:var(--chip);overflow:hidden;margin-top:4px;border:1px solid var(--line)}
 .bar i{display:block;height:100%;width:var(--p,0%);background:linear-gradient(90deg,var(--accent),var(--sel));border-radius:99px;transition:width .8s ease}
 .bar.blue i{background:linear-gradient(90deg,var(--c-drink),var(--g1))}
 
-.streak-card .top{display:flex;gap:12px;align-items:center;justify-content:space-between}
 .streak-big{display:flex;align-items:center;gap:10px}
+.streak-card .top{display:flex;gap:12px;align-items:center;justify-content:space-between}
 .streak-big b{font-size:2.6rem;line-height:1;letter-spacing:-1px}
 .flame{display:inline-block;font-size:2rem;animation:flick 1.4s ease-in-out infinite;transform-origin:50% 90%;filter:drop-shadow(0 0 8px var(--flame))}
 .streak-big small,.best small{display:block;color:var(--muted);font-size:.85rem;line-height:1.2}
@@ -128,20 +135,23 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:10p
 .strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px}
 .strip div{text-align:center;font-size:.72rem;color:var(--muted)}
 .dot{display:block;width:22px;height:22px;margin:0 auto 3px;border-radius:50%;background:var(--cell);border:1px solid var(--line)}
-.dot.dry{background:var(--dry);border-color:var(--dry);box-shadow:var(--dry-glow)}
+.dot.dry{background:var(--dry);border-color:var(--dry);box-shadow:0 0 12px var(--dry-glow-c)}
 .dot.nd{background:var(--nd);border-color:var(--nd)}
-[data-discreet="1"] .dot.dry,[data-discreet="1"] .dot.nd{background:var(--muted);border-color:var(--muted);box-shadow:none}
+[data-discreet="1"] .dot.dry{background:var(--muted);border-color:var(--muted);box-shadow:none}
+[data-discreet="1"] .dot.nd{background:transparent;border:2px solid var(--muted)}
 .legend{font-size:.85rem;color:var(--muted);margin:8px 0 0}
 
-/* ---------- day bar ---------- */
-.daybar{position:sticky;top:6px;z-index:20;margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px;border-color:var(--g1)}
+/* ---------- day bar (the only blurred surface) ---------- */
+.daybar{position:sticky;top:6px;z-index:20;margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px;border-color:var(--g1);background:var(--card-solid)}
+@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
+  .daybar{background:var(--card);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+}
 .daybar h2{margin:0;font-size:1.05rem}
 .daybar small{display:block;color:var(--muted);font-weight:400}
 
 /* ---------- layout ---------- */
 .main{display:grid;gap:14px;grid-template-columns:1fr;margin-top:14px}
 .col{display:grid;gap:14px;align-content:start;min-width:0}
-.col-cal{order:-1}
 .below{margin-top:14px}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 label{font-weight:500}
@@ -160,16 +170,15 @@ input[type=time]{border:1px solid var(--line);background:var(--chip);border-radi
 .list .x:hover{color:var(--sel)}
 .list small{color:var(--muted)}
 .list li.empty{background:none;border:0;padding:0;min-height:0;color:var(--muted);font-weight:400}
-.water-top{display:flex;gap:14px;align-items:center}
-.water-top .bar{margin-top:6px;width:100%}
-.water-top > div{flex:1;min-width:0}
+.bar.wide{margin:6px 0}
 .night-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .night{border:1px solid var(--line);background:var(--chip);border-radius:16px;padding:12px 8px;font-weight:600;font-size:1.02rem;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:84px}
 .night .em{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:var(--cell);border:1px solid var(--line)}
 .night.dry .em{color:var(--dry)}
 .night.nd .em{color:var(--nd)}
-.night[aria-pressed="true"].dry{background:var(--dry-bg);border-color:var(--dry);box-shadow:var(--dry-glow)}
+.night[aria-pressed="true"].dry{background:var(--dry-bg);border-color:var(--dry);box-shadow:0 0 14px var(--dry-glow-c)}
 .night[aria-pressed="true"].nd{background:var(--nd-bg);border-color:var(--nd)}
+[data-discreet="1"] .night .em{color:var(--ink)}
 [data-discreet="1"] .night[aria-pressed="true"]{background:var(--cell);border-color:var(--ink);box-shadow:none}
 .clear{margin-top:8px}
 
@@ -177,31 +186,35 @@ input[type=time]{border:1px solid var(--line);background:var(--chip);border-radi
 .calhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .calhead h2{margin:0;text-align:center;flex:1}
 .nav{width:44px;padding:0;font-size:1.1rem}
-.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:5px}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:4px}
 .dow{text-align:center;font-size:.75rem;color:var(--muted);font-weight:600}
 .cell{min-width:0}
-.day{width:100%;position:relative;border:1px solid var(--line);background:var(--cell);border-radius:10px;min-height:52px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden}
-.day .n{font-weight:600;font-size:.85rem;line-height:1}
-.day .ic{font-size:.8rem;line-height:1;min-height:.9em;font-weight:700}
-.day .ct{display:flex;gap:2px;line-height:1;justify-content:center;flex-wrap:wrap;max-width:100%}
-.b{border-radius:6px;padding:1px 4px;font-size:.62rem;font-weight:700;line-height:1.25;white-space:nowrap}
+.lv1{--mix:14%} .lv2{--mix:26%} .lv3{--mix:38%} .lv4{--mix:48%}
+.day,.scale i{background:color-mix(in srgb,var(--c-drink) var(--mix,0%),var(--cell))}
+.day{width:100%;position:relative;border:1px solid var(--line);border-radius:10px;min-height:68px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden}
+.day .n{font-weight:600;font-size:.8125rem;line-height:1}
+.day .ic{width:16px;height:16px;border-radius:50%;background:var(--card-solid);font-size:.6875rem;line-height:16px;font-weight:700;text-align:center;color:var(--ink)}
+.day .ic:empty{background:none}
+.day .ct{display:flex;flex-direction:column;gap:1px;align-items:center;line-height:1;max-width:100%}
+.b{border-radius:6px;padding:1px 4px;font-size:.6875rem;font-weight:700;line-height:1.25;white-space:nowrap}
 .b-pee{background:var(--bp-bg);color:var(--bp-ink)}
 .b-drink{background:var(--bd-bg);color:var(--bd-ink)}
-.day.dry{background:var(--dry-bg);border-color:var(--dry);box-shadow:var(--dry-glow)}
+.day.dry{border:2px solid var(--dry);box-shadow:0 0 12px var(--dry-glow-c)}
 .day.dry .ic{color:var(--dry)}
-.day.nd{background:var(--nd-bg);border-color:var(--nd)}
+.day.nd{border:2px solid var(--nd)}
 .day.nd .ic{color:var(--nd)}
-[data-discreet="1"] .day.dry,[data-discreet="1"] .day.nd{background:var(--cell);border-color:var(--line);box-shadow:none}
-[data-discreet="1"] .day.dry .ic,[data-discreet="1"] .day.nd .ic{color:var(--muted)}
+[data-discreet="1"] .day.dry,[data-discreet="1"] .day.nd{border:1px solid var(--line);box-shadow:none}
+[data-discreet="1"] .day.dry .ic,[data-discreet="1"] .day.nd .ic{color:var(--ink)}
 .day.today .n{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:2px 6px}
 .day.sel{outline:3px solid var(--sel);outline-offset:1px;z-index:1}
 .day:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-.day.sel:focus-visible{outline-color:var(--ink)}
 .day[disabled]{opacity:.35;cursor:default}
+.scale{display:flex;align-items:center;gap:4px;font-size:.75rem;color:var(--muted);margin-top:8px}
+.scale i{display:inline-block;width:16px;height:16px;border-radius:4px;border:1px solid var(--line)}
 .mstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
 .stat{background:var(--chip);border:1px solid var(--line);border-radius:14px;padding:8px 6px;text-align:center}
 .stat b{display:block;font-size:1.4rem;line-height:1.1}
-.stat small{color:var(--muted);font-size:.78rem;line-height:1.2;display:block}
+.stat small{color:var(--muted);font-size:.75rem;line-height:1.2;display:block}
 
 /* ---------- chart ---------- */
 .charthead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
@@ -211,15 +224,15 @@ input[type=time]{border:1px solid var(--line);background:var(--chip);border-radi
 .seg .btn[aria-pressed="false"]{background:var(--chip);color:var(--ink);border:1px solid var(--line)}
 .chart{width:100%;height:auto;display:block}
 .chart .grid{stroke:var(--line);stroke-width:1}
-.chart .ax{fill:var(--muted);font-size:9px;font-family:inherit}
-.chart .val{fill:var(--ink);font-size:8px;font-family:inherit;text-anchor:middle}
+.chart .ax{fill:var(--muted);font-size:11px;font-family:inherit}
+.chart .val{fill:var(--ink);font-size:10px;font-family:inherit;text-anchor:middle}
 .chart .bp{fill:var(--c-pee)} .chart .bd{fill:var(--c-drink)}
 .chart .off{opacity:.3}
 .keys{display:flex;gap:14px;font-size:.85rem;color:var(--muted);margin-top:4px}
 
 /* ---------- achievements ---------- */
 .shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.badge{background:var(--chip);border-radius:16px;padding:12px;border:1px solid var(--accent);display:grid;gap:2px}
+.badge{background:var(--chip);border-radius:16px;padding:12px;border:1px solid var(--accent);display:grid;gap:2px;align-content:start}
 .badge .em{font-size:1.8rem;line-height:1.2}
 .badge b{font-size:.95rem}
 .badge small{color:var(--muted);font-size:.8rem;line-height:1.25;display:block}
@@ -230,33 +243,37 @@ input[type=time]{border:1px solid var(--line);background:var(--chip);border-radi
 /* ---------- misc ---------- */
 .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);border-radius:14px;padding:8px 8px 8px 18px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);max-width:calc(100vw - 24px)}
 .toast .btn{background:var(--accent);color:var(--accent-ink);padding:6px 16px}
+dialog{background:var(--card-solid);color:var(--ink);border:1px solid var(--line);border-radius:20px;max-width:min(92vw,420px);padding:20px;box-shadow:var(--shadow)}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog .row{justify-content:flex-end;margin-top:14px}
 canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
 
 @keyframes flick{50%{transform:scale(1.12) rotate(-4deg)}}
 @keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
 @keyframes ping{from{transform:scale(1);opacity:1}to{transform:scale(1.35);opacity:0}}
 
+@media (min-width:700px){
+  .day .ct{flex-direction:row;gap:3px;justify-content:center;flex-wrap:wrap}
+  .day{min-height:76px}
+}
 @media (min-width:860px){
   .hero{grid-template-columns:1.6fr 1fr}
   .main{grid-template-columns:1fr 1fr}
-  .col-cal{order:0}
   .ring-wrap{width:150px;height:150px}
   .coach{font-size:1.4rem}
-  .day{min-height:66px}
-  .b{font-size:.7rem}
   #nightCard{scroll-margin-top:0}
+}
+@media (max-width:420px){
+  h1 .sub{display:none}
 }
 @media (max-width:400px){
   .wrap{padding:10px 14px 30px}
   .card{padding:14px 12px}
-  .status-card{gap:12px}
-  .ring-wrap{width:100px;height:100px}
+  .status-card{gap:10px 12px}
+  .ring-wrap{width:104px;height:104px}
   .coach{font-size:1.05rem}
   .week{gap:3px}
-  .day{min-height:50px}
-  .b{padding:1px 3px;font-size:.6rem}
   .stat{padding:8px 3px}
-  .stat small{font-size:.72rem}
 }
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -271,13 +288,22 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
   <button class="btn" id="toastUndo" type="button" hidden>Undo</button>
 </div>
 
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <h2 id="dlgTitle"></h2>
+  <p id="dlgText"></p>
+  <div class="row">
+    <button class="btn ghost" id="dlgCancel" type="button">Cancel</button>
+    <button class="btn" id="dlgOk" type="button">OK</button>
+  </div>
+</dialog>
+
 <div class="wrap">
   <header class="top">
-    <h1><span class="logo" aria-hidden="true"></span>Flow <span class="sub">daily tracker</span></h1>
+    <h1><span class="logo" aria-hidden="true"></span>Loop <span class="sub">daily tracker</span></h1>
     <div class="tools">
-      <button class="btn ghost tool" id="discreetBtn" type="button" aria-pressed="false" aria-label="Discreet mode">Discreet</button>
+      <button class="btn ghost tool" id="discreetBtn" type="button" aria-pressed="false" aria-label="Discreet mode" title="Discreet mode"></button>
       <button class="btn ghost tool" id="themeBtn" type="button"></button>
-      <button class="btn ghost tool" id="soundBtn" type="button" aria-pressed="true" aria-label="Sound effects"></button>
+      <button class="btn ghost tool" id="soundBtn" type="button" aria-pressed="true" aria-label="Sound effects" title="Sound effects"></button>
     </div>
   </header>
 
@@ -288,19 +314,22 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
 
   <section class="hero" aria-label="Your progress">
     <div class="card status-card" id="heroCard">
-      <div class="ring-wrap" id="ringWrap">
-        <svg class="ring" id="ring" viewBox="0 0 120 120" role="img" aria-label="Progress rings">
-          <defs>
-            <linearGradient id="gW" x1="0" y1="0" x2="1" y2="1"><stop class="s1" offset="0"/><stop class="s2" offset="1"/></linearGradient>
-            <linearGradient id="gX" x1="0" y1="0" x2="1" y2="1"><stop class="x1" offset="0"/><stop class="x2" offset="1"/></linearGradient>
-          </defs>
-          <circle class="trk" cx="60" cy="60" r="52"/>
-          <circle class="arc" id="arcWater" cx="60" cy="60" r="52" transform="rotate(-90 60 60)" stroke="url(#gW)" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
-          <circle class="trk thin" cx="60" cy="60" r="40"/>
-          <circle class="arc thin" id="arcXp" cx="60" cy="60" r="40" transform="rotate(-90 60 60)" stroke="url(#gX)" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
-          <text class="lv-l" x="60" y="53">LVL</text>
-          <text class="lv-n" id="lvN" x="60" y="80">1</text>
-        </svg>
+      <div class="ring-col">
+        <div class="ring-wrap" id="ringWrap">
+          <svg class="ring" id="ring" viewBox="0 0 120 120" role="img" aria-label="Progress rings">
+            <defs>
+              <linearGradient id="gW" x1="0" y1="0" x2="1" y2="1"><stop class="s1" offset="0"/><stop class="s2" offset="1"/></linearGradient>
+              <linearGradient id="gX" x1="0" y1="0" x2="1" y2="1"><stop class="x1" offset="0"/><stop class="x2" offset="1"/></linearGradient>
+            </defs>
+            <circle class="trk" cx="60" cy="60" r="52"/>
+            <circle class="arc" id="arcWater" cx="60" cy="60" r="52" transform="rotate(-90 60 60)" stroke="url(#gW)" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+            <circle class="trk thin" cx="60" cy="60" r="40"/>
+            <circle class="arc thin" id="arcXp" cx="60" cy="60" r="40" transform="rotate(-90 60 60)" stroke="url(#gX)" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+            <text class="lv-l" x="60" y="53">LVL</text>
+            <text class="lv-n" id="lvN" x="60" y="80">1</text>
+          </svg>
+        </div>
+        <div class="ring-key" aria-hidden="true"><span><i class="kw"></i>Water</span><span><i class="kx"></i>XP</span></div>
       </div>
       <div class="say">
         <div class="coach" id="coach"></div>
@@ -310,14 +339,19 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
           <div class="bar" aria-hidden="true"><i id="xpBar"></i></div>
         </div>
       </div>
+      <div class="quick" role="group" aria-label="Quick log for today">
+        <button class="btn" id="quickPee" type="button"></button>
+        <button class="btn alt" id="quickDrink" type="button">+ Drink</button>
+        <button class="btn ghost" id="quickNight" type="button"></button>
+      </div>
     </div>
     <div class="card streak-card">
       <div class="top">
         <div class="streak-big"><span class="flame" aria-hidden="true">🔥</span><div><b id="streak">0</b><small id="streakLabel">night streak</small></div></div>
         <div class="best"><b id="best">0</b><small>best streak</small></div>
       </div>
-      <div class="strip" id="strip" role="img" aria-label="Night log for the last 7 days"></div>
-      <p class="legend" id="streakNote"></p>
+      <div class="strip" id="strip" role="img" aria-label="Last 7 nights"></div>
+      <p class="legend" id="recap"></p>
     </div>
   </section>
 
@@ -338,36 +372,32 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
       </section>
 
       <section class="card" aria-labelledby="weeTitle">
-        <h2 id="weeTitle"><span class="dotk pee" aria-hidden="true"></span>Bathroom</h2>
+        <h2 id="weeTitle"></h2>
         <div class="row">
           <label for="weeTime">Time</label>
           <input type="time" id="weeTime">
-          <button class="btn" id="weeAdd" type="button">Log pee</button>
+          <button class="btn" id="weeAdd" type="button"></button>
         </div>
         <ul class="list" id="weeList"></ul>
       </section>
 
       <section class="card" aria-labelledby="drinkTitle">
         <h2 id="drinkTitle"><span class="dotk drink" aria-hidden="true"></span>Water</h2>
-        <div class="water-top">
-          <div>
-            <b id="goalText"></b>
-            <div class="bar blue" aria-hidden="true"><i id="fill"></i></div>
-            <p class="legend" id="earlyText"></p>
-          </div>
-        </div>
+        <b id="goalText"></b>
+        <div class="bar blue wide" aria-hidden="true"><i id="fill"></i></div>
+        <p class="legend" id="earlyText"></p>
         <div class="sizes" role="group" aria-label="Cup size" id="sizes"></div>
         <div class="row">
           <label for="drinkTime">Time</label>
           <input type="time" id="drinkTime">
           <button class="btn alt" id="drinkAdd" type="button">Log drink</button>
         </div>
-        <p class="legend">Tip: front-loading water before 4pm tends to help nights.</p>
+        <p class="legend">Tip: getting most of your water before 4pm works best.</p>
         <ul class="list" id="drinkList"></ul>
       </section>
     </div>
 
-    <div class="col col-cal">
+    <div class="col">
       <section class="card" aria-labelledby="calTitle">
         <div class="calhead">
           <button class="btn ghost nav" id="prev" type="button" aria-label="Previous month">◀</button>
@@ -375,6 +405,7 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
           <button class="btn ghost nav" id="next" type="button" aria-label="Next month">▶</button>
         </div>
         <div id="cal" role="grid" aria-labelledby="calTitle"></div>
+        <div class="scale" aria-hidden="true">Less <i></i><i class="lv1"></i><i class="lv2"></i><i class="lv3"></i><i class="lv4"></i> More water</div>
         <p class="legend" id="calLegend"></p>
         <div class="mstats" id="mstats"></div>
       </section>
@@ -388,7 +419,7 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
           </div>
         </div>
         <div id="chart"></div>
-        <div class="keys"><span><span class="dotk pee" aria-hidden="true"></span>Pee</span><span><span class="dotk drink" aria-hidden="true"></span>Drinks</span></div>
+        <div class="keys"><span><span class="dotk pee" aria-hidden="true"></span><span id="keyPee"></span></span><span><span class="dotk drink" aria-hidden="true"></span>Water (cups)</span></div>
       </section>
     </div>
   </div>
@@ -416,21 +447,25 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
 /* =========================================================
    Constants and small helpers
    ========================================================= */
-var STORE_KEY = "weeTracker.v1";
+var STORE_KEY = "weeTracker.v1";     // unchanged so existing data keeps working
 var MUTE_KEY = "weeTracker.muted";
 var THEME_KEY = "weeTracker.theme";
 var DISCREET_KEY = "weeTracker.discreet";
+var TIP_KEY = "weeTracker.eveningTip";
 var GOAL = 6;                 // cups per day
 var EARLY_CUTOFF = "16:00";   // drinks before this count as "early"
+var MAX_ENTRY_XP = 8;         // entries per day that earn XP
+var MAX_LEVEL = 15;
 var SIZES = [
   { id: "s", label: "Sip", weight: 0.5, text: "½" },
   { id: "m", label: "Cup", weight: 1, text: "1" },
   { id: "l", label: "Big", weight: 1.5, text: "1½" }
 ];
 var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-var LEVEL_TITLES = ["Rookie", "Regular", "Steady", "Locked In", "Pro", "Elite", "Legend"];
-var XP = { pee: 5, drink: 5, night: 20, dry: 30, goal: 40, sticker: 100 };
-var PEE_LINES = ["Logged.", "Got it.", "Noted. Staying on top of it.", "Logged. Nice."];
+var LEVEL_TITLES = ["Rookie", "Rising", "Steady", "On Track", "Locked In", "Grinder", "Focused", "Sharp",
+                    "Pro", "Clutch", "Elite", "Prime", "Mythic", "Titan", "Legend"];
+var XP = { pee: 2, drink: 2, night: 10, dry: 15, goal: 20, sticker: 50 };
+var PEE_LINES = ["Logged.", "Got it.", "Noted.", "Logged. Nice."];
 var KEY_RE = /^\d{4}-\d{2}-\d{2}$/;
 var TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
@@ -494,14 +529,21 @@ function earlyCupsOf(drinks) {
 }
 function byTime(a, b) { return a.t < b.t ? -1 : a.t > b.t ? 1 : 0; }
 
+/* Wording. In discreet mode every personal word becomes neutral. */
+function W() {
+  return discreet
+    ? { pee: "break", section: "Breaks", log: "Log break", quick: "+ Break", key: "Breaks" }
+    : { pee: "pee", section: "Bathroom", log: "Log pee", quick: "+ Pee", key: "Pee" };
+}
+
 /* =========================================================
    Storage (every access guarded; falls back to memory)
    ========================================================= */
 function sanitize(raw) {
-  var out = { days: {}, stickers: {} };
+  var out = { days: {}, stickers: {}, maxLevel: 1 };
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
 
-  if (raw.days && typeof raw.days === "object") {
+  if (raw.days && typeof raw.days === "object" && !Array.isArray(raw.days)) {
     Object.keys(raw.days).forEach(function (k) {
       var d = raw.days[k];
       if (!isValidKey(k) || !d || typeof d !== "object") return;
@@ -524,15 +566,32 @@ function sanitize(raw) {
       out.days[k] = day;
     });
   }
-  if (raw.stickers && typeof raw.stickers === "object") {
+  if (raw.stickers && typeof raw.stickers === "object" && !Array.isArray(raw.stickers)) {
     Object.keys(raw.stickers).forEach(function (id) {
       if (isValidKey(raw.stickers[id])) out.stickers[id] = raw.stickers[id];
     });
   }
+  var ml = Math.floor(Number(raw.maxLevel));
+  if (ml >= 1) out.maxLevel = Math.min(ml, MAX_LEVEL);
   return out;
 }
 
 var loadNotice = "";
+
+/* Keeps one backup of a corrupted payload; the same payload is never saved twice. */
+function backupCorrupt(raw) {
+  var prefix = STORE_KEY + ".backup-";
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i);
+      if (key && key.indexOf(prefix) === 0 && localStorage.getItem(key) === raw) return true;
+    }
+    localStorage.setItem(prefix + Date.now(), raw);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 function load(quiet) {
   var raw = null;
   try { raw = localStorage.getItem(STORE_KEY); } catch (e) { return sanitize(null); }
@@ -543,10 +602,12 @@ function load(quiet) {
     return sanitize(parsed);
   } catch (err) {
     if (!quiet) {
-      try {
-        localStorage.setItem(STORE_KEY + ".backup-" + Date.now(), raw);
+      var saved = backupCorrupt(raw);
+      if (saved) {
+        // The corrupt value is safely kept, so clear it: no repeat backups or notices.
+        try { localStorage.removeItem(STORE_KEY); } catch (e1) {}
         loadNotice = "Your saved data couldn't be read, so we started fresh. A copy of the old data was kept as a backup.";
-      } catch (e2) {
+      } else {
         loadNotice = "Your saved data couldn't be read, so we started fresh.";
       }
     }
@@ -554,9 +615,12 @@ function load(quiet) {
   }
 }
 function save() {
+  Object.keys(data.days).forEach(function (k) {
+    if (!isValidKey(k)) delete data.days[k];
+  });
   try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
 }
-var memory = { muted: false, theme: "dark", discreet: false };
+var memory = { muted: false, theme: "auto", discreet: false };
 function readFlag(key, fallback) {
   try {
     var v = localStorage.getItem(key);
@@ -568,7 +632,7 @@ function writeFlag(key, value) {
 }
 function loadTheme() {
   var t = readFlag(THEME_KEY, memory.theme);
-  return (t === "light" || t === "auto") ? t : "dark";
+  return (t === "light" || t === "dark") ? t : "auto";
 }
 
 /* =========================================================
@@ -586,9 +650,11 @@ var newStickers = {};          // ids to animate on next render
 var calFocus = false;
 var size = "m";
 var chartMode = "week";
-var shownLevel = 1;
+var lastXp = 0;
 var touched = { weeTime: false, drinkTime: false };
 var tabTarget = null;
+var toastAction = null;
+var dialogAction = null;
 
 function getDay(k, create) {
   var d = data.days[k];
@@ -608,14 +674,20 @@ function pastKeys() {
 /* =========================================================
    Streaks, XP, levels and achievements
    ========================================================= */
-function streaks() {
-  var dry = pastKeys().filter(function (k) { return data.days[k].night === "dry"; }).sort();
+function longestRun(keys) {
+  var sorted = keys.slice().sort();
   var best = 0, run = 0, prev = null;
-  dry.forEach(function (k) {
+  sorted.forEach(function (k) {
     run = (prev && dayDiff(prev, k) === 1) ? run + 1 : 1;
     if (run > best) best = run;
     prev = k;
   });
+  return best;
+}
+
+function streaks() {
+  var dry = pastKeys().filter(function (k) { return data.days[k].night === "dry"; });
+  var best = longestRun(dry);
   var cur = 0;
   var k = today;
   var todayNight = getDay(k).night;
@@ -628,24 +700,30 @@ function streaks() {
 
 function overall() {
   var s = streaks();
+  var goalKeys = [];
   s.goalDays = 0;
   s.logged = 0;
   s.earlyDays = 0;
+  s.perfectDays = 0;
   pastKeys().forEach(function (k) {
     var d = data.days[k];
-    if (cupsOf(d.drinks) >= GOAL) s.goalDays++;
-    if (earlyCupsOf(d.drinks) >= 3) s.earlyDays++;
+    var goal = cupsOf(d.drinks) >= GOAL;
+    var early = earlyCupsOf(d.drinks) >= 3;
+    if (goal) { s.goalDays++; goalKeys.push(k); }
+    if (early) s.earlyDays++;
+    if (goal && early && d.night === "dry") s.perfectDays++;
     if (d.wees.length || d.drinks.length || d.night) s.logged++;
   });
+  s.goalRun = longestRun(goalKeys);
   return s;
 }
 
-/* XP is derived from the data, so it always matches what is logged. */
+/* XP is derived from the data (entries per day are capped), so it matches what is logged. */
 function xpTotal() {
   var xp = 0;
   pastKeys().forEach(function (k) {
     var d = data.days[k];
-    xp += d.wees.length * XP.pee + d.drinks.length * XP.drink;
+    xp += Math.min(d.wees.length, MAX_ENTRY_XP) * XP.pee + Math.min(d.drinks.length, MAX_ENTRY_XP) * XP.drink;
     if (d.night) xp += XP.night;
     if (d.night === "dry") xp += XP.dry;
     if (cupsOf(d.drinks) >= GOAL) xp += XP.goal;
@@ -653,29 +731,51 @@ function xpTotal() {
   xp += Object.keys(data.stickers).length * XP.sticker;
   return xp;
 }
-function levelInfo(xp) {
-  var level = Math.floor(Math.sqrt(xp / 50)) + 1;
-  var floor = 50 * (level - 1) * (level - 1);
-  var next = 50 * level * level;
+function levelFromXp(xp) {
+  return Math.min(MAX_LEVEL, Math.floor(Math.sqrt(xp / 60)) + 1);
+}
+/* Displayed level never drops below the highest level reached. */
+function levelView() {
+  var xp = xpTotal();
+  var level = Math.min(MAX_LEVEL, Math.max(data.maxLevel || 1, levelFromXp(xp)));
+  var floor = 60 * (level - 1) * (level - 1);
+  var isMax = level >= MAX_LEVEL;
+  var next = isMax ? floor : 60 * level * level;
   return {
-    level: level,
-    title: LEVEL_TITLES[Math.min(level - 1, LEVEL_TITLES.length - 1)],
-    xp: xp, floor: floor, next: next,
-    pct: Math.max(0, Math.min(100, (xp - floor) / (next - floor) * 100))
+    level: level, xp: xp, floor: floor, next: next, isMax: isMax,
+    title: LEVEL_TITLES[level - 1],
+    pct: isMax ? 100 : Math.max(0, Math.min(100, (xp - floor) / (next - floor) * 100))
   };
 }
 
-function dryWord(n) { return discreet ? "✓ nights" : "dry nights"; }
+function dryWord() { return discreet ? "nights ●" : "dry nights"; }
 var BADGES = [
-  { id: "first", em: "🌙", name: "Clean Slate", hint: function () { return "Log your first " + (discreet ? "✓ night" : "dry night"); }, max: 1, val: function (s) { return s.dryTotal; } },
-  { id: "d3", em: "🔥", name: "On Fire", hint: function () { return "3 " + dryWord() + " in a row"; }, max: 3, val: function (s) { return s.best; } },
-  { id: "d7", em: "🛡️", name: "Unbreakable", hint: function () { return "7 " + dryWord() + " in a row"; }, max: 7, val: function (s) { return s.best; } },
-  { id: "d10", em: "🦉", name: "Night Owl", hint: function () { return "10 " + dryWord() + " in total"; }, max: 10, val: function (s) { return s.dryTotal; } },
-  { id: "d14", em: "👑", name: "Legend Mode", hint: function () { return "14 " + dryWord() + " in a row"; }, max: 14, val: function (s) { return s.best; } },
-  { id: "h1", em: "💧", name: "Hydro Homie", hint: function () { return "Hit your water goal"; }, max: 1, val: function (s) { return s.goalDays; } },
-  { id: "h5", em: "🌊", name: "Tidal Wave", hint: function () { return "Hit your water goal on 5 days"; }, max: 5, val: function (s) { return s.goalDays; } },
-  { id: "early", em: "🌅", name: "Early Bird", hint: function () { return "3+ cups before 4pm, on 3 days"; }, max: 3, val: function (s) { return s.earlyDays; } },
-  { id: "log", em: "📈", name: "Consistent", hint: function () { return "Log activity on 7 days"; }, max: 7, val: function (s) { return s.logged; } }
+  { id: "first", em: "🌙", name: "Clean Slate", max: 1, val: function (s) { return s.dryTotal; },
+    hint: function () { return discreet ? "Log your first ● night" : "Log your first dry night"; } },
+  { id: "d3", em: "🔥", name: "On Fire", max: 3, val: function (s) { return s.best; },
+    hint: function () { return "3 " + dryWord() + " in a row"; } },
+  { id: "d7", em: "🛡️", name: "Unbreakable", max: 7, val: function (s) { return s.best; },
+    hint: function () { return "7 " + dryWord() + " in a row"; } },
+  { id: "d10", em: "🦉", name: "Night Owl", max: 10, val: function (s) { return s.dryTotal; },
+    hint: function () { return "10 " + dryWord() + " in total"; } },
+  { id: "d14", em: "⚡", name: "Untouchable", max: 14, val: function (s) { return s.best; },
+    hint: function () { return "14 " + dryWord() + " in a row"; } },
+  { id: "d30", em: "👑", name: "Iron Will", max: 30, val: function (s) { return s.best; },
+    hint: function () { return "30 " + dryWord() + " in a row"; } },
+  { id: "h1", em: "💧", name: "Full Tank", max: 1, val: function (s) { return s.goalDays; },
+    hint: function () { return "Hit your water goal"; } },
+  { id: "h5", em: "🌊", name: "Tidal Wave", max: 5, val: function (s) { return s.goalDays; },
+    hint: function () { return "Hit your water goal on 5 days"; } },
+  { id: "early", em: "🌅", name: "Early Bird", max: 3, val: function (s) { return s.earlyDays; },
+    hint: function () { return "3+ cups before 4pm, on 3 days"; } },
+  { id: "log7", em: "📈", name: "Daily Driver", max: 7, val: function (s) { return s.logged; },
+    hint: function () { return "Log something on 7 days"; } },
+  { id: "log60", em: "🎖️", name: "Veteran", max: 60, val: function (s) { return s.logged; },
+    hint: function () { return "Log something on 60 days"; } },
+  { id: "perfect", em: "💎", name: "Full Send", max: 1, secret: true, val: function (s) { return s.perfectDays; },
+    hint: function () { return "Secret achievement"; } },
+  { id: "deep", em: "🐋", name: "Deep End", max: 7, secret: true, val: function (s) { return s.goalRun; },
+    hint: function () { return "Secret achievement"; } }
 ];
 
 /* Adds newly earned achievements (never removes). Returns the new ones. */
@@ -730,14 +830,14 @@ function sfx(kind) {
 }
 
 /* =========================================================
-   Effects: sparks (canvas), or a static glow if reduced motion
+   Effects: sparks (queued), or a static glow if reduced motion
    ========================================================= */
 var canvas = $("fx");
 var ctx2d = null;
 try { ctx2d = canvas.getContext("2d"); } catch (e) {}
 var sparks = [];
 var rafId = 0;
-var lastFx = 0;
+var fxQueue = 0;
 
 function sizeCanvas() {
   var dpr = Math.min(window.devicePixelRatio || 1, 3);
@@ -746,13 +846,8 @@ function sizeCanvas() {
   if (ctx2d) ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 sizeCanvas();
-window.addEventListener("resize", sizeCanvas);
 
 function burst() {
-  if (!ctx2d) return;
-  var now = Date.now();
-  if (now - lastFx < 3000) return;            // keep it occasional
-  lastFx = now;
   var colours = ["#22d3ee", "#a78bfa", "#f472b6", "#fbbf24"];
   var x = window.innerWidth / 2;
   var y = window.innerHeight * 0.3;
@@ -764,7 +859,7 @@ function burst() {
       colour: colours[i % colours.length], life: 35 + Math.random() * 30
     });
   }
-  if (!rafId) rafId = requestAnimationFrame(stepSparks);
+  rafId = requestAnimationFrame(stepSparks);
 }
 function stepSparks() {
   ctx2d.clearRect(0, 0, window.innerWidth, window.innerHeight);
@@ -790,7 +885,13 @@ function stepSparks() {
   } else {
     rafId = 0;
     ctx2d.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    setTimeout(runFx, 400);                 // next queued celebration
   }
+}
+function runFx() {
+  if (rafId || !fxQueue || !ctx2d) return;
+  fxQueue--;
+  burst();
 }
 var glowTimer = 0;
 function glow() {
@@ -800,8 +901,9 @@ function glow() {
   glowTimer = setTimeout(function () { hero.classList.remove("glow"); }, 1800);
 }
 function celebrate() {
-  if (isReduced()) glow();
-  else burst();
+  if (isReduced()) { glow(); return; }
+  fxQueue = Math.min(fxQueue + 1, 3);
+  runFx();
 }
 function pingRing() {
   var wrap = $("ringWrap");
@@ -831,16 +933,12 @@ function autoMessage() {
     return "No stress, it happens. New night, fresh start.";
   }
   if (isToday) {
+    if (discreet) return hour < 12 ? "Morning. Quick night check?" : "Check in whenever you're ready.";
     return hour < 12 ? "Morning. Last night: dry?" : "Check in when you're ready: last night?";
   }
   if (cups >= GOAL / 2) return "Halfway to the water goal. Keep it rolling.";
   if (cups > 0) return "Good start. Keep the water coming.";
   return "Fill in this day to keep your stats accurate.";
-}
-function say(text) {
-  override = text;
-  $("live").textContent = text;
-  renderCoach();
 }
 
 /* =========================================================
@@ -859,19 +957,39 @@ function renderCoach() {
   if (discreet) nightChip = d.night ? "Night logged" : "Night not logged";
   else nightChip = d.night === "dry" ? "Dry night" : d.night === "wet" ? "Not dry" : "Night not logged";
   $("chips").innerHTML =
-    '<span class="chip">' + plural(d.wees.length, "pee") + '</span>' +
+    '<span class="chip">' + plural(d.wees.length, W().pee) + '</span>' +
     '<span class="chip">' + fmt(cups) + ' / ' + GOAL + ' cups</span>' +
     '<span class="chip">' + esc(nightChip) + '</span>';
 
+  var info = levelView();
   setArc("arcWater", 326.7, cups / GOAL);
-  var info = levelInfo(xpTotal());
   setArc("arcXp", 251.3, info.pct / 100);
   $("lvN").textContent = info.level;
   $("lvTitle").textContent = "Lvl " + info.level + " · " + info.title;
-  $("xpText").textContent = info.xp + " / " + info.next + " XP";
+  $("xpText").textContent = info.isMax ? info.xp + " XP · MAX" : info.xp + " / " + info.next + " XP";
   $("xpBar").style.setProperty("--p", info.pct + "%");
-  $("ring").setAttribute("aria-label", "Water " + fmt(cups) + " of " + GOAL + " cups. Level " + info.level + ", " + info.xp + " of " + info.next + " XP.");
-  shownLevel = info.level;
+  $("ring").setAttribute("aria-label", "Outer ring: water, " + fmt(cups) + " of " + GOAL + " cups. Inner ring: XP. Level " + info.level + ".");
+  lastXp = info.xp;
+
+  $("quickPee").textContent = W().quick;
+  var tn = getDay(today).night;
+  var label;
+  if (discreet) label = tn === "dry" ? "Night ●" : tn === "wet" ? "Night ○" : "Night check";
+  else label = tn === "dry" ? "Last night ✓" : tn === "wet" ? "Last night ○" : "Last night?";
+  $("quickNight").textContent = label;
+}
+
+function recapText() {
+  var dry = 0, cups = 0, logged = 0;
+  for (var i = 0; i < 7; i++) {
+    var d = getDay(addDays(today, -i));
+    if (d.night === "dry") dry++;
+    cups += cupsOf(d.drinks);
+    if (d.wees.length || d.drinks.length || d.night) logged++;
+  }
+  var avg = logged ? fmt(Math.round(cups / logged * 10) / 10) : "0";
+  var nights = discreet ? dry + " nights ●" : plural(dry, "dry night");
+  return "This week: " + nights + " · " + avg + " cups/day · " + logged + "/7 days logged";
 }
 
 function renderTop() {
@@ -879,48 +997,51 @@ function renderTop() {
   $("streak").textContent = s.cur;
   $("best").textContent = s.best;
   $("streakLabel").textContent = discreet ? "streak" : "night streak";
-  $("streakNote").textContent = s.cur > 0 ? "Keep it rolling." : "Your next streak starts with the next night.";
+  $("recap").textContent = recapText();
 
-  var html = "";
+  var html = "", parts = [];
   for (var i = 6; i >= 0; i--) {
     var k = addDays(today, -i);
     var night = getDay(k).night;
     var cls = night === "dry" ? "dot dry" : night === "wet" ? "dot nd" : "dot";
-    var letter = parseKey(k).toLocaleDateString(undefined, { weekday: "narrow" });
-    html += '<div><span class="' + cls + '"></span>' + esc(letter) + '</div>';
+    var weekday = parseKey(k).toLocaleDateString(undefined, { weekday: "short" });
+    var state = night === "dry" ? (discreet ? "yes" : "dry") : night === "wet" ? (discreet ? "no" : "not dry") : "not logged";
+    parts.push(weekday + " " + state);
+    html += '<div><span class="' + cls + '"></span>' + esc(parseKey(k).toLocaleDateString(undefined, { weekday: "narrow" })) + '</div>';
   }
   $("strip").innerHTML = html;
+  $("strip").setAttribute("aria-label", "Last 7 nights: " + parts.join(", "));
 }
 
 function renderDay() {
   var d = getDay(selected);
   var isToday = selected === today;
+  var words = W();
 
   $("dayTitle").innerHTML = (isToday ? "Editing: Today" : "Editing") + "<small>" + esc(longDate(selected)) + "</small>";
   $("todayBtn").hidden = isToday;
 
   var title;
-  if (discreet) title = isToday ? "Night ✓ / ✗" : "Night ✓ / ✗ · " + shortDate(selected);
+  if (discreet) title = isToday ? "Night check" : "Night check · " + shortDate(selected);
   else title = isToday ? "Last night: dry?" : "Night before " + shortDate(selected) + ": dry?";
   $("nightTitle").textContent = title;
 
   var dryBtn = $("nDry"), wetBtn = $("nWet");
   if (discreet) {
-    dryBtn.innerHTML = '<span class="em" aria-hidden="true">✓</span>';
-    wetBtn.innerHTML = '<span class="em" aria-hidden="true">✗</span>';
-    dryBtn.setAttribute("aria-label", "Night ✓");
-    wetBtn.setAttribute("aria-label", "Night ✗");
+    dryBtn.innerHTML = '<span class="em" aria-hidden="true">●</span>Yes';
+    wetBtn.innerHTML = '<span class="em" aria-hidden="true">○</span>No';
   } else {
     dryBtn.innerHTML = '<span class="em" aria-hidden="true">✓</span>Dry night';
     wetBtn.innerHTML = '<span class="em" aria-hidden="true">○</span>Not dry';
-    dryBtn.removeAttribute("aria-label");
-    wetBtn.removeAttribute("aria-label");
   }
   dryBtn.setAttribute("aria-pressed", String(d.night === "dry"));
   wetBtn.setAttribute("aria-pressed", String(d.night === "wet"));
   $("nClear").disabled = !d.night;
   $("nightCard").classList.toggle("prompt", isToday && !d.night);
 
+  $("weeTitle").innerHTML = '<span class="dotk pee" aria-hidden="true"></span>' + esc(words.section);
+  $("weeAdd").textContent = words.log;
+  $("keyPee").textContent = words.key;
   renderLists(d);
 
   var cups = cupsOf(d.drinks);
@@ -930,15 +1051,16 @@ function renderDay() {
     : fmt(cups) + " of " + GOAL + " cups";
   var early = earlyCupsOf(d.drinks);
   $("earlyText").textContent = early > 0
-    ? fmt(early) + " cup" + (early === 1 ? "" : "s") + " before 4pm. Good timing."
-    : "Daytime drinks count extra.";
+    ? fmt(early) + " cup" + (early === 1 ? "" : "s") + " before 4pm. Counts toward Early Bird."
+    : "Cups before 4pm count toward Early Bird.";
 }
 
 function renderLists(d) {
+  var word = W().pee;
   $("weeList").innerHTML = d.wees.length
     ? d.wees.map(function (t, i) {
         return '<li><span>' + esc(prettyTime(t)) + '</span>' +
-          '<button class="x" type="button" data-del-wee="' + i + '" aria-label="Remove pee at ' + esc(prettyTime(t)) + '">✕</button></li>';
+          '<button class="x" type="button" data-del-wee="' + i + '" aria-label="Remove ' + word + ' at ' + esc(prettyTime(t)) + '">✕</button></li>';
       }).join("")
     : '<li class="empty">Nothing logged yet.</li>';
 
@@ -951,28 +1073,44 @@ function renderLists(d) {
     : '<li class="empty">Nothing logged yet.</li>';
 }
 
+function cupLevel(cups) {
+  if (cups <= 0) return 0;
+  if (cups < 2) return 1;
+  if (cups < 4) return 2;
+  if (cups < GOAL) return 3;
+  return 4;
+}
+
 function dayCellHtml(k) {
-  var day = getDay(k);
   var future = k > today;
   var isSel = k === selected;
-  var cls = "day" + (day.night === "dry" ? " dry" : day.night === "wet" ? " nd" : "") +
+  var base = longDate(k) + (k === today ? ", today" : "");
+
+  if (future) {
+    return '<div class="cell" role="gridcell" aria-selected="false">' +
+      '<button type="button" class="day" data-date="' + k + '" tabindex="-1" disabled aria-label="' + esc(base + ", in the future") + '">' +
+      '<span class="n">' + parseKey(k).getDate() + '</span><span class="ic"></span><span class="ct"></span></button></div>';
+  }
+
+  var day = getDay(k);
+  var cups = cupsOf(day.drinks);
+  var lv = cupLevel(cups);
+  var cls = "day" + (lv ? " lv" + lv : "") + (day.night === "dry" ? " dry" : day.night === "wet" ? " nd" : "") +
             (k === today ? " today" : "") + (isSel ? " sel" : "");
-  var glyph = day.night === "dry" ? "✓" : day.night === "wet" ? (discreet ? "✗" : "○") : "";
+  var glyph = day.night === "dry" ? (discreet ? "●" : "✓") : day.night === "wet" ? "○" : "";
 
   var nightText;
-  if (discreet) nightText = day.night === "dry" ? "Night ✓. " : day.night === "wet" ? "Night ✗. " : "Night not logged. ";
-  else nightText = day.night === "dry" ? "Dry night. " : day.night === "wet" ? "Not dry. " : "Night not logged. ";
-  var label = longDate(k) + (k === today ? ", today" : "") + (future ? ", in the future" : "") + ". " +
-    nightText + plural(day.wees.length, "pee") + ", " + plural(day.drinks.length, "drink") + "." + (isSel ? " Selected." : "");
+  if (discreet) nightText = day.night === "dry" ? "Night check yes. " : day.night === "wet" ? "Night check no. " : "Night not logged. ";
+  else nightText = day.night === "dry" ? "Dry night before. " : day.night === "wet" ? "Not dry the night before. " : "Night not logged. ";
+  var label = base + ". " + nightText + plural(day.wees.length, W().pee) + ", " + fmt(cups) + " cups." + (isSel ? " Selected." : "");
 
   var counts = "";
   if (day.wees.length) counts += '<span class="b b-pee">' + Math.min(day.wees.length, 99) + '</span>';
-  if (day.drinks.length) counts += '<span class="b b-drink">' + Math.min(day.drinks.length, 99) + '</span>';
+  if (cups) counts += '<span class="b b-drink">' + fmt(Math.min(cups, 99)) + '</span>';
 
   return '<div class="cell" role="gridcell" aria-selected="' + isSel + '">' +
     '<button type="button" class="' + cls + '" data-date="' + k + '" tabindex="' + (k === tabTarget ? 0 : -1) + '"' +
-    (future ? " disabled" : "") + (k === today ? ' aria-current="date"' : "") +
-    ' aria-label="' + esc(label) + '">' +
+    (k === today ? ' aria-current="date"' : "") + ' aria-label="' + esc(label) + '">' +
     '<span class="n">' + parseKey(k).getDate() + '</span><span class="ic" aria-hidden="true">' + glyph + '</span>' +
     '<span class="ct" aria-hidden="true">' + counts + '</span></button></div>';
 }
@@ -999,7 +1137,7 @@ function renderCal() {
   var i, d;
   for (i = 0; i < offset; i++) cells.push('<div class="cell" role="gridcell"></div>');
 
-  var dryN = 0, peeSum = 0, drinkSum = 0, logged = 0;
+  var dryN = 0, peeSum = 0, cupSum = 0, logged = 0;
   for (d = 1; d <= count; d++) {
     var k = prefix + pad(d);
     cells.push(dayCellHtml(k));
@@ -1009,7 +1147,7 @@ function renderCal() {
       if (day.wees.length || day.drinks.length) {
         logged++;
         peeSum += day.wees.length;
-        drinkSum += day.drinks.length;
+        cupSum += cupsOf(day.drinks);
       }
     }
   }
@@ -1020,14 +1158,14 @@ function renderCal() {
   $("cal").innerHTML = html;
 
   $("calLegend").textContent = discreet
-    ? "✓ / ✗ = night check. Amber number = pee, cyan number = drinks. Arrow keys move between days."
-    : "Glowing green = dry night, purple = not dry. Amber number = pee, cyan number = drinks. Arrow keys move between days.";
+    ? "The mark on a day is the night check for the night before that date: ● yes, ○ no. Shade = cups of water. Amber = " + W().key.toLowerCase() + ", blue = cups. Arrow keys move between days."
+    : "The mark on a day is for the night before that date: glowing ✓ = dry, ○ = not dry. Shade = cups of water. Amber = " + W().key.toLowerCase() + ", blue = cups. Arrow keys move between days.";
 
-  function avg(total) { return logged ? String(Math.round(total / logged * 10) / 10) : "–"; }
+  function avg(total) { return logged ? fmt(Math.round(total / logged * 10) / 10) : "–"; }
   $("mstats").innerHTML =
-    '<div class="stat"><b>' + dryN + '</b><small>' + (discreet ? "✓ nights" : "dry nights") + '</small></div>' +
-    '<div class="stat"><b>' + avg(peeSum) + '</b><small>pees per logged day</small></div>' +
-    '<div class="stat"><b>' + avg(drinkSum) + '</b><small>drinks per logged day</small></div>';
+    '<div class="stat"><b>' + dryN + '</b><small>' + (discreet ? "nights ●" : "dry nights") + '</small></div>' +
+    '<div class="stat"><b>' + avg(peeSum) + '</b><small>' + W().pee + 's per logged day</small></div>' +
+    '<div class="stat"><b>' + avg(cupSum) + '</b><small>cups per logged day</small></div>';
 
   if (calFocus) {
     calFocus = false;
@@ -1036,9 +1174,9 @@ function renderCal() {
   }
 }
 
-/* Hand-drawn SVG grouped bar chart of pee and drink counts */
+/* Hand-drawn SVG grouped bar chart: counts of breaks and weighted cups of water */
 function renderChart() {
-  var days = [], i, k;
+  var days = [], i;
   if (chartMode === "week") {
     for (i = 6; i >= 0; i--) days.push(addDays(today, -i));
   } else {
@@ -1048,50 +1186,51 @@ function renderChart() {
   var series = days.map(function (key) {
     var d = getDay(key);
     var future = key > today;
-    return { k: key, pee: future ? 0 : d.wees.length, drink: future ? 0 : d.drinks.length, future: future };
+    return { k: key, pee: future ? 0 : d.wees.length, cups: future ? 0 : cupsOf(d.drinks), future: future };
   });
-  var max = 1, peeTotal = 0, drinkTotal = 0;
+  var rawMax = 1, peeTotal = 0, cupTotal = 0;
   series.forEach(function (s) {
-    max = Math.max(max, s.pee, s.drink);
+    rawMax = Math.max(rawMax, s.pee, s.cups);
     peeTotal += s.pee;
-    drinkTotal += s.drink;
+    cupTotal += s.cups;
   });
-  if (max > 4) max = Math.ceil(max / 2) * 2;
+  var step = Math.max(1, Math.ceil(rawMax / 4));          // integer ticks only
+  var max = step * Math.ceil(rawMax / step);
 
-  var W = 300, H = 150, left = 20, right = 4, top = 16, bottom = 20;
-  var plotW = W - left - right, plotH = H - top - bottom;
+  var W2 = 300, H = 150, left = 22, right = 4, top = 16, bottom = 20;
+  var plotW = W2 - left - right, plotH = H - top - bottom;
   var group = plotW / series.length;
   var barW = Math.max(2, Math.min(14, group * 0.38));
   var weekly = chartMode === "week";
-  var svg = '';
+  var showValues = weekly && window.innerWidth >= 520;
+  var svg = '', v;
 
-  [0, 0.5, 1].forEach(function (f) {
-    var y = top + plotH * (1 - f);
-    svg += '<line class="grid" x1="' + left + '" x2="' + (W - right) + '" y1="' + y + '" y2="' + y + '"/>';
-    svg += '<text class="ax" x="' + (left - 4) + '" y="' + (y + 3) + '" text-anchor="end">' + fmt(max * f) + '</text>';
-  });
+  for (v = 0; v <= max; v += step) {
+    var y = top + plotH * (1 - v / max);
+    svg += '<line class="grid" x1="' + left + '" x2="' + (W2 - right) + '" y1="' + y + '" y2="' + y + '"/>';
+    svg += '<text class="ax" x="' + (left - 4) + '" y="' + (y + 4) + '" text-anchor="end">' + v + '</text>';
+  }
 
   series.forEach(function (s, idx) {
     var cx = left + group * idx + group / 2;
-    var hp = plotH * s.pee / max, hd = plotH * s.drink / max;
+    var hp = plotH * s.pee / max, hd = plotH * s.cups / max;
     var cls = s.future ? " off" : "";
     if (s.pee) svg += '<rect class="bp' + cls + '" x="' + (cx - barW - 0.5) + '" y="' + (top + plotH - hp) + '" width="' + barW + '" height="' + hp + '" rx="2"/>';
-    if (s.drink) svg += '<rect class="bd' + cls + '" x="' + (cx + 0.5) + '" y="' + (top + plotH - hd) + '" width="' + barW + '" height="' + hd + '" rx="2"/>';
-    if (weekly) {
+    if (s.cups) svg += '<rect class="bd' + cls + '" x="' + (cx + 0.5) + '" y="' + (top + plotH - hd) + '" width="' + barW + '" height="' + hd + '" rx="2"/>';
+    if (showValues) {
       if (s.pee) svg += '<text class="val" x="' + (cx - barW / 2 - 0.5) + '" y="' + (top + plotH - hp - 2) + '">' + s.pee + '</text>';
-      if (s.drink) svg += '<text class="val" x="' + (cx + barW / 2 + 0.5) + '" y="' + (top + plotH - hd - 2) + '">' + s.drink + '</text>';
+      if (s.cups) svg += '<text class="val" x="' + (cx + barW / 2 + 0.5) + '" y="' + (top + plotH - hd - 2) + '">' + fmt(s.cups) + '</text>';
     }
     var dnum = parseKey(s.k).getDate();
-    var showLabel = weekly || dnum === 1 || dnum % 5 === 0;
-    if (showLabel) {
+    if (weekly || dnum === 1 || dnum % 5 === 0) {
       var lab = weekly ? parseKey(s.k).toLocaleDateString(undefined, { weekday: "short" }).slice(0, 3) : String(dnum);
       svg += '<text class="ax" x="' + cx + '" y="' + (H - 6) + '" text-anchor="middle">' + esc(lab) + '</text>';
     }
   });
 
   var rangeLabel = weekly ? "last 7 days" : MONTHS[view.m] + " " + view.y;
-  var summary = "Bar chart, " + rangeLabel + ". Total pees " + peeTotal + ", total drinks " + drinkTotal + ".";
-  $("chart").innerHTML = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(summary) + '">' + svg + '</svg>';
+  var summary = "Bar chart, " + rangeLabel + ". Total " + W().pee + "s " + peeTotal + ", total water " + fmt(cupTotal) + " cups.";
+  $("chart").innerHTML = '<svg class="chart" viewBox="0 0 ' + W2 + ' ' + H + '" role="img" aria-label="' + esc(summary) + '">' + svg + '</svg>';
   $("rWeek").setAttribute("aria-pressed", String(weekly));
   $("rMonth").setAttribute("aria-pressed", String(!weekly));
 }
@@ -1101,33 +1240,40 @@ function renderShelf() {
   $("shelf").innerHTML = BADGES.map(function (b) {
     var earned = data.stickers[b.id];
     var cls = "badge" + (earned ? "" : " locked") + (newStickers[b.id] ? " new" : "");
-    var detail;
+    var emoji, name, detail;
     if (earned) {
+      emoji = b.em; name = b.name;
       detail = '<small>Unlocked ' + esc(shortDate(earned)) + '</small>';
+    } else if (b.secret) {
+      emoji = "❔"; name = "???";
+      detail = '<small>Secret achievement</small>';
     } else {
       var v = Math.min(b.val(s), b.max);
+      emoji = "🔒"; name = b.name;
       detail = '<div class="bar blue" aria-hidden="true"><i style="--p:' + Math.round(v / b.max * 100) + '%"></i></div>' +
                '<small>' + v + '/' + b.max + ' · ' + esc(b.hint()) + '</small>';
     }
-    return '<div class="' + cls + '"><span class="em" aria-hidden="true">' + (earned ? b.em : "🔒") + '</span>' +
-      '<b>' + esc(b.name) + '</b>' + detail + '<span class="sr">' + (earned ? "Unlocked" : "Locked") + '</span></div>';
+    return '<div class="' + cls + '"><span class="em" aria-hidden="true">' + emoji + '</span>' +
+      '<b>' + esc(name) + '</b>' + detail + '<span class="sr">' + (earned ? "Unlocked" : "Locked") + '</span></div>';
   }).join("");
 }
 
 function renderTools() {
   var sound = $("soundBtn");
-  sound.textContent = muted ? "Sound off" : "Sound on";
+  sound.textContent = muted ? "🔇" : "🔊";
   sound.setAttribute("aria-pressed", String(!muted));
 
   var themeBtn = $("themeBtn");
   var names = { auto: "Auto", light: "Light", dark: "Dark" };
-  themeBtn.textContent = "Theme: " + names[theme];
+  var icons = { auto: "🌗", light: "☀️", dark: "🌙" };
+  themeBtn.textContent = icons[theme];
   themeBtn.setAttribute("aria-label", "Theme: " + names[theme] + ". Press to change.");
+  themeBtn.title = "Theme: " + names[theme];
   document.documentElement.setAttribute("data-theme", theme);
 
   var dis = $("discreetBtn");
   dis.setAttribute("aria-pressed", String(discreet));
-  dis.textContent = discreet ? "Discreet: on" : "Discreet";
+  dis.textContent = discreet ? "🙈" : "👁";
   if (discreet) document.documentElement.setAttribute("data-discreet", "1");
   else document.documentElement.removeAttribute("data-discreet");
 }
@@ -1147,47 +1293,61 @@ function renderAll() {
 }
 
 /* =========================================================
-   Toast
+   Toast and dialog
    ========================================================= */
 var toastTimer = 0;
 function showToast(text, undoFn) {
   $("toastText").textContent = text;
-  var undoBtn = $("toastUndo");
-  undoBtn.hidden = !undoFn;
-  undoBtn.onclick = function () {
-    hideToast();
-    if (undoFn) undoFn();
-  };
+  toastAction = undoFn || null;
+  $("toastUndo").hidden = !undoFn;
   $("toast").hidden = false;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(hideToast, 5000);
 }
 function hideToast() {
   $("toast").hidden = true;
+  toastAction = null;
   clearTimeout(toastTimer);
+}
+
+function showDialog(title, text, okLabel, onOk) {
+  var dlg = $("dlg");
+  $("dlgTitle").textContent = title;
+  $("dlgText").textContent = text;
+  $("dlgOk").textContent = okLabel;
+  dialogAction = onOk;
+  if (typeof dlg.showModal === "function") dlg.showModal();
+  else dlg.setAttribute("open", "");
+}
+function closeDialog() {
+  var dlg = $("dlg");
+  if (typeof dlg.close === "function") dlg.close();
+  else dlg.removeAttribute("open");
 }
 
 /* =========================================================
    Actions
    ========================================================= */
 /* Saves, awards achievements/levels and shows the best message.
-   ev: {text, sound, big} */
+   ev: {text, sound, big, quiet} */
 function commit(ev) {
   var won = awardStickers();
-  var levelBefore = shownLevel;
+  var xpNow = xpTotal();
+  var delta = xpNow - lastXp;
+  var reached = levelFromXp(xpNow);
+  var leveled = reached > (data.maxLevel || 1);
+  if (leveled) data.maxLevel = reached;     // only a new highest level is celebrated
   save();
   newStickers = {};
   won.forEach(function (b) { newStickers[b.id] = true; });
-
-  var info = levelInfo(xpTotal());
-  var leveled = info.level > levelBefore;
 
   var parts = [];
   if (won.length) {
     parts.push("Achievement unlocked: " + won.map(function (b) { return b.em + " " + b.name; }).join(", ") + ".");
   }
-  if (leveled) parts.push("Level up. You're now Lvl " + info.level + " · " + info.title + ".");
+  if (leveled) parts.push("Level up. You're now Lvl " + reached + " · " + LEVEL_TITLES[reached - 1] + ".");
   if (ev.text) parts.push(ev.text);
+  if (delta > 0 && !ev.quiet) parts.push("+" + delta + " XP");
   var text = parts.join(" ");
 
   override = text || null;
@@ -1195,6 +1355,7 @@ function commit(ev) {
   newStickers = {};
   if (text) $("live").textContent = text;
 
+  if (ev.quiet && !won.length && !leveled) return;
   if (won.length) sfx("unlock");
   else if (leveled) sfx("level");
   else if (ev.sound) sfx(ev.sound);
@@ -1213,16 +1374,16 @@ function resetTime(inputId) {
   $(inputId).value = nowTime();
 }
 
-function addPee() {
+function addPee(forcedTime) {
   var d = getDay(selected, true);
-  d.wees.push(chosenTime("weeTime"));
+  d.wees.push(forcedTime || chosenTime("weeTime"));
   d.wees.sort();
   resetTime("weeTime");
-  commit({ text: pick(PEE_LINES) + " +" + XP.pee + " XP", sound: "log" });
+  commit({ text: pick(PEE_LINES), sound: "log" });
 }
 
-function addDrink() {
-  var time = chosenTime("drinkTime");
+function addDrink(forcedTime) {
+  var time = forcedTime || chosenTime("drinkTime");
   var d = getDay(selected, true);
   var before = cupsOf(d.drinks);
   d.drinks.push({ t: time, s: size });
@@ -1232,34 +1393,42 @@ function addDrink() {
   var after = cupsOf(d.drinks);
   var ev = { sound: "log" };
   if (before < GOAL && after >= GOAL) {
-    ev.text = "Hydration on point 💧 Goal hit. +" + XP.goal + " XP";
+    ev.text = "Hydration on point 💧 Goal hit.";
     ev.big = true;
   } else if (time < EARLY_CUTOFF) {
-    ev.text = "Early hydration. Smart move. +" + XP.drink + " XP";
+    ev.text = "Early hydration. Smart move.";
+  } else if (readFlag(TIP_KEY, "") !== today) {
+    writeFlag(TIP_KEY, today);               // evening tip: once per day
+    ev.text = "Logged. Earlier in the day works best.";
   } else {
-    ev.text = "Logged. Front-loading water earlier helps most. +" + XP.drink + " XP";
+    ev.text = "Logged.";
   }
   commit(ev);
+}
+
+function quickAdd(kind) {
+  if (selected !== today) selectDay(today, {});
+  if (kind === "pee") addPee(nowTime());
+  else addDrink(nowTime());
 }
 
 function setNight(value) {
   var d = getDay(selected, true);
   if (d.night === value) return;     // already chosen; use Clear to remove
   var before = streaks();
-  var firstAnswer = !d.night;
   d.night = value;
 
   if (value === "dry") {
     var after = streaks();
     var text;
-    if (discreet) text = "Night logged. +" + (XP.night + XP.dry) + " XP";
-    else if (after.cur > 1 && after.cur > before.best) text = "New personal best: " + after.cur + " nights 🏆";
+    var record = after.cur > 1 && after.cur > before.best;
+    if (discreet) text = "Night logged.";
+    else if (record) text = "New personal best: " + after.cur + " nights 🏆";
     else if (after.cur > 1 && selected === today) text = after.cur + "-night streak 🔥 keep it going";
     else text = "Dry night logged. Solid.";
-    commit({ text: text, sound: "log", big: !discreet && after.cur > 1 && after.cur > before.best });
+    commit({ text: text, sound: "log", big: !discreet && record });
   } else {
-    var msg = discreet ? "Night logged." : "No stress, it happens. New night, fresh start.";
-    commit({ text: msg + (firstAnswer ? " +" + XP.night + " XP" : ""), sound: "soft" });
+    commit({ text: discreet ? "Night logged." : "No stress, it happens. New night, fresh start.", sound: "soft" });
   }
 }
 
@@ -1287,13 +1456,12 @@ function deleteEntry(kind, index) {
   renderAll();
 
   var when = prettyTime(kind === "wee" ? item : item.t);
-  showToast("Removed " + (kind === "wee" ? "pee" : "drink") + " at " + when, function () {
+  showToast("Removed " + (kind === "wee" ? W().pee : "drink") + " at " + when, function () {
     var target = getDay(day, true);
     var arr = kind === "wee" ? target.wees : target.drinks;
     arr.push(item);
     if (kind === "wee") arr.sort(); else arr.sort(byTime);
-    save();
-    renderAll();
+    commit({ quiet: true });                 // re-checks achievements and levels
   });
 }
 
@@ -1328,7 +1496,7 @@ function exportData() {
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
     a.href = url;
-    a.download = "flow-backup-" + today + ".json";
+    a.download = "loop-backup-" + today + ".json";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -1338,29 +1506,42 @@ function exportData() {
     showToast("Sorry, the backup could not be saved.");
   }
 }
+function isPlainObject(v) {
+  return !!v && typeof v === "object" && !Array.isArray(v);
+}
 function importData(file) {
   if (!file) return;
   var reader = new FileReader();
   reader.onload = function () {
-    var imported;
+    var imported = null;
     try {
       var parsed = JSON.parse(String(reader.result));
-      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed) || !parsed.days) throw new Error("bad");
-      imported = sanitize(parsed);
-    } catch (e) {
-      showToast("That file doesn't look like a Flow backup.");
+      if (isPlainObject(parsed) && isPlainObject(parsed.days)) imported = sanitize(parsed);
+    } catch (e) {}
+    var importedCount = imported ? Object.keys(imported.days).length : 0;
+    if (!imported || !importedCount) {
+      showToast("That file isn't a usable Loop backup. Nothing was changed.");
       return;
     }
-    if (!window.confirm("Replace the days in this tracker with the ones from the backup? Your achievements are always kept.")) return;
-    Object.keys(imported.stickers).forEach(function (id) {
-      if (!data.stickers[id]) data.stickers[id] = imported.stickers[id];
-    });
-    data.days = imported.days;
-    awardStickers();
-    save();
-    override = null;
-    renderAll();
-    showToast("Backup loaded.");
+    var currentCount = Object.keys(data.days).length;
+    showDialog(
+      "Import " + plural(importedCount, "day") + "?",
+      "This replaces your current " + plural(currentCount, "day") + ". Your achievements and level are always kept.",
+      "Replace",
+      function () {
+        Object.keys(imported.stickers).forEach(function (id) {
+          if (!data.stickers[id]) data.stickers[id] = imported.stickers[id];
+        });
+        data.maxLevel = Math.max(data.maxLevel || 1, imported.maxLevel || 1);
+        data.days = imported.days;
+        awardStickers();
+        data.maxLevel = Math.max(data.maxLevel, levelFromXp(xpTotal()));
+        save();
+        override = null;
+        renderAll();
+        showToast("Imported " + plural(importedCount, "day") + ".");
+      }
+    );
   };
   reader.onerror = function () { showToast("Sorry, that file could not be read."); };
   reader.readAsText(file);
@@ -1391,8 +1572,17 @@ function refreshClock() {
 /* =========================================================
    Events
    ========================================================= */
-$("weeAdd").addEventListener("click", addPee);
-$("drinkAdd").addEventListener("click", addDrink);
+$("weeAdd").addEventListener("click", function () { addPee(); });
+$("drinkAdd").addEventListener("click", function () { addDrink(); });
+$("quickPee").addEventListener("click", function () { quickAdd("pee"); });
+$("quickDrink").addEventListener("click", function () { quickAdd("drink"); });
+$("quickNight").addEventListener("click", function () {
+  if (selected !== today) selectDay(today, {});
+  var card = $("nightCard");
+  card.scrollIntoView({ behavior: isReduced() ? "auto" : "smooth", block: "start" });
+  var target = getDay(today).night === "wet" ? $("nWet") : $("nDry");
+  target.focus({ preventScroll: true });
+});
 $("nDry").addEventListener("click", function () { setNight("dry"); });
 $("nWet").addEventListener("click", function () { setNight("wet"); });
 $("nClear").addEventListener("click", clearNight);
@@ -1413,7 +1603,7 @@ $("soundBtn").addEventListener("click", function () {
   if (!muted) sfx("click");
 });
 $("themeBtn").addEventListener("click", function () {
-  theme = theme === "dark" ? "light" : theme === "light" ? "auto" : "dark";
+  theme = theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto";
   memory.theme = theme;
   writeFlag(THEME_KEY, theme);
   renderTools();
@@ -1492,6 +1682,24 @@ $("importFile").addEventListener("change", function () {
 });
 $("noticeClose").addEventListener("click", function () { $("notice").hidden = true; });
 
+$("toastUndo").addEventListener("click", function () {
+  var fn = toastAction;
+  hideToast();
+  if (fn) fn();
+});
+$("dlgCancel").addEventListener("click", function () { dialogAction = null; closeDialog(); });
+$("dlgOk").addEventListener("click", function () {
+  var fn = dialogAction;
+  dialogAction = null;
+  closeDialog();
+  if (fn) fn();
+});
+
+var resizeTimer = 0;
+window.addEventListener("resize", function () {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function () { sizeCanvas(); renderChart(); }, 150);
+});
 document.addEventListener("visibilitychange", function () {
   if (!document.hidden) refreshClock();
 });
@@ -1518,9 +1726,10 @@ setInterval(refreshClock, 30000);
    Init
    ========================================================= */
 (function init() {
-  var before = JSON.stringify(data.stickers);
-  awardStickers();                           // silently catch up on achievements
-  if (JSON.stringify(data.stickers) !== before) save();
+  var before = JSON.stringify(data.stickers) + data.maxLevel;
+  awardStickers();                                           // silently catch up
+  data.maxLevel = Math.max(data.maxLevel || 1, levelFromXp(xpTotal()));
+  if (JSON.stringify(data.stickers) + data.maxLevel !== before) save();
   renderTools();
   renderTimes();
   renderAll();
