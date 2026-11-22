@@ -9,75 +9,115 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ---------- design tokens ---------- */
 :root{
-  --bg:#e8f6ff; --bg2:#fff3d6; --card:#ffffff; --ink:#1d3557; --muted:#4b607a;
-  --line:#cfe3f3; --primary:#1e88e5; --primary-ink:#ffffff; --accent:#ff9f1c; --accent-ink:#2b1d00;
-  --good:#1b9e5a; --good-bg:#dcf7e8; --soft:#fff1c9; --wet:#5c6bc0; --wet-bg:#e3e6fb;
-  --water:#39a7ff; --water2:#7cc8ff; --sel:#ff6fa8; --shadow:0 6px 18px rgba(30,80,140,.14);
-  --chip:#eef6fd;
+  --bg:#e8f6ff; --bg2:#fff3d6; --card:#ffffff; --ink:#1d3557; --muted:#47596f;
+  --line:#b9d3e8; --primary:#1565c0; --primary-ink:#ffffff; --accent:#ff9f1c; --accent-ink:#2b1d00;
+  --good:#1b7f4b; --good-bg:#d6f5e4; --soft:#fff1c9; --wet:#5c6bc0; --wet-bg:#e3e6fb;
+  --water:#39a7ff; --water2:#7cc8ff; --sel:#d81b60; --shadow:0 6px 18px rgba(30,80,140,.14);
+  --chip:#eef6fd; --bw-bg:#ffe08a; --bw-ink:#3d2c00; --bd-bg:#bfe4ff; --bd-ink:#0a2a47;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0f1b2d; --bg2:#1d1a33; --card:#1a2a42; --ink:#eef5ff; --muted:#b4c4da;
-    --line:#2e4566; --primary:#5fb0ff; --primary-ink:#06213d; --accent:#ffb84d; --accent-ink:#2b1d00;
+  :root:not([data-theme]){
+    --bg:#0f1b2d; --bg2:#1d1a33; --card:#1a2a42; --ink:#eef5ff; --muted:#b9c9de;
+    --line:#35507a; --primary:#5fb0ff; --primary-ink:#06213d; --accent:#ffb84d; --accent-ink:#2b1d00;
     --good:#58e0a0; --good-bg:#17402f; --soft:#3a3320; --wet:#a6b1ff; --wet-bg:#2a2f5a;
     --water:#4db3ff; --water2:#8fd0ff; --sel:#ff8fbd; --shadow:0 6px 18px rgba(0,0,0,.4);
-    --chip:#223756; color-scheme: dark;
+    --chip:#223756; --bw-bg:#5c4a12; --bw-ink:#ffe9a8; --bd-bg:#1f5f99; --bd-ink:#e6f4ff;
+    color-scheme: dark;
   }
 }
+:root[data-theme="dark"]{
+  --bg:#0f1b2d; --bg2:#1d1a33; --card:#1a2a42; --ink:#eef5ff; --muted:#b9c9de;
+  --line:#35507a; --primary:#5fb0ff; --primary-ink:#06213d; --accent:#ffb84d; --accent-ink:#2b1d00;
+  --good:#58e0a0; --good-bg:#17402f; --soft:#3a3320; --wet:#a6b1ff; --wet-bg:#2a2f5a;
+  --water:#4db3ff; --water2:#8fd0ff; --sel:#ff8fbd; --shadow:0 6px 18px rgba(0,0,0,.4);
+  --chip:#223756; --bw-bg:#5c4a12; --bw-ink:#ffe9a8; --bd-bg:#1f5f99; --bd-ink:#e6f4ff;
+  color-scheme: dark;
+}
+
+/* ---------- base ---------- */
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
   margin:0; font-family:"Fredoka","Baloo 2","Trebuchet MS","Comic Sans MS",system-ui,sans-serif;
-  color:var(--ink); background:var(--bg); background-image:linear-gradient(160deg,var(--bg),var(--bg2));
-  background-attachment:fixed; min-height:100vh; font-size:17px; line-height:1.35; overflow-x:hidden;
+  color:var(--ink); background:var(--bg); min-height:100vh; font-size:17px; line-height:1.35; overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1;
+  background:linear-gradient(160deg,var(--bg),var(--bg2));
 }
 button,input{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:4px solid var(--sel); outline-offset:2px; border-radius:10px}
+[hidden]{display:none!important}
 .wrap{max-width:1080px;margin:0 auto;padding:14px 16px 40px}
-header.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 14px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 h1{margin:0;font-size:clamp(1.6rem,6vw,2.4rem);letter-spacing:.5px}
 h1 span{display:inline-block;animation:bob 3s ease-in-out infinite}
 h2{margin:0 0 10px;font-size:1.25rem}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 14px}
+.tools{display:flex;gap:8px}
+
 .card{background:var(--card);border-radius:24px;padding:16px;box-shadow:var(--shadow);border:2px solid var(--line);min-width:0}
-.btn{border:0;border-radius:999px;padding:10px 18px;background:var(--primary);color:var(--primary-ink);font-weight:600;box-shadow:0 3px 0 rgba(0,0,0,.18);transition:transform .1s}
+.card.glow{box-shadow:0 0 0 5px var(--accent),var(--shadow)}
+.btn{border:0;border-radius:999px;padding:10px 18px;min-height:44px;background:var(--primary);color:var(--primary-ink);font-weight:600;box-shadow:0 3px 0 rgba(0,0,0,.2);transition:transform .1s}
 .btn:active{transform:translateY(2px);box-shadow:none}
 .btn.alt{background:var(--accent);color:var(--accent-ink)}
 .btn.ghost{background:var(--chip);color:var(--ink);box-shadow:none;border:2px solid var(--line)}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
-.sound{font-size:1.2rem;padding:8px 14px}
+.tool{padding:8px 14px;font-size:1rem}
+
+.notice{background:var(--soft);border:2px solid var(--accent);border-radius:18px;padding:10px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+
+/* ---------- hero ---------- */
 .hero{display:grid;gap:14px;grid-template-columns:1fr}
-.mascot-card{display:flex;gap:12px;align-items:center}
-.mascot{width:96px;height:112px;flex:none;animation:bob 3s ease-in-out infinite}
-.bubble{position:relative;background:var(--soft);border-radius:18px;padding:12px 14px;font-weight:500;flex:1;min-height:64px;display:flex;align-items:center}
-.bubble::before{content:"";position:absolute;left:-10px;top:50%;margin-top:-8px;border:8px solid transparent;border-right-color:var(--soft);border-left:0}
+.mascot-card{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.mascot-btn{background:none;border:0;padding:0;border-radius:24px}
+.mascot{display:block;width:96px;height:112px;animation:bob 3s ease-in-out infinite}
+.mascot-btn.wiggle .mascot{animation:wiggle .6s}
+.say{display:grid;gap:10px;min-width:0}
+.bubble{position:relative;background:var(--soft);border-radius:18px;padding:12px 14px;font-weight:500;font-size:1.05rem;min-height:64px;display:flex;align-items:center}
+.bubble::before{content:"";position:absolute;left:-10px;top:24px;border:8px solid transparent;border-right-color:var(--soft);border-left:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--chip);border-radius:999px;padding:4px 12px;font-size:.9rem;font-weight:500}
 .stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .big{background:var(--chip);border-radius:18px;padding:10px 12px;text-align:center}
 .big b{display:block;font-size:2rem;line-height:1.1}
 .big small{color:var(--muted);font-size:.9rem}
 .flame{display:inline-block;animation:flick 1.2s ease-in-out infinite;transform-origin:50% 90%}
+.legend{font-size:.9rem;color:var(--muted);margin:8px 0 0}
+
+/* ---------- day bar ---------- */
+.daybar{position:sticky;top:6px;z-index:20;margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px;border-color:var(--sel)}
+.daybar h2{margin:0;font-size:1.1rem}
+.daybar small{display:block;color:var(--muted);font-weight:400}
+
+/* ---------- layout ---------- */
 .main{display:grid;gap:14px;grid-template-columns:1fr;margin-top:14px}
 .col{display:grid;gap:14px;align-content:start;min-width:0}
-.dayhead{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
-.dayhead h2{margin:0}
-.pill{display:inline-block;background:var(--chip);border-radius:999px;padding:3px 12px;font-size:.9rem;color:var(--muted)}
+.col-cal{order:-1}
+.shelf-card{margin-top:14px}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 label{font-weight:500}
 input[type=time]{border:2px solid var(--line);background:var(--chip);border-radius:14px;padding:8px 10px;min-height:44px;color:var(--ink)}
+#nightCard{scroll-margin-top:96px}
+#nightCard.prompt{border-color:var(--accent);box-shadow:0 0 0 4px var(--soft),var(--shadow)}
+
 .sizes{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .size{border:2px solid var(--line);background:var(--chip);border-radius:16px;padding:6px 12px;min-height:44px;font-weight:500}
 .size[aria-pressed="true"]{background:var(--water);color:#031a2e;border-color:var(--water)}
 .list{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.list li{display:flex;align-items:center;gap:6px;background:var(--chip);border-radius:999px;padding:4px 4px 4px 12px;font-weight:500}
-.list .x{border:0;background:var(--card);border-radius:50%;width:32px;height:32px;line-height:1;font-weight:700;color:var(--muted)}
-.list .x:hover{color:#d33}
+.list li{display:flex;align-items:center;gap:6px;background:var(--chip);border-radius:999px;padding:0 0 0 14px;font-weight:500;min-height:44px}
+.list .x{border:0;background:var(--card);border-radius:50%;width:44px;height:44px;line-height:1;font-weight:700;color:var(--muted)}
+.list .x:hover{color:#c62828}
+.list small{color:var(--muted)}
 .empty{color:var(--muted);margin:10px 0 0}
-.wee-top{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .bottle-wrap{display:flex;gap:14px;align-items:center;margin-bottom:6px}
-.glass{position:relative;width:64px;height:96px;flex:none;border:4px solid var(--water);border-top-width:4px;border-radius:8px 8px 22px 22px;overflow:hidden;background:var(--chip)}
-.glass .fill{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(var(--water2),var(--water));transition:height .8s cubic-bezier(.3,1.4,.5,1)}
+.glass{position:relative;width:64px;height:96px;flex:none;border:4px solid var(--water);border-radius:8px 8px 22px 22px;overflow:hidden;background:var(--chip)}
+.glass .fill{position:absolute;left:0;right:0;bottom:0;height:var(--fill,0%);background:linear-gradient(var(--water2),var(--water));transition:height .8s cubic-bezier(.3,1.4,.5,1)}
 .glass .fill::before{content:"";position:absolute;left:-20%;top:-8px;width:140%;height:16px;background:var(--water2);border-radius:50%;animation:wave 2.4s ease-in-out infinite}
 .night-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .night{border:3px solid var(--line);background:var(--chip);border-radius:20px;padding:12px 8px;font-weight:600;font-size:1.05rem;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:84px}
@@ -85,75 +125,122 @@ input[type=time]{border:2px solid var(--line);background:var(--chip);border-radi
 .night[aria-pressed="true"].dry{background:var(--good-bg);border-color:var(--good)}
 .night[aria-pressed="true"].wet{background:var(--wet-bg);border-color:var(--wet)}
 .clear{margin-top:8px}
+
+/* ---------- calendar ---------- */
 .calhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .calhead h2{margin:0;text-align:center;flex:1}
-.nav{width:44px;height:44px;padding:0;font-size:1.2rem}
-.dows,.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-.dows div{text-align:center;font-size:.8rem;color:var(--muted);font-weight:600}
-.cal{margin-top:4px}
-.day{position:relative;border:2px solid var(--line);background:var(--chip);border-radius:12px;min-height:62px;padding:3px 2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;font-size:.78rem}
+.nav{width:44px;padding:0;font-size:1.2rem}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:4px}
+.dow{text-align:center;font-size:.8rem;color:var(--muted);font-weight:600}
+.cell{min-width:0}
+.day{width:100%;position:relative;border:2px solid var(--line);background:var(--chip);border-radius:12px;min-height:64px;padding:3px 1px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden}
 .day .n{font-weight:700;font-size:.95rem;line-height:1}
-.day .ic{font-size:1.05rem;line-height:1;min-height:1.05em}
-.day .ct{display:flex;gap:3px;line-height:1;white-space:nowrap}
-.day.dry{background:var(--good-bg)} .day.wet{background:var(--wet-bg)}
+.day .ic{font-size:1.05rem;line-height:1;min-height:1.1em}
+.day .ic.wet-ic{background:var(--card);border-radius:50%;width:1.4em;height:1.4em;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.day .ct{display:flex;gap:2px;line-height:1;justify-content:center;flex-wrap:wrap;max-width:100%}
+.b{border-radius:999px;padding:1px 4px;font-size:.68rem;font-weight:700;line-height:1.2;white-space:nowrap}
+.b i{display:none;font-style:normal}
+.b-wee{background:var(--bw-bg);color:var(--bw-ink)}
+.b-drink{background:var(--bd-bg);color:var(--bd-ink)}
+.day.dry{background:var(--good-bg)}
+.day.wet{background:var(--wet-bg)}
 .day.today .n{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:2px 6px}
-.day.sel{border-color:var(--sel);box-shadow:0 0 0 3px var(--sel);transform:scale(1.04);z-index:1}
-.day[disabled]{opacity:.35;cursor:default}
-.blank{min-height:1px}
-.legend{font-size:.85rem;color:var(--muted);margin-top:8px}
+.day.sel{border-color:var(--sel);box-shadow:0 0 0 3px var(--sel);z-index:1}
+.day[disabled]{opacity:.4;cursor:default}
 .mstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
 .mstats .big b{font-size:1.5rem}
-.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+
+/* ---------- stickers ---------- */
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 .badge{background:var(--chip);border-radius:18px;padding:10px;text-align:center;border:2px solid var(--accent)}
 .badge .em{font-size:2.2rem;display:block}
 .badge b{display:block;font-size:.95rem}
-.badge small{color:var(--muted);font-size:.78rem}
-.badge.locked{border-color:var(--line);filter:grayscale(1);opacity:.65}
+.badge small{color:var(--muted);font-size:.8rem;display:block}
+.badge.locked{border-color:var(--line);border-style:dashed}
+.badge.locked .em{filter:grayscale(1);opacity:.6}
+.bar{height:8px;border-radius:99px;background:var(--line);margin:6px 4px 2px;overflow:hidden}
+.bar i{display:block;height:100%;width:var(--p,0%);background:var(--water)}
 .badge.new{animation:pop .7s}
+
+/* ---------- backup, toast, fx ---------- */
+.backup .row{margin-top:6px}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);border-radius:999px;padding:8px 8px 8px 18px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);max-width:calc(100vw - 24px)}
+.toast .btn{background:var(--accent);color:var(--accent-ink);padding:6px 16px;min-height:44px}
 canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
 @keyframes bob{50%{transform:translateY(-6px)}}
+@keyframes wiggle{20%{transform:rotate(-12deg) scale(1.08)}50%{transform:rotate(10deg) scale(1.08)}80%{transform:rotate(-6deg)}}
 @keyframes flick{50%{transform:scale(1.15) rotate(-4deg)}}
 @keyframes wave{50%{transform:translateX(10%)}}
 @keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
-.bounce{animation:pop .5s}
+
+@media (min-width:600px){
+  .b i{display:inline;margin-right:1px}
+  .b{font-size:.75rem}
+}
 @media (min-width:860px){
-  .hero{grid-template-columns:1.4fr 1fr}
+  .hero{grid-template-columns:1.5fr 1fr}
   .main{grid-template-columns:1fr 1fr}
-  .day{min-height:72px}
+  .col-cal{order:0}
+  .mascot{width:132px;height:154px}
+  .bubble{font-size:1.2rem;min-height:84px}
+  .day{min-height:76px}
+  #nightCard{scroll-margin-top:0}
 }
 @media (max-width:400px){
   .wrap{padding:10px 16px 30px}
   .mascot{width:76px;height:90px}
-  .day{font-size:.68rem;min-height:56px}
-  .day .ct{gap:1px}
-  .mstats{grid-template-columns:1fr 1fr 1fr}
+  .mascot-card{gap:10px}
+  .card{padding:14px 12px}
+  .week{gap:3px}
+  .day{min-height:60px;border-width:2px}
+  .b{padding:1px 3px;font-size:.64rem}
   .mstats .big{padding:8px 4px}
+  .mstats .big small{font-size:.8rem}
 }
 @media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{animation:none!important;transition:none!important}
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 </style>
 </head>
 <body>
 <canvas id="fx" aria-hidden="true"></canvas>
+<div class="sr" id="live" role="status" aria-live="polite" aria-atomic="true"></div>
+<div class="toast" id="toast" role="status" hidden>
+  <span id="toastText"></span>
+  <button class="btn" id="toastUndo" type="button" hidden>Undo</button>
+</div>
+
 <div class="wrap">
   <header class="top">
     <h1><span aria-hidden="true">💧</span> Wee Tracker</h1>
-    <button class="btn ghost sound" id="soundBtn" type="button" aria-pressed="true" aria-label="Sound effects"></button>
+    <div class="tools">
+      <button class="btn ghost tool" id="themeBtn" type="button"></button>
+      <button class="btn ghost tool" id="soundBtn" type="button" aria-pressed="true" aria-label="Sound effects"></button>
+    </div>
   </header>
 
+  <div class="notice" id="notice" role="status" hidden>
+    <span id="noticeText"></span>
+    <button class="btn ghost" id="noticeClose" type="button">Got it</button>
+  </div>
+
   <section class="hero" aria-label="Your progress">
-    <div class="card mascot-card">
-      <svg class="mascot" id="mascot" viewBox="0 0 100 120" role="img" aria-label="Droplet buddy">
-        <path d="M50 6 C50 6 12 52 12 78 a38 38 0 0 0 76 0 C88 52 50 6 50 6Z" fill="#39a7ff" stroke="#1e6fc0" stroke-width="4"/>
-        <ellipse cx="32" cy="70" rx="7" ry="11" fill="#fff" opacity=".35" transform="rotate(20 32 70)"/>
-        <g id="eyes"></g>
-        <g id="mouth"></g>
-        <ellipse cx="28" cy="88" rx="6" ry="4" fill="#ff8fb3" opacity=".7"/>
-        <ellipse cx="72" cy="88" rx="6" ry="4" fill="#ff8fb3" opacity=".7"/>
-      </svg>
-      <div class="bubble" id="bubble" role="status" aria-live="polite"></div>
+    <div class="card mascot-card" id="heroCard">
+      <button class="mascot-btn" id="mascotBtn" type="button" aria-label="Tap your droplet buddy">
+        <svg class="mascot" viewBox="0 0 100 120" aria-hidden="true" focusable="false">
+          <path d="M50 6 C50 6 12 52 12 78 a38 38 0 0 0 76 0 C88 52 50 6 50 6Z" fill="#39a7ff" stroke="#1e6fc0" stroke-width="4"/>
+          <ellipse cx="32" cy="70" rx="7" ry="11" fill="#fff" opacity=".35" transform="rotate(20 32 70)"/>
+          <g id="eyes"></g>
+          <g id="mouth"></g>
+          <ellipse cx="28" cy="88" rx="6" ry="4" fill="#ff8fb3" opacity=".7"/>
+          <ellipse cx="72" cy="88" rx="6" ry="4" fill="#ff8fb3" opacity=".7"/>
+        </svg>
+      </button>
+      <div class="say">
+        <div class="bubble" id="bubble"></div>
+        <div class="chips" id="chips"></div>
+      </div>
     </div>
     <div class="card">
       <div class="stats-row">
@@ -164,21 +251,18 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
     </div>
   </section>
 
+  <section class="card daybar" id="dayBar" aria-label="Day being edited">
+    <h2 id="dayTitle"></h2>
+    <button class="btn ghost" id="todayBtn" type="button" hidden>Jump to today</button>
+  </section>
+
   <div class="main">
     <div class="col">
-      <section class="card" aria-labelledby="dayTitle">
-        <div class="dayhead">
-          <h2 id="dayTitle">Today</h2>
-          <button class="btn ghost" id="todayBtn" type="button">Jump to today</button>
-        </div>
-        <p class="legend" id="dayNote" style="margin:4px 0 0"></p>
-      </section>
-
-      <section class="card" aria-labelledby="nightTitle">
-        <h2 id="nightTitle">🌙 Did I wee the bed last night?</h2>
+      <section class="card" id="nightCard" aria-labelledby="nightTitle">
+        <h2 id="nightTitle">🌙 Did I stay dry last night?</h2>
         <div class="night-btns">
-          <button class="night dry" id="nDry" type="button" aria-pressed="false"><span class="em" aria-hidden="true">☀️</span>No, dry night!</button>
-          <button class="night wet" id="nWet" type="button" aria-pressed="false"><span class="em" aria-hidden="true">🌧️</span>Yes, a wet one</button>
+          <button class="night dry" id="nDry" type="button" aria-pressed="false"><span class="em" aria-hidden="true">☀️</span>Yes, dry night!</button>
+          <button class="night wet" id="nWet" type="button" aria-pressed="false"><span class="em" aria-hidden="true">🌈</span>Not this time</button>
         </div>
         <button class="btn ghost clear" id="nClear" type="button">Clear answer</button>
       </section>
@@ -197,7 +281,10 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
         <h2 id="drinkTitle">🥤 Water</h2>
         <div class="bottle-wrap">
           <div class="glass" aria-hidden="true"><div class="fill" id="fill"></div></div>
-          <div><b id="goalText"></b><div class="legend" style="margin:0">Daily goal: <span id="goalN"></span> drinks</div></div>
+          <div>
+            <b id="goalText"></b>
+            <p class="legend" id="earlyText"></p>
+          </div>
         </div>
         <div class="sizes" role="group" aria-label="Cup size" id="sizes"></div>
         <div class="row">
@@ -205,415 +292,1038 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
           <input type="time" id="drinkTime">
           <button class="btn alt" id="drinkAdd" type="button">Add drink</button>
         </div>
+        <p class="legend">Tip: drinking plenty before 4pm helps nights go well.</p>
         <ul class="list" id="drinkList"></ul>
       </section>
     </div>
 
-    <div class="col">
+    <div class="col col-cal">
       <section class="card" aria-labelledby="calTitle">
         <div class="calhead">
           <button class="btn ghost nav" id="prev" type="button" aria-label="Previous month">◀</button>
-          <h2 id="calTitle" aria-live="polite"></h2>
+          <h2 id="calTitle"></h2>
           <button class="btn ghost nav" id="next" type="button" aria-label="Next month">▶</button>
         </div>
-        <div class="dows" aria-hidden="true"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div>
-        <div class="cal" id="cal" role="grid" aria-labelledby="calTitle"></div>
-        <p class="legend">☀️ dry night · 🌧️ wet night · 💦 wees · 🥤 drinks. Use arrow keys to move around.</p>
+        <div id="cal" role="grid" aria-labelledby="calTitle"></div>
+        <p class="legend">The icon on a day shows how you woke up that morning: ☀️ dry, 🌈 wet. Yellow number = wees, blue number = drinks. Use arrow keys to move around.</p>
         <div class="mstats" id="mstats"></div>
-      </section>
-
-      <section class="card" aria-labelledby="badgeTitle">
-        <h2 id="badgeTitle">🏅 My stickers</h2>
-        <div class="shelf" id="shelf"></div>
       </section>
     </div>
   </div>
+
+  <section class="card shelf-card" aria-labelledby="badgeTitle">
+    <h2 id="badgeTitle">🏅 My stickers</h2>
+    <div class="shelf" id="shelf"></div>
+  </section>
+
+  <section class="card backup shelf-card" aria-labelledby="backupTitle">
+    <h2 id="backupTitle">💾 Backup</h2>
+    <p class="legend">Save your tracker to a file, or load one back in.</p>
+    <div class="row">
+      <button class="btn ghost" id="exportBtn" type="button">Export backup</button>
+      <button class="btn ghost" id="importBtn" type="button">Import backup</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden aria-label="Choose a backup file">
+    </div>
+  </section>
 </div>
 
 <script>
-(function(){
+(function () {
 "use strict";
 
-/* ---------- constants & helpers ---------- */
-var STORE_KEY="weeTracker.v1", MUTE_KEY="weeTracker.muted", GOAL=6;
-var SIZES=[{id:"s",emoji:"🥛",label:"Small sip"},{id:"m",emoji:"🥤",label:"Medium cup"},{id:"l",emoji:"🫗",label:"Big cup"}];
-var MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
-var reduced=false;
-try{ reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+/* =========================================================
+   Constants and small helpers
+   ========================================================= */
+var STORE_KEY = "weeTracker.v1";
+var MUTE_KEY = "weeTracker.muted";
+var THEME_KEY = "weeTracker.theme";
+var GOAL = 6;                 // cups per day
+var EARLY_CUTOFF = "16:00";   // drinks before this count as "early"
+var SIZES = [
+  { id: "s", emoji: "💧", label: "Small sip", weight: 0.5 },
+  { id: "m", emoji: "🥛", label: "Medium cup", weight: 1 },
+  { id: "l", emoji: "🥤", label: "Big cup", weight: 1.5 }
+];
+var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+var CHEERS = [
+  "Giggle giggle! You're awesome! 😄", "Hehe, that tickles! 💙", "High five! ✋",
+  "You're doing brilliantly!", "I'm so proud of you! ⭐", "Splish splash, you rock! 💦"
+];
+var WEE_CHEERS = [
+  "Well done for listening to your body! 🎉", "Great job! Your body says thank you! 💙",
+  "Nice one! Wee logged! ⭐", "Super star tracking! 🌟"
+];
+var KEY_RE = /^\d{4}-\d{2}-\d{2}$/;
+var TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
-function $(id){return document.getElementById(id);}
-function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
-function pad(n){return (n<10?"0":"")+n;}
-function keyOf(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
-function parseKey(k){var p=k.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
-function addDays(k,n){var d=parseKey(k);d.setDate(d.getDate()+n);return keyOf(d);}
-function todayKey(){return keyOf(new Date());}
-function nowTime(){var d=new Date();return pad(d.getHours())+":"+pad(d.getMinutes());}
-function dayDiff(a,b){return Math.round((parseKey(b)-parseKey(a))/864e5);}
-var KEY_RE=/^\d{4}-\d{2}-\d{2}$/, TIME_RE=/^([01]\d|2[0-3]):[0-5]\d$/;
-function prettyTime(t){var h=+t.slice(0,2),m=t.slice(3);var ap=h>=12?"pm":"am";h=h%12||12;return h+":"+m+" "+ap;}
+var reducedQuery = null;
+try { reducedQuery = window.matchMedia("(prefers-reduced-motion: reduce)"); } catch (e) {}
+function isReduced() { return !!(reducedQuery && reducedQuery.matches); }
 
-/* ---------- storage (always safe) ---------- */
-var memory={days:{}}, memMuted=false;
-function sanitize(raw){
-  var out={days:{}};
-  if(!raw||typeof raw!=="object"||!raw.days||typeof raw.days!=="object")return out;
-  Object.keys(raw.days).forEach(function(k){
-    if(!KEY_RE.test(k))return;
-    var d=raw.days[k]; if(!d||typeof d!=="object")return;
-    var day={wees:[],drinks:[],night:null};
-    if(Array.isArray(d.wees))d.wees.forEach(function(t){if(typeof t==="string"&&TIME_RE.test(t))day.wees.push(t);});
-    if(Array.isArray(d.drinks))d.drinks.forEach(function(x){
-      if(x&&typeof x==="object"&&typeof x.t==="string"&&TIME_RE.test(x.t)){
-        day.drinks.push({t:x.t,s:(x.s==="s"||x.s==="l")?x.s:"m"});
-      }});
-    if(d.night==="dry"||d.night==="wet")day.night=d.night;
-    day.wees.sort(); day.drinks.sort(function(a,b){return a.t<b.t?-1:a.t>b.t?1:0;});
-    out.days[k]=day;
-  });
+function $(id) { return document.getElementById(id); }
+
+function esc(s) {
+  var map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  return String(s).replace(/[&<>"']/g, function (c) { return map[c]; });
+}
+function pad(n) { return (n < 10 ? "0" : "") + n; }
+function keyOf(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+function parseKey(k) {
+  var p = k.split("-");
+  return new Date(+p[0], +p[1] - 1, +p[2]);
+}
+function isValidKey(k) {
+  return typeof k === "string" && KEY_RE.test(k) && keyOf(parseKey(k)) === k;
+}
+function addDays(k, n) {
+  var d = parseKey(k);
+  d.setDate(d.getDate() + n);
+  return keyOf(d);
+}
+function todayKey() { return keyOf(new Date()); }
+function nowTime() {
+  var d = new Date();
+  return pad(d.getHours()) + ":" + pad(d.getMinutes());
+}
+function dayDiff(a, b) { return Math.round((parseKey(b) - parseKey(a)) / 864e5); }
+function monthOf(k) {
+  var d = parseKey(k);
+  return { y: d.getFullYear(), m: d.getMonth() };
+}
+function prettyTime(t) {
+  var h = +t.slice(0, 2);
+  var suffix = h >= 12 ? "pm" : "am";
+  h = h % 12 || 12;
+  return h + ":" + t.slice(3) + " " + suffix;
+}
+function longDate(k) {
+  return parseKey(k).toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
+}
+function shortDate(k) {
+  return parseKey(k).toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
+}
+function fmt(n) { return n % 1 === 0 ? String(n) : n.toFixed(1); }
+function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+function sizeInfo(id) {
+  for (var i = 0; i < SIZES.length; i++) { if (SIZES[i].id === id) return SIZES[i]; }
+  return SIZES[1];
+}
+function cupsOf(drinks) {
+  return drinks.reduce(function (sum, d) { return sum + sizeInfo(d.s).weight; }, 0);
+}
+function earlyCupsOf(drinks) {
+  return cupsOf(drinks.filter(function (d) { return d.t < EARLY_CUTOFF; }));
+}
+
+/* =========================================================
+   Storage (every access guarded; falls back to memory)
+   ========================================================= */
+function sanitize(raw) {
+  var out = { days: {}, stickers: {} };
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
+
+  if (raw.days && typeof raw.days === "object") {
+    Object.keys(raw.days).forEach(function (k) {
+      var d = raw.days[k];
+      if (!isValidKey(k) || !d || typeof d !== "object") return;
+      var day = { wees: [], drinks: [], night: null };
+      if (Array.isArray(d.wees)) {
+        d.wees.forEach(function (t) {
+          if (typeof t === "string" && TIME_RE.test(t)) day.wees.push(t);
+        });
+      }
+      if (Array.isArray(d.drinks)) {
+        d.drinks.forEach(function (x) {
+          if (x && typeof x === "object" && typeof x.t === "string" && TIME_RE.test(x.t)) {
+            day.drinks.push({ t: x.t, s: (x.s === "s" || x.s === "l") ? x.s : "m" });
+          }
+        });
+      }
+      if (d.night === "dry" || d.night === "wet") day.night = d.night;
+      day.wees.sort();
+      day.drinks.sort(byTime);
+      out.days[k] = day;
+    });
+  }
+  if (raw.stickers && typeof raw.stickers === "object") {
+    Object.keys(raw.stickers).forEach(function (id) {
+      if (isValidKey(raw.stickers[id])) out.stickers[id] = raw.stickers[id];
+    });
+  }
   return out;
 }
-function load(){
-  try{
-    var s=localStorage.getItem(STORE_KEY);
-    if(s)return sanitize(JSON.parse(s));
-  }catch(e){}
-  return {days:{}};
-}
-function save(){ memory=data; try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){} }
-function loadMuted(){ try{ return localStorage.getItem(MUTE_KEY)==="1"; }catch(e){ return memMuted; } }
-function saveMuted(){ memMuted=muted; try{localStorage.setItem(MUTE_KEY,muted?"1":"0");}catch(e){} }
+function byTime(a, b) { return a.t < b.t ? -1 : a.t > b.t ? 1 : 0; }
 
-var data=load(), muted=loadMuted();
-var today=todayKey(), selected=today;
-var view=(function(){var d=new Date();return {y:d.getFullYear(),m:d.getMonth()};})();
-var override=null; // temporary mascot message
-
-function getDay(k,create){
-  var d=data.days[k];
-  if(!d&&create){d=data.days[k]={wees:[],drinks:[],night:null};}
-  return d||{wees:[],drinks:[],night:null};
-}
-function pruneDay(k){
-  var d=data.days[k]; if(d&&!d.wees.length&&!d.drinks.length&&!d.night)delete data.days[k];
-}
-
-/* ---------- stats / streaks / badges ---------- */
-function streaks(){
-  var dry=Object.keys(data.days).filter(function(k){return data.days[k].night==="dry";}).sort();
-  var best=0,run=0,prev=null;
-  dry.forEach(function(k){ run=(prev&&dayDiff(prev,k)===1)?run+1:1; if(run>best)best=run; prev=k; });
-  var cur=0,k=todayKey();
-  var tn=getDay(k).night;
-  if(tn==="wet")cur=0;
-  else{
-    if(tn!=="dry")k=addDays(k,-1);
-    while(getDay(k).night==="dry"){cur++;k=addDays(k,-1);}
+var loadNotice = "";
+function load(quiet) {
+  var raw = null;
+  try { raw = localStorage.getItem(STORE_KEY); } catch (e) { return sanitize(null); }
+  if (!raw) return sanitize(null);
+  try {
+    var parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("bad shape");
+    return sanitize(parsed);
+  } catch (err) {
+    if (!quiet) {
+      try {
+        localStorage.setItem(STORE_KEY + ".backup-" + Date.now(), raw);
+        loadNotice = "Your saved data looked a bit tangled, so we started fresh. A copy of the old data was kept safely.";
+      } catch (e2) {
+        loadNotice = "Your saved data looked a bit tangled, so we started fresh.";
+      }
+    }
+    return sanitize(null);
   }
-  return {cur:cur,best:Math.max(best,cur),dryTotal:dry.length};
 }
-function overall(){
-  var s=streaks(),goalDays=0,logged=0;
-  Object.keys(data.days).forEach(function(k){
-    var d=data.days[k];
-    if(d.drinks.length>=GOAL)goalDays++;
-    if(d.wees.length||d.drinks.length||d.night)logged++;
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
+}
+var memMuted = false, memTheme = "auto";
+function loadMuted() {
+  try { return localStorage.getItem(MUTE_KEY) === "1"; } catch (e) { return memMuted; }
+}
+function saveMuted() {
+  memMuted = muted;
+  try { localStorage.setItem(MUTE_KEY, muted ? "1" : "0"); } catch (e) {}
+}
+function loadTheme() {
+  try {
+    var t = localStorage.getItem(THEME_KEY);
+    return (t === "light" || t === "dark") ? t : "auto";
+  } catch (e) { return memTheme; }
+}
+function saveTheme() {
+  memTheme = theme;
+  try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+}
+
+/* =========================================================
+   State
+   ========================================================= */
+var data = load(false);
+var muted = loadMuted();
+var theme = loadTheme();
+var today = todayKey();
+var selected = today;
+var view = monthOf(today);
+var override = null;           // temporary mascot message {t, m}
+var newStickers = {};          // ids to animate on next render
+var calFocus = false;
+var size = "m";
+var touched = { weeTime: false, drinkTime: false };
+var removed = null;            // last deleted entry, for undo
+
+function getDay(k, create) {
+  var d = data.days[k];
+  if (!d && create) {
+    d = data.days[k] = { wees: [], drinks: [], night: null };
+  }
+  return d || { wees: [], drinks: [], night: null };
+}
+function pruneDay(k) {
+  var d = data.days[k];
+  if (d && !d.wees.length && !d.drinks.length && !d.night) delete data.days[k];
+}
+function pastKeys() {
+  return Object.keys(data.days).filter(function (k) { return k <= today; });
+}
+
+/* =========================================================
+   Streaks and stickers
+   ========================================================= */
+function streaks() {
+  var dry = pastKeys().filter(function (k) { return data.days[k].night === "dry"; }).sort();
+  var best = 0, run = 0, prev = null;
+  dry.forEach(function (k) {
+    run = (prev && dayDiff(prev, k) === 1) ? run + 1 : 1;
+    if (run > best) best = run;
+    prev = k;
   });
-  s.goalDays=goalDays;s.logged=logged;return s;
+  var cur = 0;
+  var k = today;
+  var todayNight = getDay(k).night;
+  if (todayNight !== "wet") {
+    if (todayNight !== "dry") k = addDays(k, -1);
+    while (getDay(k).night === "dry") { cur++; k = addDays(k, -1); }
+  }
+  return { cur: cur, best: Math.max(best, cur), dryTotal: dry.length };
 }
-var BADGES=[
-  {id:"first",em:"🌟",name:"First Dry Night",hint:"Have a dry night",ok:function(s){return s.dryTotal>=1;}},
-  {id:"d3",em:"🥉",name:"3 Dry Nights in a Row",hint:"3 dry nights in a row",ok:function(s){return s.best>=3;}},
-  {id:"d7",em:"🔥",name:"7-Day Streak",hint:"7 dry nights in a row",ok:function(s){return s.best>=7;}},
-  {id:"d14",em:"🏆",name:"Champion",hint:"14 dry nights in a row",ok:function(s){return s.best>=14;}},
-  {id:"d10",em:"🌙",name:"Moon Master",hint:"10 dry nights in total",ok:function(s){return s.dryTotal>=10;}},
-  {id:"h1",em:"💧",name:"Hydration Hero",hint:"Reach the water goal once",ok:function(s){return s.goalDays>=1;}},
-  {id:"h5",em:"🧙",name:"Water Wizard",hint:"Reach the water goal 5 days",ok:function(s){return s.goalDays>=5;}},
-  {id:"log",em:"📒",name:"Super Logger",hint:"Log 7 different days",ok:function(s){return s.logged>=7;}}
+function overall() {
+  var s = streaks();
+  s.goalDays = 0;
+  s.logged = 0;
+  pastKeys().forEach(function (k) {
+    var d = data.days[k];
+    if (cupsOf(d.drinks) >= GOAL) s.goalDays++;
+    if (d.wees.length || d.drinks.length || d.night) s.logged++;
+  });
+  return s;
+}
+var BADGES = [
+  { id: "first", em: "🌟", name: "First Dry Night", hint: "Have a dry night", max: 1, val: function (s) { return s.dryTotal; } },
+  { id: "d3", em: "🥉", name: "3 Dry Nights in a Row", hint: "Dry nights in a row", max: 3, val: function (s) { return s.best; } },
+  { id: "d7", em: "🔥", name: "7-Day Streak", hint: "Dry nights in a row", max: 7, val: function (s) { return s.best; } },
+  { id: "d10", em: "🌙", name: "Moon Master", hint: "Dry nights in total", max: 10, val: function (s) { return s.dryTotal; } },
+  { id: "d14", em: "🏆", name: "Champion", hint: "Dry nights in a row", max: 14, val: function (s) { return s.best; } },
+  { id: "h1", em: "💧", name: "Hydration Hero", hint: "Days reaching the water goal", max: 1, val: function (s) { return s.goalDays; } },
+  { id: "h5", em: "🧙", name: "Water Wizard", hint: "Days reaching the water goal", max: 5, val: function (s) { return s.goalDays; } },
+  { id: "log", em: "📒", name: "Super Logger", hint: "Days logged", max: 7, val: function (s) { return s.logged; } }
 ];
-function earnedSet(){var s=overall(),o={};BADGES.forEach(function(b){if(b.ok(s))o[b.id]=1;});return o;}
 
-/* ---------- sound ---------- */
-var actx=null;
-function tone(freq,start,dur,type,vol){
-  if(!actx)return;
-  var o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime+start;
-  o.type=type||"sine";o.frequency.setValueAtTime(freq,t);
-  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol||0.15,t+0.02);
-  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-  o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+dur+0.05);
-}
-function sfx(kind){
-  if(muted)return;
-  try{
-    if(!actx){var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;actx=new AC();}
-    if(actx.state==="suspended")actx.resume();
-    if(kind==="pop"){tone(520,0,.12,"sine");tone(780,.07,.12,"sine");}
-    else if(kind==="splash"){tone(400,0,.1,"triangle");tone(600,.08,.14,"triangle");}
-    else if(kind==="soft"){tone(392,0,.25,"sine",.1);tone(440,.2,.35,"sine",.1);}
-    else if(kind==="remove"){tone(300,0,.1,"sine",.08);}
-    else if(kind==="win"){[523,659,784,1047].forEach(function(f,i){tone(f,i*.11,.25,"triangle",.14);});}
-  }catch(e){}
-}
-
-/* ---------- confetti ---------- */
-var cv=$("fx"),cx=null,parts=[],raf=0;
-try{cx=cv.getContext("2d");}catch(e){}
-function sizeCanvas(){cv.width=window.innerWidth;cv.height=window.innerHeight;}
-sizeCanvas();window.addEventListener("resize",sizeCanvas);
-function confetti(){
-  if(!cx)return;
-  var n=reduced?30:150, cols=["#ff6fa8","#ffb84d","#39a7ff","#58e0a0","#b388ff","#ffe066"];
-  for(var i=0;i<n;i++){
-    var a=Math.random()*Math.PI*2, sp=reduced?2+Math.random()*3:4+Math.random()*9;
-    parts.push({x:cv.width/2,y:cv.height*0.35,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-(reduced?1:5),
-      s:5+Math.random()*7,c:cols[i%cols.length],r:Math.random()*6,vr:reduced?0:(Math.random()-.5)*.4,
-      life:reduced?50:110+Math.random()*60});
-  }
-  if(!raf)raf=requestAnimationFrame(step);
-}
-function step(){
-  cx.clearRect(0,0,cv.width,cv.height);
-  parts=parts.filter(function(p){return p.life>0&&p.y<cv.height+20;});
-  parts.forEach(function(p){
-    p.vy+=reduced?.05:.22;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life--;
-    cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);
-    cx.globalAlpha=Math.min(1,p.life/30);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/3,p.s,p.s*.66);cx.restore();
+/* Adds newly earned stickers (never removes). Returns the new ones. */
+function awardStickers() {
+  var s = overall(), won = [];
+  BADGES.forEach(function (b) {
+    if (!data.stickers[b.id] && b.val(s) >= b.max) {
+      data.stickers[b.id] = today;
+      won.push(b);
+    }
   });
-  if(parts.length)raf=requestAnimationFrame(step);else{raf=0;cx.clearRect(0,0,cv.width,cv.height);}
+  return won;
 }
 
-/* ---------- mascot ---------- */
-function drawMascot(mood){
-  var eyes,mouth;
-  var dot=function(x){return '<circle cx="'+x+'" cy="70" r="5" fill="#12304f"/><circle cx="'+(x+1.8)+'" cy="68" r="1.8" fill="#fff"/>';};
-  if(mood==="party"){
-    var star=function(x){return '<path d="M'+x+' 62 l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6-4.4-4.2 6-.8z" fill="#ffe066" stroke="#12304f" stroke-width="1.5"/>';};
-    eyes=star(34)+star(66);
-    mouth='<path d="M36 86 Q50 106 64 86 Z" fill="#12304f"/><path d="M42 94 Q50 100 58 94" fill="#ff6fa8"/>';
-  }else if(mood==="happy"){
-    eyes=dot(36)+dot(64);
-    mouth='<path d="M38 86 Q50 100 62 86" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/>';
-  }else if(mood==="hug"){
-    eyes='<path d="M30 72 Q36 64 42 72" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/><path d="M58 72 Q64 64 70 72" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/>';
-    mouth='<path d="M40 90 Q50 97 60 90" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/>';
-  }else{
-    eyes=dot(36)+dot(64);
-    mouth='<ellipse cx="50" cy="90" rx="6" ry="4" fill="#12304f"/>';
+/* =========================================================
+   Sound (Web Audio, generated tones)
+   ========================================================= */
+var actx = null;
+function tone(freq, start, dur, type, vol) {
+  if (!actx) return;
+  var osc = actx.createOscillator();
+  var gain = actx.createGain();
+  var t = actx.currentTime + start;
+  osc.type = type || "sine";
+  osc.frequency.setValueAtTime(freq, t);
+  gain.gain.setValueAtTime(0.0001, t);
+  gain.gain.exponentialRampToValueAtTime(vol || 0.15, t + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(gain);
+  gain.connect(actx.destination);
+  osc.start(t);
+  osc.stop(t + dur + 0.05);
+}
+function sfx(kind) {
+  if (muted) return;
+  try {
+    if (!actx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      actx = new AC();
+    }
+    if (actx.state === "suspended") actx.resume();
+    if (kind === "pop") { tone(520, 0, 0.12); tone(780, 0.07, 0.12); }
+    else if (kind === "splash") { tone(400, 0, 0.1, "triangle"); tone(600, 0.08, 0.14, "triangle"); }
+    else if (kind === "soft") { tone(392, 0, 0.25, "sine", 0.1); tone(440, 0.2, 0.35, "sine", 0.1); }
+    else if (kind === "remove") { tone(300, 0, 0.1, "sine", 0.08); }
+    else if (kind === "giggle") { tone(700, 0, 0.07); tone(900, 0.08, 0.07); tone(760, 0.16, 0.09); }
+    else if (kind === "win") {
+      [523, 659, 784, 1047].forEach(function (f, i) { tone(f, i * 0.11, 0.25, "triangle", 0.14); });
+    }
+  } catch (e) {}
+}
+
+/* =========================================================
+   Celebrations: confetti (canvas) or a static glow if reduced motion
+   ========================================================= */
+var canvas = $("fx");
+var ctx2d = null;
+try { ctx2d = canvas.getContext("2d"); } catch (e) {}
+var particles = [];
+var rafId = 0;
+var dpr = 1;
+
+function sizeCanvas() {
+  dpr = Math.min(window.devicePixelRatio || 1, 3);
+  canvas.width = Math.round(window.innerWidth * dpr);
+  canvas.height = Math.round(window.innerHeight * dpr);
+  if (ctx2d) ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+sizeCanvas();
+window.addEventListener("resize", sizeCanvas);
+
+function confetti(opts) {
+  if (!ctx2d || isReduced()) return;
+  opts = opts || {};
+  var count = opts.count || 150;
+  var x = opts.x != null ? opts.x : window.innerWidth / 2;
+  var y = opts.y != null ? opts.y : window.innerHeight * 0.35;
+  var power = opts.power || 1;
+  var colours = ["#ff6fa8", "#ffb84d", "#39a7ff", "#58e0a0", "#b388ff", "#ffe066"];
+  for (var i = 0; i < count; i++) {
+    var angle = Math.random() * Math.PI * 2;
+    var speed = (4 + Math.random() * 9) * power;
+    particles.push({
+      x: x, y: y,
+      vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 5 * power,
+      size: 5 + Math.random() * 7, colour: colours[i % colours.length],
+      rot: Math.random() * 6, spin: (Math.random() - 0.5) * 0.4,
+      life: 90 + Math.random() * 60
+    });
   }
-  $("eyes").innerHTML=eyes;$("mouth").innerHTML=mouth;
+  if (!rafId) rafId = requestAnimationFrame(stepConfetti);
 }
-function autoMessage(){
-  var d=getDay(selected),isToday=selected===today,s=streaks(),dn=d.drinks.length;
-  if(d.night==="dry")return {m:"happy",t:"Dry night! You're a star! ⭐"+(s.cur>=3&&isToday?" That's "+s.cur+" in a row!":"")};
-  if(d.night==="wet")return {m:"hug",t:"That's okay, tomorrow is a new night! 💙"};
-  if(dn>=GOAL)return {m:"party",t:"Water goal reached! Splashtastic! 💦"};
-  if(dn>=Math.ceil(GOAL/2))return {m:"happy",t:"Halfway there! Just "+(GOAL-dn)+" more drink"+(GOAL-dn===1?"":"s")+"!"};
-  if(dn>0)return {m:"happy",t:"Nice sipping! Keep it up! 🥤"};
-  if(!d.night&&!d.wees.length)return {m:"calm",t:isToday?"Hi friend! Ready for a great day? 😄":"Let's fill in this day together!"};
-  return {m:"happy",t:"You're doing great! 🌈"};
+function stepConfetti() {
+  ctx2d.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  particles = particles.filter(function (p) { return p.life > 0 && p.y < window.innerHeight + 20; });
+  particles.forEach(function (p) {
+    p.vy += 0.22;
+    p.vx *= 0.99;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.rot += p.spin;
+    p.life--;
+    ctx2d.save();
+    ctx2d.translate(p.x, p.y);
+    ctx2d.rotate(p.rot);
+    ctx2d.globalAlpha = Math.min(1, p.life / 30);
+    ctx2d.fillStyle = p.colour;
+    ctx2d.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.66);
+    ctx2d.restore();
+  });
+  if (particles.length) {
+    rafId = requestAnimationFrame(stepConfetti);
+  } else {
+    rafId = 0;
+    ctx2d.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  }
 }
-function say(text,mood){override={t:text,m:mood||"happy"};renderMascot();}
-function renderMascot(){
-  var a=override||autoMessage();
-  $("bubble").textContent=a.t;drawMascot(a.m);
+var glowTimer = 0;
+function glow() {
+  var hero = $("heroCard");
+  hero.classList.add("glow");
+  clearTimeout(glowTimer);
+  glowTimer = setTimeout(function () { hero.classList.remove("glow"); }, 1800);
+}
+/* big = true for major wins; small celebrations come from an element */
+function celebrate(big, fromEl) {
+  if (isReduced()) { glow(); return; }
+  if (big) { confetti({ count: 150 }); return; }
+  var x, y;
+  if (fromEl) {
+    var r = fromEl.getBoundingClientRect();
+    x = r.left + r.width / 2;
+    y = r.top + r.height / 2;
+  }
+  confetti({ count: 28, power: 0.6, x: x, y: y });
 }
 
-/* ---------- rendering ---------- */
-function renderTop(){
-  var s=streaks();
-  $("streak").textContent=s.cur;$("best").textContent=s.best;
-  $("streakNote").textContent=s.cur>0?"Every dry night is a win. Keep shining!":"Your next dry night starts a new streak!";
+/* =========================================================
+   Mascot and messages
+   ========================================================= */
+function drawMascot(mood) {
+  var eyes, mouth;
+  function dot(x) {
+    return '<circle cx="' + x + '" cy="70" r="5" fill="#12304f"/><circle cx="' + (x + 1.8) + '" cy="68" r="1.8" fill="#fff"/>';
+  }
+  function star(x) {
+    return '<path d="M' + x + ' 62 l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6-4.4-4.2 6-.8z" fill="#ffe066" stroke="#12304f" stroke-width="1.5"/>';
+  }
+  if (mood === "party") {
+    eyes = star(34) + star(66);
+    mouth = '<path d="M36 86 Q50 106 64 86 Z" fill="#12304f"/><path d="M42 94 Q50 100 58 94" fill="#ff6fa8"/>';
+  } else if (mood === "happy") {
+    eyes = dot(36) + dot(64);
+    mouth = '<path d="M38 86 Q50 100 62 86" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/>';
+  } else if (mood === "hug") {
+    eyes = '<path d="M30 72 Q36 64 42 72" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/>' +
+           '<path d="M58 72 Q64 64 70 72" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/>';
+    mouth = '<path d="M40 90 Q50 97 60 90" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/>';
+  } else {
+    eyes = dot(36) + dot(64);
+    mouth = '<ellipse cx="50" cy="90" rx="6" ry="4" fill="#12304f"/>';
+  }
+  $("eyes").innerHTML = eyes;
+  $("mouth").innerHTML = mouth;
 }
-function renderDay(){
-  var d=getDay(selected),isToday=selected===today;
-  var dt=parseKey(selected).toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"});
-  $("dayTitle").textContent=isToday?"Today · "+dt:dt;
-  $("dayNote").textContent=isToday?"Everything you add goes on today.":"You are editing a past day.";
-  $("todayBtn").style.display=isToday?"none":"";
-  $("nDry").setAttribute("aria-pressed",d.night==="dry");
-  $("nWet").setAttribute("aria-pressed",d.night==="wet");
-  $("nClear").disabled=!d.night;
-  // wees
-  var wl=$("weeList");
-  wl.innerHTML=d.wees.length?d.wees.map(function(t,i){
-    return '<li><span>💦 '+esc(prettyTime(t))+'</span><button class="x" type="button" data-del-wee="'+i+'" aria-label="Remove wee at '+esc(prettyTime(t))+'">✕</button></li>';
-  }).join(""):'<li class="empty" style="background:none;padding:0">No wees logged yet.</li>';
-  // drinks
-  var dl=$("drinkList");
-  dl.innerHTML=d.drinks.length?d.drinks.map(function(x,i){
-    var sz=SIZES.filter(function(z){return z.id===x.s;})[0]||SIZES[1];
-    return '<li><span>'+sz.emoji+' '+esc(prettyTime(x.t))+' <small>'+esc(sz.label)+'</small></span><button class="x" type="button" data-del-drink="'+i+'" aria-label="Remove drink at '+esc(prettyTime(x.t))+'">✕</button></li>';
-  }).join(""):'<li class="empty" style="background:none;padding:0">No drinks logged yet.</li>';
-  var n=d.drinks.length;
-  $("fill").style.height=Math.min(100,n/GOAL*100)+"%";
-  $("goalText").textContent=n>=GOAL?"Goal reached! 🎉 ("+n+")":n+" of "+GOAL+" drinks";
-  $("goalN").textContent=GOAL;
+
+function autoMessage() {
+  var d = getDay(selected);
+  var isToday = selected === today;
+  var s = streaks();
+  var cups = cupsOf(d.drinks);
+  var hour = new Date().getHours();
+
+  if (cups >= GOAL) return { m: "party", t: "Water goal reached! Splashtastic! 💦" };
+  if (d.night === "dry") {
+    return { m: "happy", t: "Dry night! You're a star! ⭐" + (s.cur >= 3 && isToday ? " That's " + s.cur + " in a row!" : "") };
+  }
+  if (d.night === "wet") return { m: "hug", t: "That's okay, tomorrow is a new night! 💙" };
+  if (isToday && !d.night) {
+    return hour < 12
+      ? { m: "happy", t: "Good morning! How was your night? 🌞" }
+      : { m: "calm", t: "Hi friend! Tell me how your night was whenever you're ready. 💙" };
+  }
+  if (cups >= GOAL / 2) return { m: "happy", t: "Halfway there! Keep sipping! 🥤" };
+  if (cups > 0) return { m: "happy", t: "Nice sipping! Keep it up! 🥤" };
+  if (!isToday && !d.wees.length) return { m: "calm", t: "Let's fill in this day together!" };
+  return { m: "happy", t: "You're doing great! 🌈" };
 }
-var calFocus=false;
-function renderCal(){
-  var y=view.y,m=view.m,first=new Date(y,m,1),count=new Date(y,m+1,0).getDate();
-  var off=(first.getDay()+6)%7, html="", now=new Date();
-  $("calTitle").textContent=MONTHS[m]+" "+y;
-  $("next").disabled=(y===now.getFullYear()&&m===now.getMonth())||(y>now.getFullYear())||(y===now.getFullYear()&&m>now.getMonth());
-  var tabKey=null;
-  if(selected.slice(0,7)===y+"-"+pad(m+1))tabKey=selected;
-  else tabKey=y+"-"+pad(m+1)+"-01";
-  for(var i=0;i<off;i++)html+='<div class="blank" role="gridcell" aria-hidden="true"></div>';
-  var dryN=0,weeSum=0,drinkSum=0,logged=0;
-  for(var d=1;d<=count;d++){
-    var k=y+"-"+pad(m+1)+"-"+pad(d),day=getDay(k),future=k>today;
-    var cls="day"+(day.night==="dry"?" dry":day.night==="wet"?" wet":"")+(k===today?" today":"")+(k===selected?" sel":"");
-    var ic=day.night==="dry"?"☀️":day.night==="wet"?"🌧️":"";
-    var label=parseKey(k).toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"})+
-      (k===today?", today":"")+(future?", in the future":"")+". "+
-      (day.night==="dry"?"Dry night. ":day.night==="wet"?"Wet night. ":"Night not logged. ")+day.wees.length+" wees, "+day.drinks.length+" drinks.";
-    html+='<div role="gridcell"><button type="button" class="'+cls+'" style="width:100%" data-date="'+k+'" tabindex="'+(k===tabKey?0:-1)+'"'+
-      (future?' disabled':'')+' aria-pressed="'+(k===selected)+'" aria-label="'+esc(label)+'"'+(k===today?' aria-current="date"':'')+'>'+
-      '<span class="n">'+d+'</span><span class="ic" aria-hidden="true">'+ic+'</span>'+
-      '<span class="ct" aria-hidden="true">'+(day.wees.length?'<span>💦'+day.wees.length+'</span>':'')+(day.drinks.length?'<span>🥤'+day.drinks.length+'</span>':'')+'</span></button></div>';
-    if(!future){
-      if(day.night==="dry")dryN++;
-      if(day.wees.length||day.drinks.length){logged++;weeSum+=day.wees.length;drinkSum+=day.drinks.length;}
+
+/* Shows a message from the mascot. Only real events are announced to screen readers. */
+function say(text, mood, announce) {
+  override = { t: text, m: mood || "happy" };
+  if (announce !== false) $("live").textContent = text;
+  renderMascot();
+}
+function renderMascot() {
+  var msg = override || autoMessage();
+  $("bubble").textContent = msg.t;
+  drawMascot(msg.m);
+  var d = getDay(selected);
+  var cups = cupsOf(d.drinks);
+  $("chips").innerHTML =
+    '<span class="chip">💦 ' + d.wees.length + ' wee' + (d.wees.length === 1 ? "" : "s") + '</span>' +
+    '<span class="chip">🥤 ' + fmt(cups) + ' / ' + GOAL + ' cups</span>' +
+    '<span class="chip">' + (d.night === "dry" ? "☀️ Dry night" : d.night === "wet" ? "🌈 Wet night" : "🌙 Night not logged") + '</span>';
+}
+
+/* =========================================================
+   Rendering
+   ========================================================= */
+function renderTop() {
+  var s = streaks();
+  $("streak").textContent = s.cur;
+  $("best").textContent = s.best;
+  $("streakNote").textContent = s.cur > 0 ? "Every dry night is a win. Keep shining!" : "Your next dry night starts a new streak!";
+}
+
+function renderDay() {
+  var d = getDay(selected);
+  var isToday = selected === today;
+
+  $("dayTitle").innerHTML = (isToday ? "Editing: Today" : "Editing") + "<small>" + esc(longDate(selected)) + "</small>";
+  $("todayBtn").hidden = isToday;
+
+  $("nightTitle").textContent = isToday
+    ? "🌙 Did I stay dry last night?"
+    : "🌙 Did I stay dry the night before " + shortDate(selected) + "?";
+  $("nDry").setAttribute("aria-pressed", String(d.night === "dry"));
+  $("nWet").setAttribute("aria-pressed", String(d.night === "wet"));
+  $("nClear").disabled = !d.night;
+  $("nightCard").classList.toggle("prompt", isToday && !d.night);
+
+  renderLists(d);
+
+  var cups = cupsOf(d.drinks);
+  $("fill").style.setProperty("--fill", Math.min(100, cups / GOAL * 100) + "%");
+  $("goalText").textContent = cups >= GOAL
+    ? "Goal reached! 🎉 (" + fmt(cups) + " cups)"
+    : fmt(cups) + " of " + GOAL + " cups";
+  var early = earlyCupsOf(d.drinks);
+  $("earlyText").textContent = early > 0
+    ? "☀️ " + fmt(early) + " cup" + (early === 1 ? "" : "s") + " before 4pm. Lovely!"
+    : "Daytime drinks are extra helpful.";
+}
+
+function renderLists(d) {
+  $("weeList").innerHTML = d.wees.length
+    ? d.wees.map(function (t, i) {
+        return '<li><span>💦 ' + esc(prettyTime(t)) + '</span>' +
+          '<button class="x" type="button" data-del-wee="' + i + '" aria-label="Remove wee at ' + esc(prettyTime(t)) + '">✕</button></li>';
+      }).join("")
+    : '<li class="empty">No wees logged yet.</li>';
+
+  $("drinkList").innerHTML = d.drinks.length
+    ? d.drinks.map(function (x, i) {
+        var sz = sizeInfo(x.s);
+        return '<li><span>' + sz.emoji + ' ' + esc(prettyTime(x.t)) + ' <small>' + esc(sz.label) + '</small></span>' +
+          '<button class="x" type="button" data-del-drink="' + i + '" aria-label="Remove ' + esc(sz.label) + ' at ' + esc(prettyTime(x.t)) + '">✕</button></li>';
+      }).join("")
+    : '<li class="empty">No drinks logged yet.</li>';
+}
+
+function dayCellHtml(k) {
+  var day = getDay(k);
+  var future = k > today;
+  var isSel = k === selected;
+  var cls = "day" + (day.night === "dry" ? " dry" : day.night === "wet" ? " wet" : "") +
+            (k === today ? " today" : "") + (isSel ? " sel" : "");
+  var icon = day.night === "dry" ? '<span class="ic">☀️</span>'
+           : day.night === "wet" ? '<span class="ic wet-ic">🌈</span>'
+           : '<span class="ic"></span>';
+  var label = longDate(k) + (k === today ? ", today" : "") + (future ? ", in the future" : "") + ". " +
+    (day.night === "dry" ? "Woke up dry. " : day.night === "wet" ? "Woke up wet. " : "Night not logged. ") +
+    day.wees.length + " wees, " + day.drinks.length + " drinks." + (isSel ? " Selected." : "");
+  var counts = "";
+  if (day.wees.length) counts += '<span class="b b-wee"><i>💦</i>' + Math.min(day.wees.length, 99) + '</span>';
+  if (day.drinks.length) counts += '<span class="b b-drink"><i>🥤</i>' + Math.min(day.drinks.length, 99) + '</span>';
+  var tab = (k === tabTarget) ? 0 : -1;
+
+  return '<div class="cell" role="gridcell" aria-selected="' + isSel + '">' +
+    '<button type="button" class="' + cls + '" data-date="' + k + '" tabindex="' + tab + '"' +
+    (future ? " disabled" : "") + (k === today ? ' aria-current="date"' : "") +
+    ' aria-label="' + esc(label) + '">' +
+    '<span class="n">' + parseKey(k).getDate() + '</span>' + icon +
+    '<span class="ct" aria-hidden="true">' + counts + '</span></button></div>';
+}
+
+var tabTarget = null;
+function renderCal() {
+  var y = view.y, m = view.m;
+  var count = new Date(y, m + 1, 0).getDate();
+  var offset = (new Date(y, m, 1).getDay() + 6) % 7;
+  var prefix = y + "-" + pad(m + 1) + "-";
+  var nowM = monthOf(today);
+
+  $("calTitle").textContent = MONTHS[m] + " " + y;
+  $("next").disabled = (y * 12 + m) >= (nowM.y * 12 + nowM.m);
+
+  tabTarget = selected.slice(0, 7) === prefix.slice(0, 7) ? selected : prefix + "01";
+  if (tabTarget > today) tabTarget = today;
+
+  var names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  var html = '<div class="week" role="row">' + names.map(function (n) {
+    return '<div class="dow" role="columnheader">' + n + '</div>';
+  }).join("") + '</div>';
+
+  var cells = [];
+  var i, d;
+  for (i = 0; i < offset; i++) cells.push('<div class="cell" role="gridcell"></div>');
+
+  var dryN = 0, weeSum = 0, drinkSum = 0, logged = 0;
+  for (d = 1; d <= count; d++) {
+    var k = prefix + pad(d);
+    cells.push(dayCellHtml(k));
+    if (k <= today) {
+      var day = getDay(k);
+      if (day.night === "dry") dryN++;
+      if (day.wees.length || day.drinks.length) {
+        logged++;
+        weeSum += day.wees.length;
+        drinkSum += day.drinks.length;
+      }
     }
   }
-  $("cal").innerHTML=html;
-  var avg=function(v){return logged?(Math.round(v/logged*10)/10).toString():"–";};
-  $("mstats").innerHTML=
-    '<div class="big"><b>'+dryN+'</b><small>dry nights</small></div>'+
-    '<div class="big"><b>'+avg(weeSum)+'</b><small>wees / day</small></div>'+
-    '<div class="big"><b>'+avg(drinkSum)+'</b><small>drinks / day</small></div>';
-  if(calFocus){calFocus=false;var b=$("cal").querySelector('[data-date="'+selected+'"]');if(b)b.focus();}
+  while (cells.length % 7) cells.push('<div class="cell" role="gridcell"></div>');
+  for (i = 0; i < cells.length; i += 7) {
+    html += '<div class="week" role="row">' + cells.slice(i, i + 7).join("") + '</div>';
+  }
+  $("cal").innerHTML = html;
+
+  function avg(total) { return logged ? String(Math.round(total / logged * 10) / 10) : "–"; }
+  $("mstats").innerHTML =
+    '<div class="big"><b>' + dryN + '</b><small>dry nights</small></div>' +
+    '<div class="big"><b>' + avg(weeSum) + '</b><small>wees per logged day</small></div>' +
+    '<div class="big"><b>' + avg(drinkSum) + '</b><small>drinks per logged day</small></div>';
+
+  if (calFocus) {
+    calFocus = false;
+    var btn = $("cal").querySelector('[data-date="' + selected + '"]');
+    if (btn) btn.focus();
+  }
 }
-var newBadges={};
-function renderShelf(){
-  var s=overall();
-  $("shelf").innerHTML=BADGES.map(function(b){
-    var ok=b.ok(s);
-    return '<div class="badge'+(ok?"":" locked")+(newBadges[b.id]?" new":"")+'"><span class="em" aria-hidden="true">'+(ok?b.em:"🔒")+'</span><b>'+esc(b.name)+'</b><small>'+(ok?"Earned!":esc(b.hint))+'</small><span class="sr">'+(ok?"Unlocked":"Locked")+'</span></div>';
+
+function renderShelf() {
+  var s = overall();
+  $("shelf").innerHTML = BADGES.map(function (b) {
+    var earned = data.stickers[b.id];
+    var cls = "badge" + (earned ? "" : " locked") + (newStickers[b.id] ? " new" : "");
+    var detail;
+    if (earned) {
+      detail = '<small>Earned ' + esc(shortDate(earned)) + '</small>';
+    } else {
+      var v = Math.min(b.val(s), b.max);
+      detail = '<div class="bar" aria-hidden="true"><i style="--p:' + Math.round(v / b.max * 100) + '%"></i></div>' +
+               '<small>' + v + '/' + b.max + ' · ' + esc(b.hint) + '</small>';
+    }
+    return '<div class="' + cls + '"><span class="em" aria-hidden="true">' + (earned ? b.em : "🔒") + '</span>' +
+      '<b>' + esc(b.name) + '</b>' + detail + '<span class="sr">' + (earned ? "Unlocked" : "Locked") + '</span></div>';
   }).join("");
 }
-function renderSound(){
-  var b=$("soundBtn");b.textContent=muted?"🔇":"🔊";b.setAttribute("aria-pressed",String(!muted));
-  b.setAttribute("aria-label",muted?"Sound effects off":"Sound effects on");
-}
-function renderAll(){renderTop();renderDay();renderCal();renderShelf();renderMascot();}
 
-/* ---------- actions ---------- */
-function afterChange(before,extraWin){
+function renderTools() {
+  var sound = $("soundBtn");
+  sound.textContent = muted ? "🔇 Sound" : "🔊 Sound";
+  sound.setAttribute("aria-pressed", String(!muted));
+  var themeBtn = $("themeBtn");
+  var names = { auto: "Auto", light: "Light", dark: "Dark" };
+  var icons = { auto: "🌗", light: "☀️", dark: "🌙" };
+  themeBtn.textContent = icons[theme] + " " + names[theme];
+  themeBtn.setAttribute("aria-label", "Theme: " + names[theme] + ". Press to change.");
+  if (theme === "auto") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", theme);
+}
+
+function renderTimes() {
+  if (!touched.weeTime) $("weeTime").value = nowTime();
+  if (!touched.drinkTime) $("drinkTime").value = nowTime();
+}
+
+function renderAll() {
+  renderTop();
+  renderDay();
+  renderCal();
+  renderShelf();
+  renderMascot();
+}
+
+/* =========================================================
+   Toast and notice
+   ========================================================= */
+var toastTimer = 0;
+function showToast(text, undoFn) {
+  $("toastText").textContent = text;
+  var undoBtn = $("toastUndo");
+  undoBtn.hidden = !undoFn;
+  undoBtn.onclick = function () {
+    hideToast();
+    if (undoFn) undoFn();
+  };
+  $("toast").hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, 5000);
+}
+function hideToast() {
+  $("toast").hidden = true;
+  clearTimeout(toastTimer);
+}
+
+/* =========================================================
+   Actions
+   ========================================================= */
+/* Saves, awards stickers and shows the best message. ev: {text, mood, sound, big, from} */
+function commit(ev) {
+  var won = awardStickers();
   save();
-  var after=earnedSet(),won=[];
-  BADGES.forEach(function(b){if(after[b.id]&&!before[b.id]){won.push(b);newBadges[b.id]=1;}});
-  renderAll();newBadges={};
-  if(won.length){
-    say("New sticker: "+won[0].name+" "+won[0].em,"party");confetti();sfx("win");
-  }else if(extraWin){confetti();sfx("win");}
+  newStickers = {};
+  won.forEach(function (b) { newStickers[b.id] = true; });
+
+  var text = ev.text, mood = ev.mood || "happy", sound = ev.sound, big = !!ev.big;
+  if (won.length) {
+    var names = won.map(function (b) { return b.em + " " + b.name; }).join(", ");
+    text = "New sticker: " + names + "!" + (ev.text ? " " + ev.text : "");
+    mood = "party";
+    sound = "win";
+    big = true;
+  }
+  if (text) override = { t: text, m: mood };
+  else override = null;
+
+  renderAll();
+  newStickers = {};
+  if (text) $("live").textContent = text;
+  if (sound) sfx(sound);
+  if (big) celebrate(true);
+  else if (ev.small) celebrate(false, ev.from);
 }
-function addWee(){
-  var t=$("weeTime").value;if(!TIME_RE.test(t))t=nowTime();
-  var before=earnedSet(),d=getDay(selected,true);
-  d.wees.push(t);d.wees.sort();sfx("pop");override=null;
-  afterChange(before,false);
-  $("weeTime").value=nowTime();
+
+function chosenTime(inputId) {
+  var input = $(inputId);
+  var value = touched[inputId] ? input.value : nowTime();
+  return TIME_RE.test(value) ? value : nowTime();
 }
-var size="m";
-function addDrink(){
-  var t=$("drinkTime").value;if(!TIME_RE.test(t))t=nowTime();
-  var before=earnedSet(),d=getDay(selected,true),was=d.drinks.length;
-  d.drinks.push({t:t,s:size});d.drinks.sort(function(a,b){return a.t<b.t?-1:a.t>b.t?1:0;});
-  override=null;sfx("splash");
-  var hit=was<GOAL&&d.drinks.length>=GOAL;
-  afterChange(before,hit);
-  $("drinkTime").value=nowTime();
-  if(hit)say("Water goal reached! Splashtastic! 💦","party");
+function resetTime(inputId) {
+  touched[inputId] = false;
+  $(inputId).value = nowTime();
 }
-function setNight(v){
-  var d=getDay(selected,true),before=earnedSet(),was=d.night;
-  if(d.night===v){d.night=null;pruneDay(selected);override=null;save();renderAll();return;}
-  d.night=v;override=null;
-  if(v==="dry"){
-    afterChange(before,was!=="dry");
-    if(was!=="dry"){var s=streaks();say("Dry night! You're a star! ⭐"+(s.cur>1?" "+s.cur+" nights in a row!":""),"party");}
-  }else{
-    sfx("soft");afterChange(before,false);
+
+function addWee() {
+  var d = getDay(selected, true);
+  d.wees.push(chosenTime("weeTime"));
+  d.wees.sort();
+  resetTime("weeTime");
+  commit({ text: pick(WEE_CHEERS), sound: "pop", small: true, from: $("weeAdd") });
+}
+
+function addDrink() {
+  var time = chosenTime("drinkTime");
+  var d = getDay(selected, true);
+  var before = cupsOf(d.drinks);
+  d.drinks.push({ t: time, s: size });
+  d.drinks.sort(byTime);
+  resetTime("drinkTime");
+
+  var after = cupsOf(d.drinks);
+  var ev = { sound: "splash", small: true, from: $("drinkAdd") };
+  if (before < GOAL && after >= GOAL) {
+    ev.text = "Water goal reached! Splashtastic! 💦";
+    ev.mood = "party";
+    ev.big = true;
+  } else if (time < EARLY_CUTOFF) {
+    ev.text = "Great drinking before 4pm! Daytime drinks are brilliant. 🌞";
+  } else {
+    ev.text = "Lovely sip! Earlier in the day is extra helpful. 💙";
+  }
+  commit(ev);
+}
+
+function setNight(value) {
+  var d = getDay(selected, true);
+  if (d.night === value) return;     // already chosen; use Clear to remove
+  var before = streaks();
+  d.night = value;
+
+  if (value === "dry") {
+    var after = streaks();
+    var text = "Dry night! You're a star! ⭐";
+    if (selected === today || after.cur > 1) {
+      if (after.cur > 1 && after.cur > before.best) text = "New best streak: " + after.cur + " dry nights in a row! 🏆";
+      else if (after.cur > 1) text = "Dry night! " + after.cur + " nights in a row! ⭐";
+    }
+    commit({ text: text, mood: "party", sound: "win", big: true });
+  } else {
+    commit({ text: "That's okay, tomorrow is a new night! 💙", mood: "hug", sound: "soft" });
   }
 }
-function selectDay(k,focus){
-  if(k>today||!KEY_RE.test(k))return;
-  selected=k;override=null;
-  var d=parseKey(k);view={y:d.getFullYear(),m:d.getMonth()};
-  calFocus=!!focus;renderAll();
-}
-function shiftMonth(n){
-  var d=new Date(view.y,view.m+n,1),now=new Date();
-  if(d.getFullYear()*12+d.getMonth()>now.getFullYear()*12+now.getMonth())return;
-  view={y:d.getFullYear(),m:d.getMonth()};renderCal();
+
+function clearNight() {
+  var d = getDay(selected);
+  if (!d.night) return;
+  d.night = null;
+  pruneDay(selected);
+  override = null;
+  sfx("remove");
+  save();
+  renderAll();
 }
 
-/* ---------- events ---------- */
-$("weeAdd").addEventListener("click",addWee);
-$("drinkAdd").addEventListener("click",addDrink);
-$("nDry").addEventListener("click",function(){setNight("dry");});
-$("nWet").addEventListener("click",function(){setNight("wet");});
-$("nClear").addEventListener("click",function(){
-  var d=getDay(selected);if(!d.night)return;d.night=null;pruneDay(selected);override=null;sfx("remove");save();renderAll();
+function deleteEntry(kind, index) {
+  var d = getDay(selected);
+  var list = kind === "wee" ? d.wees : d.drinks;
+  var item = list.splice(index, 1)[0];
+  if (item === undefined) return;
+  var day = selected;
+  pruneDay(day);
+  override = null;
+  sfx("remove");
+  save();
+  renderAll();
+
+  var label = kind === "wee" ? "wee" : "drink";
+  var when = prettyTime(kind === "wee" ? item : item.t);
+  showToast("Removed " + label + " at " + when, function () {
+    var target = getDay(day, true);
+    var arr = kind === "wee" ? target.wees : target.drinks;
+    arr.push(item);
+    if (kind === "wee") arr.sort(); else arr.sort(byTime);
+    save();
+    renderAll();
+  });
+}
+
+function selectDay(k, opts) {
+  opts = opts || {};
+  if (!isValidKey(k) || k > today) return;
+  selected = k;
+  override = null;
+  view = monthOf(k);
+  calFocus = !!opts.focus;
+  renderAll();
+  if (opts.scroll && window.matchMedia("(max-width: 859px)").matches) {
+    $("nightCard").scrollIntoView({ behavior: isReduced() ? "auto" : "smooth", block: "start" });
+  }
+}
+
+function shiftMonth(n) {
+  var target = new Date(view.y, view.m + n, 1);
+  var nowM = monthOf(today);
+  if (target.getFullYear() * 12 + target.getMonth() > nowM.y * 12 + nowM.m) return;
+  view = { y: target.getFullYear(), m: target.getMonth() };
+  renderCal();
+}
+
+/* =========================================================
+   Backup: export / import
+   ========================================================= */
+function exportData() {
+  try {
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "wee-tracker-backup-" + today + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    showToast("Backup saved! 💾");
+  } catch (e) {
+    showToast("Sorry, the backup could not be saved.");
+  }
+}
+function importData(file) {
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function () {
+    var imported;
+    try {
+      var parsed = JSON.parse(String(reader.result));
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed) || !parsed.days) throw new Error("bad");
+      imported = sanitize(parsed);
+    } catch (e) {
+      showToast("That file doesn't look like a Wee Tracker backup.");
+      return;
+    }
+    if (!window.confirm("Replace the days in this tracker with the ones from the backup? Your stickers are always kept.")) return;
+    Object.keys(imported.stickers).forEach(function (id) {
+      if (!data.stickers[id]) data.stickers[id] = imported.stickers[id];
+    });
+    data.days = imported.days;
+    awardStickers();
+    save();
+    override = null;
+    renderAll();
+    showToast("Backup loaded! 🎉");
+  };
+  reader.onerror = function () { showToast("Sorry, that file could not be read."); };
+  reader.readAsText(file);
+}
+
+/* =========================================================
+   Time keeping (single consistent "today")
+   ========================================================= */
+function refreshToday() {
+  var t = todayKey();
+  if (t === today) return;
+  var old = today;
+  today = t;
+  if (selected === old) {
+    var oldMonth = monthOf(old);
+    var viewingOld = view.y === oldMonth.y && view.m === oldMonth.m;
+    selected = t;
+    if (viewingOld) view = monthOf(t);
+  }
+  override = null;
+  renderAll();
+}
+function refreshClock() {
+  refreshToday();
+  renderTimes();
+}
+
+/* =========================================================
+   Events
+   ========================================================= */
+$("weeAdd").addEventListener("click", addWee);
+$("drinkAdd").addEventListener("click", addDrink);
+$("nDry").addEventListener("click", function () { setNight("dry"); });
+$("nWet").addEventListener("click", function () { setNight("wet"); });
+$("nClear").addEventListener("click", clearNight);
+$("todayBtn").addEventListener("click", function () { selectDay(today, { scroll: false }); });
+$("prev").addEventListener("click", function () { shiftMonth(-1); });
+$("next").addEventListener("click", function () { shiftMonth(1); });
+
+$("weeTime").addEventListener("input", function () { touched.weeTime = true; });
+$("drinkTime").addEventListener("input", function () { touched.drinkTime = true; });
+
+$("soundBtn").addEventListener("click", function () {
+  muted = !muted;
+  saveMuted();
+  renderTools();
+  if (!muted) sfx("pop");
 });
-$("todayBtn").addEventListener("click",function(){today=todayKey();selectDay(today,false);});
-$("prev").addEventListener("click",function(){shiftMonth(-1);});
-$("next").addEventListener("click",function(){shiftMonth(1);});
-$("soundBtn").addEventListener("click",function(){muted=!muted;saveMuted();renderSound();if(!muted)sfx("pop");});
-$("weeList").addEventListener("click",function(e){
-  var b=e.target.closest("[data-del-wee]");if(!b)return;
-  var d=getDay(selected);d.wees.splice(+b.getAttribute("data-del-wee"),1);pruneDay(selected);
-  override=null;sfx("remove");save();renderAll();
+$("themeBtn").addEventListener("click", function () {
+  theme = theme === "auto" ? "light" : theme === "light" ? "dark" : "auto";
+  saveTheme();
+  renderTools();
 });
-$("drinkList").addEventListener("click",function(e){
-  var b=e.target.closest("[data-del-drink]");if(!b)return;
-  var d=getDay(selected);d.drinks.splice(+b.getAttribute("data-del-drink"),1);pruneDay(selected);
-  override=null;sfx("remove");save();renderAll();
+
+$("mascotBtn").addEventListener("click", function () {
+  var btn = $("mascotBtn");
+  btn.classList.remove("wiggle");
+  void btn.offsetWidth;
+  btn.classList.add("wiggle");
+  setTimeout(function () { btn.classList.remove("wiggle"); }, 700);
+  sfx("giggle");
+  say(pick(CHEERS), Math.random() < 0.3 ? "party" : "happy", false);
 });
-$("cal").addEventListener("click",function(e){
-  var b=e.target.closest("[data-date]");if(b){sfx("pop");selectDay(b.getAttribute("data-date"),true);}
+
+$("weeList").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-del-wee]");
+  if (b) deleteEntry("wee", +b.getAttribute("data-del-wee"));
 });
-$("cal").addEventListener("keydown",function(e){
-  var b=e.target.closest("[data-date]");if(!b)return;
-  var k=b.getAttribute("data-date"),n=null;
-  switch(e.key){
-    case "ArrowLeft":n=addDays(k,-1);break;
-    case "ArrowRight":n=addDays(k,1);break;
-    case "ArrowUp":n=addDays(k,-7);break;
-    case "ArrowDown":n=addDays(k,7);break;
-    case "Home":n=addDays(k,-((parseKey(k).getDay()+6)%7));break;
-    case "End":n=addDays(k,6-((parseKey(k).getDay()+6)%7));break;
-    case "PageUp":case "PageDown":
-      var d=parseKey(k),t=new Date(d.getFullYear(),d.getMonth()+(e.key==="PageUp"?-1:1),1);
-      var last=new Date(t.getFullYear(),t.getMonth()+1,0).getDate();
-      t.setDate(Math.min(d.getDate(),last));n=keyOf(t);break;
-    default:return;
+$("drinkList").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-del-drink]");
+  if (b) deleteEntry("drink", +b.getAttribute("data-del-drink"));
+});
+
+$("sizes").innerHTML = SIZES.map(function (z) {
+  return '<button type="button" class="size" data-size="' + z.id + '" aria-pressed="' + (z.id === size) + '">' +
+    z.emoji + ' ' + esc(z.label) + ' (' + (z.weight === 0.5 ? "½" : z.weight === 1.5 ? "1½" : "1") + ')</button>';
+}).join("");
+$("sizes").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-size]");
+  if (!b) return;
+  size = b.getAttribute("data-size");
+  Array.prototype.forEach.call($("sizes").children, function (c) {
+    c.setAttribute("aria-pressed", String(c === b));
+  });
+});
+
+$("cal").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-date]");
+  if (!b) return;
+  sfx("pop");
+  selectDay(b.getAttribute("data-date"), { focus: true, scroll: true });
+});
+$("cal").addEventListener("keydown", function (e) {
+  var b = e.target.closest("[data-date]");
+  if (!b) return;
+  var k = b.getAttribute("data-date");
+  var next = null;
+  var weekday = (parseKey(k).getDay() + 6) % 7;
+  switch (e.key) {
+    case "ArrowLeft": next = addDays(k, -1); break;
+    case "ArrowRight": next = addDays(k, 1); break;
+    case "ArrowUp": next = addDays(k, -7); break;
+    case "ArrowDown": next = addDays(k, 7); break;
+    case "Home": next = addDays(k, -weekday); break;
+    case "End": next = addDays(k, 6 - weekday); break;
+    case "PageUp":
+    case "PageDown":
+      var d = parseKey(k);
+      var t = new Date(d.getFullYear(), d.getMonth() + (e.key === "PageUp" ? -1 : 1), 1);
+      var last = new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate();
+      t.setDate(Math.min(d.getDate(), last));
+      next = keyOf(t);
+      break;
+    default: return;
   }
   e.preventDefault();
-  if(n>today)n=today;
-  selectDay(n,true);
+  if (next > today) next = today;
+  selectDay(next, { focus: true });
 });
-// size buttons
-$("sizes").innerHTML=SIZES.map(function(z){
-  return '<button type="button" class="size" data-size="'+z.id+'" aria-pressed="'+(z.id===size)+'">'+z.emoji+' '+esc(z.label)+'</button>';
-}).join("");
-$("sizes").addEventListener("click",function(e){
-  var b=e.target.closest("[data-size]");if(!b)return;
-  size=b.getAttribute("data-size");
-  Array.prototype.forEach.call($("sizes").children,function(c){c.setAttribute("aria-pressed",String(c===b));});
-});
-// roll over at midnight if page left open
-setInterval(function(){
-  var t=todayKey();
-  if(t!==today){var wasToday=selected===today;today=t;if(wasToday)selected=t;
-    var d=parseKey(selected);view={y:d.getFullYear(),m:d.getMonth()};renderAll();}
-},60000);
 
-/* ---------- init ---------- */
-$("weeTime").value=nowTime();$("drinkTime").value=nowTime();
-renderSound();renderAll();
+$("exportBtn").addEventListener("click", exportData);
+$("importBtn").addEventListener("click", function () { $("importFile").click(); });
+$("importFile").addEventListener("change", function () {
+  importData(this.files && this.files[0]);
+  this.value = "";
+});
+$("noticeClose").addEventListener("click", function () { $("notice").hidden = true; });
+
+document.addEventListener("visibilitychange", function () {
+  if (!document.hidden) refreshClock();
+});
+window.addEventListener("focus", refreshClock);
+window.addEventListener("storage", function (e) {
+  if (e.key === STORE_KEY || e.key === null) {
+    data = load(true);
+    renderAll();
+  } else if (e.key === MUTE_KEY) {
+    muted = loadMuted();
+    renderTools();
+  } else if (e.key === THEME_KEY) {
+    theme = loadTheme();
+    renderTools();
+  }
+});
+setInterval(refreshClock, 30000);
+
+/* =========================================================
+   Init
+   ========================================================= */
+(function init() {
+  var before = JSON.stringify(data.stickers);
+  awardStickers();                           // silently catch up on stickers
+  if (JSON.stringify(data.stickers) !== before) save();
+  renderTools();
+  renderTimes();
+  renderAll();
+  if (loadNotice) {
+    $("noticeText").textContent = loadNotice;
+    $("notice").hidden = false;
+  }
+})();
 })();
 </script>
 </body>
