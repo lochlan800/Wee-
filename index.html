@@ -149,6 +149,7 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:10p
 .streak-big{display:flex;align-items:center;gap:10px}
 .streak-card .top{display:flex;gap:12px;align-items:center;justify-content:space-between}
 .streak-big b{font-size:2.6rem;line-height:1;letter-spacing:-1px}
+.flame.still{animation:none;opacity:.45;filter:grayscale(1)}
 .flame{display:inline-block;font-size:2rem;animation:flick 1.4s ease-in-out infinite;transform-origin:50% 90%;filter:drop-shadow(0 0 8px var(--flame))}
 .streak-big small,.best small{display:block;color:var(--muted);font-size:.85rem;line-height:1.2}
 .best{text-align:right}
@@ -316,7 +317,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
 .tl-ntime{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .tl-ntime label{font-size:.8125rem;color:var(--muted)}
 .tl-band{display:flex;align-items:center;gap:8px;margin:0 0 14px;min-height:36px}
-.tl-band-l{width:44px;font-size:.75rem;color:var(--muted)}
+.tl-band-l{width:52px;flex:none;font-size:.75rem;line-height:1.1;color:var(--muted)}
 .tl-band-m{background:var(--nd-bg);color:var(--ink);border-left:4px solid var(--nd);border-radius:10px;padding:6px 10px;font-size:.8125rem;font-weight:600}
 [data-discreet="1"] .tl-band-m{background:var(--cell);border-left-color:var(--muted)}
 .tl-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 14px 20px;position:relative}
@@ -430,7 +431,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
     <button class="btn" id="tlToastUndo" type="button" hidden>Undo</button>
   </div>
   <div class="tl-scroll" id="tlScroll" tabindex="0" role="region" aria-label="Timeline of this day">
-    <div class="tl-band" id="tlBand" hidden><span class="tl-band-l">Night</span><span class="tl-band-m" id="tlBandMark"></span></div>
+    <div class="tl-band" id="tlBand" hidden><span class="tl-band-l" id="tlBandLbl">Night</span><span class="tl-band-m" id="tlBandMark"></span></div>
     <ol class="tl-track" id="tlTrack"></ol>
   </div>
   <form class="tl-add" id="tlForm" novalidate aria-label="Add to this day">
@@ -499,7 +500,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
     </div>
     <div class="card streak-card">
       <div class="top">
-        <div class="streak-big"><span class="flame" aria-hidden="true">🔥</span><div><b id="streak">0</b><small id="streakLabel">night streak</small></div></div>
+        <div class="streak-big"><span class="flame" id="flame" aria-hidden="true">🔥</span><div><b id="streak">0</b><small id="streakLabel">night streak</small></div></div>
         <div class="best"><b id="best">0</b><small>best streak</small></div>
       </div>
       <div class="strip" id="strip" role="img" aria-label="Last 7 nights"></div>
@@ -1008,7 +1009,7 @@ var BADGES = [
   { id: "h5", em: "🌊", name: "Tidal Wave", max: 5, val: function (s) { return s.goalDays; },
     hint: function () { return "Hit your water goal on 5 days"; } },
   { id: "early", em: "🌅", name: "Early Bird", max: 3, val: function (s) { return s.earlyDays; },
-    hint: function () { return "Hit your goal with half of it before 4pm, on 3 days"; } },
+    hint: function () { return "Goal hit, half before 4pm · 3 days"; } },
   { id: "log7", em: "📈", name: "Daily Driver", max: 7, val: function (s) { return s.logged; },
     hint: function () { return "Log something on 7 days"; } },
   { id: "log60", em: "🎖️", name: "Veteran", max: 60, val: function (s) { return s.logged; },
@@ -1248,6 +1249,7 @@ function recapText() {
 function renderTop() {
   var s = streaks();
   $("streak").textContent = s.cur;
+  $("flame").classList.toggle("still", s.cur === 0);
   $("best").textContent = s.best;
   $("streakLabel").textContent = discreet ? "streak" : "night streak";
   $("recap").textContent = recapText();
@@ -1613,12 +1615,17 @@ function isTlOpen() { return $("tl").hasAttribute("open"); }
 var tlExpanded = [];      // open groups, tracked by the minutes they cover so they stay open as entries change
 var ROW_H = 44;
 
-/* One short line for the sheet header. The pressed button already says dry / not dry,
-   so a not-dry night only adds its time. */
+/* One short line for the sheet header: the night status (plus its time, if any). */
 function nightStatusPart(d) {
-  if (d.night === "wet") return d.nightTime ? "○ " + prettyTime(d.nightTime) : "";
-  if (d.night === "dry") return discreet ? "Night check ●" : "Dry night";
-  return discreet ? "Night check: not logged" : "Night not logged";
+  var t = d.nightTime ? prettyTime(d.nightTime) : "";
+  if (discreet) {
+    if (d.night === "dry") return "●";
+    if (d.night === "wet") return "○" + (t ? " · " + t : "");
+  } else {
+    if (d.night === "dry") return "Dry night";
+    if (d.night === "wet") return "Not dry" + (t ? " · ~" + t : "");
+  }
+  return "Night: –";
 }
 
 function renderTlNight(d) {
@@ -1640,6 +1647,7 @@ function renderTlNight(d) {
   // the "Night" band above the day's hours
   var showBand = wet && !!d.nightTime;
   $("tlBand").hidden = !showBand;
+  $("tlBandLbl").textContent = discreet ? "Night" : "Night before";
   if (showBand) $("tlBandMark").textContent = (discreet ? "○ " : "🌙 ") + prettyTime(d.nightTime);
 }
 
@@ -1704,7 +1712,7 @@ function renderTimeline() {
   $("tlSub").textContent = [
     nightStatusPart(d),
     plural(d.wees.length, W().pee),
-    fmtMl(mlOf(d.drinks)) + " / " + fmtMl(goal())
+    N(mlOf(d.drinks)) + "/" + fmtMl(goal())
   ].filter(Boolean).join(" · ");
 
   // visible hours: 06:00-22:00 by default, widened to fit every entry
