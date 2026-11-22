@@ -95,6 +95,10 @@ button:focus:not(:focus-visible),input:focus:not(:focus-visible),[tabindex]:focu
 .wrap{max-width:1100px;margin:0 auto;padding:14px 16px 40px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 h1{margin:0;font-size:clamp(1.5rem,6vw,2rem);letter-spacing:-.5px;display:flex;align-items:center;gap:10px;white-space:nowrap}
+/* both names exist; discreet mode swaps them in CSS so nothing flashes */
+.nm-b{display:none}
+[data-discreet="1"] .nm-a{display:none}
+[data-discreet="1"] .nm-b{display:inline}
 h1 .logo{display:inline-block;width:.8em;height:.8em;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:0 0 16px var(--g1)}
 h1 .sub{font-size:.9rem;font-weight:500;color:var(--muted);letter-spacing:0}
 h2{margin:0 0 10px;font-size:1.1rem;letter-spacing:-.2px}
@@ -293,20 +297,30 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
   box-shadow:0 10px 30px var(--shadow-c);overflow:hidden;flex-direction:column;z-index:40}
 #tl[open]{display:flex}
 @media (max-width:859px){
-  #tl{left:0;right:0;bottom:0;top:auto;width:100%;max-width:none;max-height:none;height:88vh;border-radius:22px 22px 0 0}
+  #tl{left:0;right:0;bottom:0;top:auto;width:100%;max-width:none;max-height:none;height:94vh;border-radius:22px 22px 0 0}
 }
 @media (max-width:859px){
-  @supports (height:1dvh){ #tl{height:88dvh} }
+  @supports (height:1dvh){ #tl{height:94dvh} }
 }
 @media (min-width:860px){
   #tl{top:0;right:0;bottom:0;left:auto;width:460px;max-width:100vw;max-height:none;height:100vh;border-radius:22px 0 0 22px}
 }
-.tl-head{display:flex;align-items:center;gap:8px;padding:12px 14px 8px}
+.tl-head{display:flex;align-items:center;gap:8px;padding:8px 14px 4px}
 .tl-head h2{margin:0;flex:1;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.tl-pin{padding:0 14px 10px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.tl-night{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.tl-night .preset{padding:4px 12px}
-.tl-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:26px 14px 20px;position:relative}
+.tl-pin{padding:0 14px 8px;border-bottom:1px solid var(--line);display:grid;gap:2px}
+.tl-night{display:flex;align-items:center;gap:6px}
+.tl-lbl{flex:1;font-size:.8125rem;color:var(--muted);font-weight:600}
+.mini{width:44px;height:44px;padding:0;border-radius:12px;border:1px solid var(--line);background:var(--chip);font-size:1.05rem;font-weight:700;line-height:1}
+.mini[aria-pressed="true"]{background:linear-gradient(135deg,var(--g1),var(--g2));color:var(--on-g);border-color:transparent}
+.mini[disabled]{opacity:.45}
+.tl-sub{font-size:.8125rem;color:var(--muted);margin:0}
+.tl-ntime{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tl-ntime label{font-size:.8125rem;color:var(--muted)}
+.tl-band{display:flex;align-items:center;gap:8px;margin:0 0 14px;min-height:36px}
+.tl-band-l{width:44px;font-size:.75rem;color:var(--muted)}
+.tl-band-m{background:var(--nd-bg);color:var(--ink);border-left:4px solid var(--nd);border-radius:10px;padding:6px 10px;font-size:.8125rem;font-weight:600}
+[data-discreet="1"] .tl-band-m{background:var(--cell);border-left-color:var(--muted)}
+.tl-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 14px 20px;position:relative}
 .tl-track{position:relative;margin:0;padding:0;list-style:none}
 .tl-hr{position:absolute;left:0;right:0;border-top:1px solid var(--line);height:0}
 .tl-hr span{position:absolute;top:-8px;left:0;width:44px;font-size:.75rem;color:var(--muted);background:var(--card-solid);padding-right:4px}
@@ -318,15 +332,17 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
 .tl-tx b{font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tl-tx small{font-size:.6875rem;white-space:nowrap}
 .tl-chip .x{flex:none;width:44px;height:44px;border-radius:0;color:inherit;opacity:.8}
-.tl-group{position:absolute;left:52px;right:0;z-index:2;border-radius:12px;border:1px solid var(--line);border-left:4px solid var(--c-drink);background:var(--card-solid);overflow:hidden}
-.tl-gh{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;background:var(--bd-bg);color:var(--bd-ink);border:0;padding:4px 10px;text-align:left;font-size:.75rem;line-height:1.25;font-weight:600}
+.tl-group{position:absolute;left:52px;right:0;z-index:2;border-radius:12px;border:0;border-left:4px solid var(--c-drink);box-shadow:0 0 0 1px var(--line);background:var(--card-solid);overflow:hidden}
+.tl-gh{display:flex;align-items:center;gap:8px;width:100%;height:44px;overflow:hidden;background:var(--bd-bg);color:var(--bd-ink);border:0;padding:0 10px;text-align:left;font-size:.75rem;line-height:1.25;font-weight:600}
+.tl-gh span:first-child{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .tl-gh .chev{margin-left:auto;flex:none}
-.tl-row{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:44px;padding-left:12px;border-top:1px solid var(--line);font-size:.875rem}
+.tl-row{display:flex;align-items:center;justify-content:space-between;gap:6px;height:44px;padding-left:12px;border-top:1px solid var(--line);font-size:.875rem}
 .tl-row.pee{border-left:4px solid var(--c-pee)}
 .tl-row.drink{border-left:4px solid var(--c-drink)}
 .tl-row .x{flex:none}
 .tl-empty{position:absolute;left:52px;right:0;top:40px;color:var(--muted);margin:0}
-.tl-add{border-top:1px solid var(--line);padding:10px 14px 14px;display:grid;gap:8px}
+.tl-add{border-top:1px solid var(--line);padding:8px 14px 12px;display:grid;gap:6px}
+.tl-add label{font-size:.75rem}
 .tl-add .row{align-items:flex-end}
 .fld{display:grid;gap:2px}
 .tl-toast{margin:8px 14px 0;background:var(--ink);color:var(--bg);border-radius:14px;padding:4px 4px 4px 16px;display:flex;gap:10px;align-items:center;justify-content:space-between}
@@ -398,18 +414,24 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
   </div>
   <div class="tl-pin">
     <div class="tl-night" role="group" aria-labelledby="tlNightLbl">
-      <span class="chip" id="tlNightLbl"></span>
-      <button class="preset" id="tlNDry" type="button" aria-pressed="false"></button>
-      <button class="preset" id="tlNWet" type="button" aria-pressed="false"></button>
-      <button class="preset" id="tlNClear" type="button">Clear</button>
+      <span class="tl-lbl" id="tlNightLbl"></span>
+      <button class="mini" id="tlNDry" type="button" aria-pressed="false"></button>
+      <button class="mini" id="tlNWet" type="button" aria-pressed="false"></button>
+      <button class="mini" id="tlNClear" type="button" aria-label="Clear night answer">✕</button>
     </div>
-    <span class="chip" id="tlTotals"></span>
+    <div class="tl-ntime" id="tlNightTimeRow" hidden>
+      <label for="tlNightTime" id="tlNightTimeLbl">What time? (optional)</label>
+      <input type="time" id="tlNightTime">
+      <button class="mini" id="tlNightTimeClear" type="button" aria-label="Clear night time">✕</button>
+    </div>
+    <p class="tl-sub"><span id="tlNightStatus"></span> · <span id="tlTotals"></span></p>
   </div>
   <div class="tl-toast" id="tlToast" role="status" hidden>
     <span id="tlToastText"></span>
     <button class="btn" id="tlToastUndo" type="button" hidden>Undo</button>
   </div>
   <div class="tl-scroll" id="tlScroll" tabindex="0" role="region" aria-label="Timeline of this day">
+    <div class="tl-band" id="tlBand" hidden><span class="tl-band-l">Night</span><span class="tl-band-m" id="tlBandMark"></span></div>
     <ol class="tl-track" id="tlTrack"></ol>
   </div>
   <form class="tl-add" id="tlForm" novalidate aria-label="Add to this day">
@@ -429,7 +451,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
 
 <div class="wrap">
   <header class="top">
-    <h1><span class="logo" aria-hidden="true"></span><span id="appName">haPENIS</span> <span class="sub">daily tracker</span></h1>
+    <h1><span class="logo" aria-hidden="true"></span><span id="appName"><span class="nm-a">haPENIS</span><span class="nm-b">Loop</span></span> <span class="sub">daily tracker</span></h1>
     <div class="tools">
       <button class="btn ghost tool" id="discreetBtn" type="button" aria-pressed="false" aria-label="Discreet mode" title="Discreet mode"></button>
       <button class="btn ghost tool" id="themeBtn" type="button"></button>
@@ -501,6 +523,11 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
           <button class="night dry" id="nDry" type="button" aria-pressed="false"></button>
           <button class="night nd" id="nWet" type="button" aria-pressed="false"></button>
         </div>
+        <div class="row" id="nightTimeRow" hidden>
+          <label for="nightTime" id="nightTimeLbl">What time? (optional)</label>
+          <input type="time" id="nightTime">
+          <button class="btn ghost" id="nightTimeClear" type="button">Clear time</button>
+        </div>
         <button class="btn ghost clear" id="nClear" type="button">Clear answer</button>
       </section>
 
@@ -532,7 +559,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
         <div id="goalEditor" hidden>
           <div class="row">
             <label for="goalInput">Daily goal (ml)</label>
-            <input type="number" id="goalInput" inputmode="numeric" min="500" max="5000" step="100" value="1500">
+            <input type="number" id="goalInput" inputmode="numeric" min="1000" max="4000" step="100" value="1500">
             <button class="btn" id="goalSave" type="button">Save</button>
             <button class="btn ghost" id="goalCancel" type="button">Cancel</button>
           </div>
@@ -601,7 +628,9 @@ var THEME_KEY = "weeTracker.theme";
 var DISCREET_KEY = "weeTracker.discreet";
 var TIP_KEY = "weeTracker.eveningTip";
 var DEFAULT_GOAL = 1500;      // ml per day
-var GOAL_MIN = 500, GOAL_MAX = 5000;
+var GOAL_MIN = 500, GOAL_MAX = 5000;          // tolerated when loading saved data
+var GOAL_UI_MIN = 1000, GOAL_UI_MAX = 4000;   // what the goal editor accepts
+var GOAL_COUNT_MIN = 1200;                    // goal hits only count against at least this much
 var ML_MIN = 10, ML_MAX = 2000;
 var EARLY_CUTOFF = "16:00";   // drinks before this count as "early"
 var MAX_ENTRY_XP = 8;         // entries per day that earn XP
@@ -671,6 +700,14 @@ function shortDate(k) {
 }
 function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
 function plural(n, word) { return n + " " + word + (n === 1 ? "" : "s"); }
+var numFmt = null, hourFmt = null;
+try { numFmt = new Intl.NumberFormat(undefined); } catch (e) {}
+try { hourFmt = new Intl.DateTimeFormat(undefined, { hour: "numeric" }); } catch (e) {}
+function N(n) { return numFmt ? numFmt.format(n) : String(n); }
+function fmtMl(n) { return N(n) + " ml"; }
+function hourLabel(h) {
+  return hourFmt ? hourFmt.format(new Date(2000, 0, 1, h % 24, 0)) : pad(h % 24) + ":00";
+}
 function mlOf(drinks) {
   return drinks.reduce(function (sum, d) { return sum + d.ml; }, 0);
 }
@@ -700,7 +737,7 @@ function sanitizeDrink(x) {
   return { t: x.t, ml: ml };
 }
 function sanitize(raw) {
-  var out = { days: {}, stickers: {}, maxLevel: 1, goalMl: DEFAULT_GOAL, lastMl: 250 };
+  var out = { v: 5, days: {}, stickers: {}, maxLevel: 1, goalMl: DEFAULT_GOAL, lastMl: 250 };
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
 
   if (raw.days && typeof raw.days === "object" && !Array.isArray(raw.days)) {
@@ -720,6 +757,7 @@ function sanitize(raw) {
         });
       }
       if (d.night === "dry" || d.night === "wet") day.night = d.night;
+      if (day.night === "wet" && typeof d.nightTime === "string" && TIME_RE.test(d.nightTime)) day.nightTime = d.nightTime;
       var dayGoal = Math.round(Number(d.goalMl));
       if (dayGoal >= GOAL_MIN && dayGoal <= GOAL_MAX) day.goalMl = dayGoal;
       day.wees.sort();
@@ -738,10 +776,19 @@ function sanitize(raw) {
   if (goal >= GOAL_MIN && goal <= GOAL_MAX) out.goalMl = goal;
   var last = Math.round(Number(raw.lastMl));
   if (last >= ML_MIN && last <= ML_MAX) out.lastMl = last;
+  if (!(Number(raw.v) >= 5)) {
+    // one-time migration: older days without a stamped goal take the goal that was saved
+    migrated = true;
+    Object.keys(out.days).forEach(function (k) {
+      var dd = out.days[k];
+      if (dd.drinks.length && !dd.goalMl) dd.goalMl = out.goalMl;
+    });
+  }
   return out;
 }
 
 var loadNotice = "";
+var migrated = false;
 
 /* Keeps one backup of a corrupted payload; the same payload is never saved twice. */
 function backupCorrupt(raw) {
@@ -845,6 +892,8 @@ function goalFor(k) {
   return data.goalMl || DEFAULT_GOAL;
 }
 function goal() { return goalFor(selected); }
+/* Goal hits (XP, achievements) never count against less than GOAL_COUNT_MIN. */
+function countGoal(k) { return Math.max(goalFor(k), GOAL_COUNT_MIN); }
 function dayEntries(d) {
   var list = [];
   d.wees.forEach(function (t, i) { list.push({ type: "pee", t: t, idx: i }); });
@@ -892,8 +941,8 @@ function overall() {
   s.perfectDays = 0;
   pastKeys().forEach(function (k) {
     var d = data.days[k];
-    var hit = mlOf(d.drinks) >= goalFor(k);
-    var early = earlyMlOf(d.drinks) >= goalFor(k) / 2;
+    var hit = mlOf(d.drinks) >= countGoal(k);
+    var early = earlyMlOf(d.drinks) >= countGoal(k) / 2;
     if (hit) { s.goalDays++; goalKeys.push(k); }
     if (early) s.earlyDays++;
     if (hit && early && d.night === "dry") s.perfectDays++;
@@ -911,7 +960,7 @@ function xpTotal() {
     xp += Math.min(d.wees.length, MAX_ENTRY_XP) * XP.pee + Math.min(d.drinks.length, MAX_ENTRY_XP) * XP.drink;
     if (d.night) xp += XP.night;
     if (d.night === "dry") xp += XP.dry;
-    if (mlOf(d.drinks) >= goalFor(k)) xp += XP.goal;
+    if (mlOf(d.drinks) >= countGoal(k)) xp += XP.goal;
   });
   xp += Object.keys(data.stickers).length * XP.sticker;
   return xp;
@@ -1148,7 +1197,7 @@ function renderCoach() {
   else nightChip = d.night === "dry" ? "Dry night" : d.night === "wet" ? "Not dry" : "Night not logged";
   $("chips").innerHTML =
     '<span class="chip">' + plural(d.wees.length, W().pee) + '</span>' +
-    '<span class="chip">' + ml + ' / ' + goal() + ' ml</span>' +
+    '<span class="chip">' + fmtMl(ml) + ' / ' + fmtMl(goal()) + '</span>' +
     '<span class="chip">' + esc(nightChip) + '</span>';
 
   var info = levelView();
@@ -1164,12 +1213,12 @@ function renderCoach() {
     $("xpBarWrap").hidden = false;
     $("xpBar").style.setProperty("--p", info.pct + "%");
   }
-  $("ring").setAttribute("aria-label", "Outer ring: water, " + ml + " of " + goal() + " ml. Inner ring: XP. Level " + info.level + ".");
+  $("ring").setAttribute("aria-label", "Outer ring: water, " + fmtMl(ml) + " of " + fmtMl(goal()) + ". Inner ring: XP. Level " + info.level + ".");
   lastXp = info.xp;
 
   $("quickPee").textContent = W().quick;
-  $("quickDrink").textContent = "+ " + data.lastMl + " ml";
-  $("quickDrink").setAttribute("aria-label", "Log a drink of " + data.lastMl + " ml now");
+  $("quickDrink").textContent = "+ " + fmtMl(data.lastMl);
+  $("quickDrink").setAttribute("aria-label", "Log a drink of " + fmtMl(data.lastMl) + " now");
   var tn = getDay(today).night;
   var label;
   if (discreet) label = tn === "dry" ? "Night ●" : tn === "wet" ? "Night ○" : "Night check";
@@ -1187,7 +1236,7 @@ function recapText() {
   }
   var avg = logged ? Math.round(ml / logged / 10) * 10 : 0;
   var nights = discreet ? dry + " nights ●" : plural(dry, "dry night");
-  return "This week: " + nights + " · " + avg + " ml/day · " + logged + "/7 days logged";
+  return "This week: " + nights + " · " + N(avg) + " ml/day · " + logged + "/7 days logged";
 }
 
 function renderTop() {
@@ -1237,6 +1286,10 @@ function renderDay() {
   wetBtn.setAttribute("aria-pressed", String(d.night === "wet"));
   $("nClear").disabled = !d.night;
   $("nightCard").classList.toggle("prompt", isToday && !d.night);
+  $("nightTimeRow").hidden = d.night !== "wet";
+  $("nightTimeLbl").textContent = discreet ? "Time (optional)" : "What time? (optional)";
+  if (document.activeElement !== $("nightTime")) $("nightTime").value = d.nightTime || "";
+  $("nightTimeClear").disabled = !d.nightTime;
 
   $("weeTitle").innerHTML = '<span class="dotk pee" aria-hidden="true"></span>' + esc(words.section);
   $("weeAdd").textContent = words.log;
@@ -1247,14 +1300,14 @@ function renderDay() {
   var ml = mlOf(d.drinks);
   $("fill").style.setProperty("--p", Math.min(100, ml / goal() * 100) + "%");
   $("goalText").textContent = ml >= goal()
-    ? "Goal hit · " + ml + " ml"
-    : ml + " of " + goal() + " ml";
+    ? "Goal hit · " + fmtMl(ml)
+    : fmtMl(ml) + " of " + fmtMl(goal());
   var early = earlyMlOf(d.drinks);
   $("earlyText").textContent = early > 0
-    ? early + " ml before 4pm. Counts toward Early Bird."
+    ? fmtMl(early) + " before 4pm. Counts toward Early Bird."
     : "Water before 4pm counts toward Early Bird.";
-  $("goalBtn").textContent = data.goalMl + " ml ✎";
-  $("goalBtn").setAttribute("aria-label", "Goal for new days: " + data.goalMl + " ml. Edit");
+  $("goalBtn").textContent = fmtMl(data.goalMl) + " ✎";
+  $("goalBtn").setAttribute("aria-label", "Goal for new days: " + fmtMl(data.goalMl) + ". Edit");
   renderPresets();
 }
 
@@ -1262,7 +1315,7 @@ function renderPresets() {
   var current = Number($("mlInput").value);
   $("presets").innerHTML = PRESETS.map(function (p) {
     return '<button type="button" class="preset" data-ml="' + p.ml + '" aria-pressed="' + (current === p.ml) + '">' +
-      esc(p.label) + ' ' + p.ml + ' ml</button>';
+      esc(p.label) + ' ' + fmtMl(p.ml) + '</button>';
   }).join("");
 }
 
@@ -1277,8 +1330,8 @@ function renderLists(d) {
 
   $("drinkList").innerHTML = d.drinks.length
     ? d.drinks.map(function (x, i) {
-        return '<li><span>' + esc(prettyTime(x.t)) + ' · ' + x.ml + ' ml</span>' +
-          '<button class="x" type="button" data-del-drink="' + i + '" aria-label="Remove drink of ' + x.ml + ' ml at ' + esc(prettyTime(x.t)) + '">✕</button></li>';
+        return '<li><span>' + esc(prettyTime(x.t)) + ' · ' + fmtMl(x.ml) + '</span>' +
+          '<button class="x" type="button" data-del-drink="' + i + '" aria-label="Remove drink of ' + fmtMl(x.ml) + ' at ' + esc(prettyTime(x.t)) + '">✕</button></li>';
       }).join("")
     : '<li class="empty">Nothing logged yet.</li>';
 }
@@ -1293,7 +1346,7 @@ function mlLevel(ml, g) {
 }
 
 function entryAria(e) {
-  var who = e.type === "drink" ? "drink " + e.ml + " ml" : W().pee;
+  var who = e.type === "drink" ? "drink " + fmtMl(e.ml) : W().pee;
   return prettyTime(e.t) + " " + who;
 }
 
@@ -1316,16 +1369,17 @@ function dayCellHtml(k) {
   var glyph = day.night === "dry" ? (discreet ? "●" : "✓") : day.night === "wet" ? "○" : "";
 
   var nightText;
-  if (discreet) nightText = day.night === "dry" ? "Night check yes. " : day.night === "wet" ? "Night check no. " : "Night not logged. ";
-  else nightText = day.night === "dry" ? "Dry night before. " : day.night === "wet" ? "Not dry the night before. " : "Night not logged. ";
+  var nt = day.nightTime ? prettyTime(day.nightTime) : "";
+  if (discreet) nightText = day.night === "dry" ? "Night check yes. " : day.night === "wet" ? "Night check no" + (nt ? ", " + nt : "") + ". " : "Night not logged. ";
+  else nightText = day.night === "dry" ? "Dry night before. " : day.night === "wet" ? "Not dry the night before" + (nt ? ", around " + nt : "") + ". " : "Night not logged. ";
 
   var entries = dayEntries(day);
   var times = entries.length ? " Logged: " + entries.map(entryAria).join("; ") + "." : " Nothing logged.";
-  var label = base + ". " + nightText + plural(day.wees.length, W().pee) + ", " + ml + " ml." + times + (isSel ? " Selected." : "");
+  var label = base + ". " + nightText + plural(day.wees.length, W().pee) + ", " + fmtMl(ml) + "." + times + (isSel ? " Selected." : "");
 
   var counts = "";
   if (day.wees.length) counts += '<span class="b b-pee">' + Math.min(day.wees.length, 99) + '</span>';
-  if (ml) counts += '<span class="b b-drink">' + ml + '</span>';
+  if (ml) counts += '<span class="b b-drink">' + N(ml) + '</span>';
 
   var preview = entries.slice(0, 3).map(function (e) {
     return '<span class="pv"><i class="pd ' + e.type + '"></i>' + esc(prettyTime(e.t)) + '</span>';
@@ -1389,7 +1443,7 @@ function renderCal() {
   function avg(total, round) {
     if (!logged) return "–";
     var v = total / logged;
-    return String(round ? Math.round(v / 10) * 10 : Math.round(v * 10) / 10);
+    return round ? N(Math.round(v / 10) * 10) : String(Math.round(v * 10) / 10);
   }
   $("mstats").innerHTML =
     '<div class="stat"><b>' + dryN + '</b><small>' + (discreet ? "nights ●" : "dry nights") + '</small></div>' +
@@ -1420,7 +1474,8 @@ function barChartSvg(series, opts) {
   var step = niceStep(rawMax);
   var max = step * Math.ceil(rawMax / step);
 
-  var W2 = 300, H = 120, left = 34, right = 4, top = 14, bottom = 20;
+  var W2 = 300, H = 120, left = 40, right = 4, top = 14, bottom = 20;
+  var f = opts.fmt || String;
   var plotW = W2 - left - right, plotH = H - top - bottom;
   var group = plotW / series.length;
   var barW = Math.max(3, Math.min(22, group * 0.6));
@@ -1431,11 +1486,12 @@ function barChartSvg(series, opts) {
   for (v = 0; v <= max; v += step) {
     var y = top + plotH * (1 - v / max);
     svg += '<line class="grid" x1="' + left + '" x2="' + (W2 - right) + '" y1="' + y + '" y2="' + y + '"/>';
-    svg += '<text class="ax" x="' + (left - 4) + '" y="' + (y + 4) + '" text-anchor="end">' + v + '</text>';
+    svg += '<text class="ax" x="' + (left - 4) + '" y="' + (y + 4) + '" text-anchor="end">' + f(v) + '</text>';
   }
   if (opts.goalLine) {
     var gy = top + plotH * (1 - opts.goalLine / max);
     svg += '<line class="goal" x1="' + left + '" x2="' + (W2 - right) + '" y1="' + gy + '" y2="' + gy + '"/>';
+    svg += '<text class="ax" x="' + (W2 - right) + '" y="' + (gy - 3) + '" text-anchor="end">current goal</text>';
   }
 
   series.forEach(function (s, idx) {
@@ -1446,7 +1502,7 @@ function barChartSvg(series, opts) {
       svg += '<rect class="' + opts.cls + (s.future ? " off" : "") + '" x="' + (cx - barW / 2) + '" y="' + (top + plotH - h) +
              '" width="' + barW + '" height="' + h + '" rx="2"/>';
       if (showValues) {
-        var shown = opts.round ? Math.round(val / 10) * 10 : val;
+        var shown = f(opts.round ? Math.round(val / 10) * 10 : val);
         svg += '<text class="val" x="' + cx + '" y="' + (top + plotH - h - 3) + '">' + shown + '</text>';
       }
     }
@@ -1476,12 +1532,12 @@ function renderChart() {
   series.forEach(function (s) { peeTotal += s.pee; mlTotal += s.ml; });
   var rangeLabel = chartMode === "week" ? "last 7 days" : MONTHS[view.m] + " " + view.y;
 
-  var water = barChartSvg(series, { key: "ml", cls: "bd", minMax: 500, goalLine: data.goalMl, round: true });
+  var water = barChartSvg(series, { key: "ml", cls: "bd", minMax: 500, goalLine: data.goalMl, round: true, fmt: N });
   var pee = barChartSvg(series, { key: "pee", cls: "bp", minMax: 4, goalLine: 0, round: false });
   function wrap(c, label) {
     return '<svg class="chart" viewBox="0 0 ' + c.W + ' ' + c.H + '" role="img" aria-label="' + esc(label) + '">' + c.svg + '</svg>';
   }
-  $("chartWater").innerHTML = wrap(water, "Bar chart of water in ml, " + rangeLabel + ". Total " + mlTotal + " ml. Dashed line is your current goal of " + data.goalMl + " ml.");
+  $("chartWater").innerHTML = wrap(water, "Bar chart of water in ml, " + rangeLabel + ". Total " + fmtMl(mlTotal) + ". Dashed line is your current goal of " + fmtMl(data.goalMl) + ".");
   $("chartPee").innerHTML = wrap(pee, "Bar chart of " + W().pee + " counts, " + rangeLabel + ". Total " + peeTotal + ".");
   $("rWeek").setAttribute("aria-pressed", String(chartMode === "week"));
   $("rMonth").setAttribute("aria-pressed", String(chartMode !== "week"));
@@ -1536,7 +1592,6 @@ function renderTools() {
   if (discreet) document.documentElement.setAttribute("data-discreet", "1");
   else document.documentElement.removeAttribute("data-discreet");
   var appName = discreet ? "Loop" : "haPENIS";      // neutral name while discreet
-  $("appName").textContent = appName;
   document.title = appName;
 }
 
@@ -1549,47 +1604,82 @@ function renderTimes() {
 /* ---------- day timeline ---------- */
 function isTlOpen() { return $("tl").hasAttribute("open"); }
 
-var tlExpanded = {};
+var tlExpanded = [];      // open groups, tracked by the minutes they cover so they stay open as entries change
+var ROW_H = 44;
+
+function nightStatusText(d) {
+  var t = d.nightTime ? prettyTime(d.nightTime) : "";
+  if (discreet) {
+    if (d.night === "dry") return "Night check: ●";
+    if (d.night === "wet") return "Night check: ○" + (t ? " · " + t : "");
+    return "Night check: not logged";
+  }
+  if (d.night === "dry") return "Dry night";
+  if (d.night === "wet") return "Not dry" + (t ? " · ~" + t : "");
+  return "Night not logged";
+}
 
 function renderTlNight(d) {
   $("tlNightLbl").textContent = discreet ? "Night check" : "Night before";
-  $("tlNDry").textContent = discreet ? "● Yes" : "✓ Dry";
-  $("tlNWet").textContent = discreet ? "○ No" : "○ Not dry";
+  $("tlNDry").textContent = discreet ? "●" : "✓";
+  $("tlNWet").textContent = "○";
+  $("tlNDry").setAttribute("aria-label", discreet ? "Night check yes" : "Dry night");
+  $("tlNWet").setAttribute("aria-label", discreet ? "Night check no" : "Not dry");
   $("tlNDry").setAttribute("aria-pressed", String(d.night === "dry"));
   $("tlNWet").setAttribute("aria-pressed", String(d.night === "wet"));
   $("tlNClear").disabled = !d.night;
+  $("tlNightStatus").textContent = nightStatusText(d);
+
+  var wet = d.night === "wet";
+  $("tlNightTimeRow").hidden = !wet;
+  $("tlNightTimeLbl").textContent = discreet ? "Time (optional)" : "What time? (optional)";
+  if (document.activeElement !== $("tlNightTime")) $("tlNightTime").value = d.nightTime || "";
+  $("tlNightTimeClear").disabled = !d.nightTime;
+
+  // the "Night" band above the day's hours
+  var showBand = wet && !!d.nightTime;
+  $("tlBand").hidden = !showBand;
+  if (showBand) $("tlBandMark").textContent = (discreet ? "○ " : "🌙 ") + prettyTime(d.nightTime);
 }
 
 function chipDeleteAttr(e) {
   return e.type === "drink" ? 'data-tl-drink="' + e.idx + '"' : 'data-tl-wee="' + e.idx + '"';
 }
 function entryLabel(e) {
-  return e.type === "drink" ? "drink " + e.ml + " ml" : W().pee;
+  return e.type === "drink" ? "drink " + fmtMl(e.ml) : W().pee;
 }
 
-/* A crowded cluster becomes one chip that expands into a readable list. */
-function groupHtml(cluster) {
+function findOpenRec(range) {
+  for (var i = 0; i < tlExpanded.length; i++) {
+    if (tlExpanded[i].lo <= range.hi && range.lo <= tlExpanded[i].hi) return tlExpanded[i];
+  }
+  return null;
+}
+
+/* A crowded cluster becomes one header that expands into rows, in the flow of the page
+   (later entries and hour lines shift down, so nothing is hidden). */
+function groupHtml(cluster, top) {
   var items = cluster.items;
   var first = items[0], last = items[items.length - 1];
   var drinks = items.filter(function (e) { return e.type === "drink"; });
   var pees = items.filter(function (e) { return e.type === "pee"; });
-  var key = "g" + first.t;
-  var open = !!tlExpanded[key];
+  var range = cluster.range;
+  var open = cluster.open;
   var parts = [];
   if (drinks.length) {
     var total = drinks.reduce(function (sum, e) { return sum + e.ml; }, 0);
-    parts.push(plural(drinks.length, "drink") + " · " + total.toLocaleString() + " ml");
+    parts.push(plural(drinks.length, "drink") + " · " + fmtMl(total));
   }
   if (pees.length) parts.push(plural(pees.length, W().pee));
   var title = prettyTime(first.t) + "–" + prettyTime(last.t) + " · " + parts.join(" · ");
-  var id = "tlg-" + key.slice(1).replace(":", "");
+  var id = "tlg-" + range.lo;
 
-  var html = '<li class="tl-group' + (open ? " open" : "") + '" style="top:' + first.top + 'px">' +
-    '<button class="tl-gh" type="button" data-tl-group="' + key + '" aria-expanded="' + open + '" aria-controls="' + id + '">' +
+  var html = '<li class="tl-group' + (open ? " open" : "") + '" style="top:' + top + 'px">' +
+    '<button class="tl-gh" type="button" data-tl-group="1" data-lo="' + range.lo + '" data-hi="' + range.hi + '" aria-expanded="' + open + '" aria-controls="' + id + '">' +
     '<span>' + esc(title) + '</span><span class="chev" aria-hidden="true">' + (open ? "▴" : "▾") + '</span></button>';
   if (open) {
     html += '<div id="' + id + '">' + items.map(function (e) {
-      var sub = e.type === "drink" ? e.ml + " ml" : W().Pee;
+      var sub = e.type === "drink" ? fmtMl(e.ml) : W().Pee;
       return '<div class="tl-row ' + e.type + '"><span>' + entryIcon(e.type) + ' ' + esc(prettyTime(e.t)) + ' · ' + esc(sub) + '</span>' +
         '<button class="x" type="button" ' + chipDeleteAttr(e) + ' aria-label="Remove ' + esc(entryLabel(e)) + ' at ' + esc(prettyTime(e.t)) + '">✕</button></div>';
     }).join("") + '</div>';
@@ -1610,7 +1700,7 @@ function renderTimeline() {
     : (isToday ? "Today · " : "") + longDate(selected);
   $("tlNext").disabled = selected >= today;
   renderTlNight(d);
-  $("tlTotals").textContent = plural(d.wees.length, W().pee) + " · " + mlOf(d.drinks) + " / " + goal() + " ml";
+  $("tlTotals").textContent = plural(d.wees.length, W().pee) + " · " + fmtMl(mlOf(d.drinks)) + " / " + fmtMl(goal());
 
   // visible hours: 06:00-22:00 by default, widened to fit every entry
   var startH = 6, endH = 22;
@@ -1620,18 +1710,6 @@ function renderTimeline() {
     endH = Math.max(endH, Math.ceil((m + 1) / 60));
   });
   endH = Math.min(endH, 24);
-  var height = (endH - startH) * HOUR_PX;
-
-  var html = "", h;
-  for (h = startH; h <= endH; h++) {
-    html += '<li class="tl-hr" aria-hidden="true" style="top:' + (h - startH) * HOUR_PX + 'px"><span>' + pad(h % 24) + ':00</span></li>';
-  }
-  if (isToday) {
-    var nowM = minutesOf(nowTime());
-    if (nowM >= startH * 60 && nowM <= endH * 60) {
-      html += '<li class="tl-now" aria-hidden="true" style="top:' + (nowM - startH * 60) / 60 * HOUR_PX + 'px"></li>';
-    }
-  }
 
   // cluster entries that overlap in time, assign lanes inside each cluster
   var cluster = null, clusters = [];
@@ -1649,17 +1727,58 @@ function renderTimeline() {
     e.lane = lane;
   });
 
+  // open groups push everything after them down by the height of their rows
+  var extras = [], extraTotal = 0;
   clusters.forEach(function (c) {
-    if (c.lanes.length > maxLanes) {
-      html += groupHtml(c);
+    c.isGroup = c.lanes.length > maxLanes;
+    if (!c.isGroup) return;
+    c.range = { lo: minutesOf(c.items[0].t), hi: minutesOf(c.items[c.items.length - 1].t) };
+    var rec = findOpenRec(c.range);
+    c.open = !!rec;
+    if (rec) {
+      rec.lo = c.range.lo;
+      rec.hi = c.range.hi;
+      var h = c.items.length * ROW_H;
+      extras.push({ at: c.items[0].top + CHIP_H, h: h });
+      extraTotal += h;
+    }
+  });
+  function shiftAt(y) {
+    var sum = 0;
+    extras.forEach(function (x) { if (x.at <= y) sum += x.h; });
+    return sum;
+  }
+
+  var height = (endH - startH) * HOUR_PX + extraTotal;
+  var html = "", h;
+  for (h = startH; h <= endH; h++) {
+    var y0 = (h - startH) * HOUR_PX;
+    html += '<li class="tl-hr" aria-hidden="true" style="top:' + (y0 + shiftAt(y0)) + 'px"><span>' + esc(hourLabel(h)) + '</span></li>';
+  }
+  if (isToday) {
+    var nowM = minutesOf(nowTime());
+    if (nowM >= startH * 60 && nowM <= endH * 60) {
+      var yn = (nowM - startH * 60) / 60 * HOUR_PX;
+      html += '<li class="tl-now" aria-hidden="true" style="top:' + (yn + shiftAt(yn)) + 'px"></li>';
+    }
+  }
+
+  var firstTop = null;
+  clusters.forEach(function (c) {
+    if (c.isGroup) {
+      var gTop = c.items[0].top + shiftAt(c.items[0].top);
+      if (firstTop === null) firstTop = gTop;
+      html += groupHtml(c, gTop);
       return;
     }
     var frac = 1 / c.lanes.length;
     c.items.forEach(function (e) {
+      var top = e.top + shiftAt(e.top);
+      if (firstTop === null) firstTop = top;
       var left = "calc(" + GUTTER + "px + (100% - " + GUTTER + "px) * " + (e.lane * frac).toFixed(4) + ")";
       var width = "calc((100% - " + GUTTER + "px) * " + frac.toFixed(4) + " - 4px)";
-      var sub = e.type === "drink" ? e.ml + " ml" : W().Pee;
-      html += '<li class="tl-chip ' + e.type + '" style="top:' + e.top + 'px;left:' + left + ';width:' + width + '">' +
+      var sub = e.type === "drink" ? fmtMl(e.ml) : W().Pee;
+      html += '<li class="tl-chip ' + e.type + '" style="top:' + top + 'px;left:' + left + ';width:' + width + '">' +
         '<span class="tl-ic" aria-hidden="true">' + entryIcon(e.type) + '</span>' +
         '<span class="tl-tx"><b>' + esc(prettyTime(e.t)) + '</b><small>' + esc(sub) + '</small></span>' +
         '<button class="x" type="button" ' + chipDeleteAttr(e) + ' aria-label="Remove ' + esc(entryLabel(e)) + ' at ' + esc(prettyTime(e.t)) + '">✕</button></li>';
@@ -1674,7 +1793,7 @@ function renderTimeline() {
   track.innerHTML = html;
   track.setAttribute("aria-label", "Entries in time order");
   track._startH = startH;
-  track._firstTop = entries.length ? entries[0].top : null;
+  track._firstTop = firstTop;
 }
 
 function scrollTimelineToStart() {
@@ -1683,7 +1802,7 @@ function scrollTimelineToStart() {
   if (target === null && selected === today) {
     target = (minutesOf(nowTime()) - track._startH * 60) / 60 * HOUR_PX - 120;
   }
-  $("tlScroll").scrollTop = Math.max(0, (target || 0) - 40);
+  $("tlScroll").scrollTop = Math.max(0, (target || 0) + track.offsetTop - 80);
 }
 
 function renderTlForm() {
@@ -1851,7 +1970,7 @@ function readMl(input, errEl) {
   var raw = String(input.value).trim();
   var n = Number(raw);
   if (raw === "" || !isFinite(n) || n < ML_MIN || n > ML_MAX) {
-    errEl.textContent = "Please enter an amount between " + ML_MIN + " and " + ML_MAX + " ml.";
+    errEl.textContent = "Please enter an amount between " + N(ML_MIN) + " and " + N(ML_MAX) + " ml.";
     input.setAttribute("aria-invalid", "true");
     input.focus();
     return null;
@@ -1913,6 +2032,7 @@ function setNight(value) {
   if (d.night === value) return;     // already chosen; use Clear to remove
   var before = streaks();
   d.night = value;
+  if (value === "dry") delete d.nightTime;     // a time only belongs to a not-dry night
 
   if (value === "dry") {
     var after = streaks();
@@ -1928,10 +2048,36 @@ function setNight(value) {
   }
 }
 
+function setNightTime(value) {
+  var d = getDay(selected, true);
+  if (d.night !== "wet") return;
+  if (value && TIME_RE.test(value)) d.nightTime = value;
+  else delete d.nightTime;
+  save();
+  renderSoon();
+}
+
+/* A blur-triggered change fires between mousedown and mouseup; re-rendering then would
+   replace the element being clicked, so wait until the pointer is released. */
+var pointerDown = false, pendingRender = false;
+document.addEventListener("pointerdown", function () { pointerDown = true; }, true);
+document.addEventListener("pointerup", function () {
+  pointerDown = false;
+  setTimeout(function () {
+    if (pendingRender) { pendingRender = false; renderAll(); }
+  }, 60);
+}, true);
+document.addEventListener("pointercancel", function () { pointerDown = false; }, true);
+function renderSoon() {
+  if (pointerDown) pendingRender = true;
+  else renderAll();
+}
+
 function clearNight() {
   var d = getDay(selected);
   if (!d.night) return;
   d.night = null;
+  delete d.nightTime;
   pruneDay(selected);
   override = null;
   sfx("remove");
@@ -2013,7 +2159,7 @@ function selectDay(k, opts) {
   if (!isValidKey(k) || k > today) return;
   selected = k;
   override = null;
-  tlExpanded = {};
+  tlExpanded = [];
   view = monthOf(k);
   calFocus = !!opts.focus;
   renderAll();
@@ -2044,8 +2190,8 @@ function commitGoal() {
   var input = $("goalInput");
   var raw = String(input.value).trim();
   var n = Number(raw);
-  if (raw === "" || !isFinite(n) || n < GOAL_MIN || n > GOAL_MAX) {
-    $("goalErr").textContent = "Pick a goal between " + GOAL_MIN + " and " + GOAL_MAX + " ml.";
+  if (raw === "" || !isFinite(n) || n < GOAL_UI_MIN || n > GOAL_UI_MAX) {
+    $("goalErr").textContent = "Pick a goal between " + N(GOAL_UI_MIN) + " and " + N(GOAL_UI_MAX) + " ml.";
     input.setAttribute("aria-invalid", "true");
     input.focus();
     return;
@@ -2277,6 +2423,10 @@ $("tlNext").addEventListener("click", function () { selectDay(addDays(selected, 
 $("tlNDry").addEventListener("click", function () { setNight("dry"); });
 $("tlNWet").addEventListener("click", function () { setNight("wet"); });
 $("tlNClear").addEventListener("click", clearNight);
+$("tlNightTime").addEventListener("change", function () { setNightTime(this.value); });
+$("tlNightTimeClear").addEventListener("click", function () { setNightTime(""); });
+$("nightTime").addEventListener("change", function () { setNightTime(this.value); });
+$("nightTimeClear").addEventListener("click", function () { setNightTime(""); });
 $("tlTypeDrink").addEventListener("click", function () { tlType = "drink"; renderTlForm(); });
 $("tlTypePee").addEventListener("click", function () { tlType = "pee"; renderTlForm(); });
 $("tlTrack").addEventListener("click", function (e) {
@@ -2284,11 +2434,15 @@ $("tlTrack").addEventListener("click", function (e) {
   var w = e.target.closest("[data-tl-wee]");
   var dr = e.target.closest("[data-tl-drink]");
   if (g) {
-    var key = g.getAttribute("data-tl-group");
-    tlExpanded[key] = !tlExpanded[key];
+    var range = { lo: +g.getAttribute("data-lo"), hi: +g.getAttribute("data-hi") };
+    var rec = findOpenRec(range);
+    if (rec) tlExpanded.splice(tlExpanded.indexOf(rec), 1);
+    else tlExpanded.push(range);
     renderTimeline();
-    var again = $("tlTrack").querySelector('[data-tl-group="' + key + '"]');
-    if (again) again.focus();
+    Array.prototype.forEach.call($("tlTrack").querySelectorAll("[data-tl-group]"), function (btn) {
+      var lo = +btn.getAttribute("data-lo"), hi = +btn.getAttribute("data-hi");
+      if (lo <= range.hi && range.lo <= hi) btn.focus();
+    });
   } else if (w) deleteEntry("wee", +w.getAttribute("data-tl-wee"), "tl");
   else if (dr) deleteEntry("drink", +dr.getAttribute("data-tl-drink"), "tl");
 });
@@ -2373,7 +2527,7 @@ setInterval(refreshClock, 30000);
   var before = JSON.stringify(data.stickers) + data.maxLevel;
   awardStickers();                                           // silently catch up
   data.maxLevel = Math.max(data.maxLevel || 1, levelFromXp(xpTotal()));
-  if (JSON.stringify(data.stickers) + data.maxLevel !== before) save();
+  if (migrated || JSON.stringify(data.stickers) + data.maxLevel !== before) save();
   $("goalInput").value = data.goalMl;
   $("mlInput").value = data.lastMl;
   $("tlMl").value = data.lastMl;
