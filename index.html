@@ -19,42 +19,56 @@ try {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ---------- design tokens: one block, light-dark(light, dark) ---------- */
+/* ---------- design tokens: plain values only (dark default) ---------- */
 :root{
-  color-scheme: light dark;
-  --bg:light-dark(#eef1fa,#080b16);
-  --glow1:light-dark(rgba(124,58,237,.16),rgba(124,58,237,.35));
-  --glow2:light-dark(rgba(34,211,238,.18),rgba(34,211,238,.22));
-  --card:light-dark(rgba(255,255,255,.94),rgba(19,26,44,.92));
-  --card-solid:light-dark(#ffffff,#131a2c);
-  --line:light-dark(#ccd5ea,#2b3658);
-  --chip:light-dark(#edf0f9,#1b2440);
-  --cell:light-dark(#e8ecf7,#182038);
-  --ink:light-dark(#0f172a,#eef2ff);
-  --muted:light-dark(#475569,#a8b3d4);
-  --g1:light-dark(#6d28d9,#7c3aed);
-  --g2:light-dark(#1d4ed8,#2563eb);
-  --on-g:#ffffff;
-  --accent:light-dark(#f59e0b,#fbbf24);
-  --accent-ink:#1a1200;
-  --dry:light-dark(#047857,#34d399);
-  --dry-bg:light-dark(#c9f5df,#0f3b30);
-  --dry-glow-c:light-dark(rgba(16,185,129,.55),rgba(52,211,153,.65));
-  --nd:light-dark(#4338ca,#a5b4fc);
-  --nd-bg:light-dark(#dfe4ff,#262d63);
-  --sel:light-dark(#be185d,#f472b6);
-  --flame:light-dark(#e0620f,#ff8a3d);
-  --c-drink:light-dark(#0e7490,#22d3ee);
-  --c-pee:light-dark(#b45309,#fbbf24);
-  --bp-bg:light-dark(#fde9b0,#3d3210);
-  --bp-ink:light-dark(#6b3a05,#fde68a);
-  --bd-bg:light-dark(#c4f1fb,#0c3a4a);
-  --bd-ink:light-dark(#134e63,#a5f3fc);
-  --shadow-c:light-dark(rgba(40,60,120,.14),rgba(0,0,0,.45));
-  --shadow:0 10px 30px var(--shadow-c);
+  color-scheme: dark;
+  --bg:#080b16; --glow1:rgba(124,58,237,.35); --glow2:rgba(34,211,238,.22);
+  --card:rgba(19,26,44,.92); --card-solid:#131a2c; --line:#2b3658; --chip:#1b2440; --cell:#182038;
+  --ink:#eef2ff; --muted:#a8b3d4;
+  --g1:#7c3aed; --g2:#2563eb; --on-g:#ffffff;
+  --accent:#fbbf24; --accent-ink:#1a1200;
+  --dry:#34d399; --dry-bg:#0f3b30; --dry-glow-c:rgba(52,211,153,.65);
+  --nd:#a5b4fc; --nd-bg:#262d63;
+  --sel:#f472b6; --flame:#ff8a3d;
+  --c-drink:#22d3ee; --c-pee:#fbbf24;
+  --bp-bg:#3d3210; --bp-ink:#fde68a; --bd-bg:#0c3a4a; --bd-ink:#a5f3fc;
+  --h1:#1b2a55; --h2:#1f3a7a; --h3:#234b9e; --h4:#2a5dc4;
+  --shadow-c:rgba(0,0,0,.45);
 }
-:root[data-theme="light"]{color-scheme:light}
-:root[data-theme="dark"]{color-scheme:dark}
+/* light: follows the OS when theme is auto, unless the user forced dark */
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    color-scheme: light;
+    --bg:#eef1fa; --glow1:rgba(124,58,237,.16); --glow2:rgba(34,211,238,.18);
+    --card:rgba(255,255,255,.94); --card-solid:#ffffff; --line:#ccd5ea; --chip:#edf0f9; --cell:#e8ecf7;
+    --ink:#0f172a; --muted:#475569;
+    --g1:#6d28d9; --g2:#1d4ed8;
+    --accent:#f59e0b;
+    --dry:#047857; --dry-bg:#c9f5df; --dry-glow-c:rgba(16,185,129,.55);
+    --nd:#4338ca; --nd-bg:#dfe4ff;
+    --sel:#be185d; --flame:#e0620f;
+    --c-drink:#0e7490; --c-pee:#b45309;
+    --bp-bg:#fde9b0; --bp-ink:#6b3a05; --bd-bg:#c4f1fb; --bd-ink:#134e63;
+    --h1:#dbe6fb; --h2:#c3d6f8; --h3:#a9c4f5; --h4:#8fb4f5;
+    --shadow-c:rgba(40,60,120,.14);
+  }
+}
+:root[data-theme="light"]{
+  color-scheme: light;
+  --bg:#eef1fa; --glow1:rgba(124,58,237,.16); --glow2:rgba(34,211,238,.18);
+  --card:rgba(255,255,255,.94); --card-solid:#ffffff; --line:#ccd5ea; --chip:#edf0f9; --cell:#e8ecf7;
+  --ink:#0f172a; --muted:#475569;
+  --g1:#6d28d9; --g2:#1d4ed8;
+  --accent:#f59e0b;
+  --dry:#047857; --dry-bg:#c9f5df; --dry-glow-c:rgba(16,185,129,.55);
+  --nd:#4338ca; --nd-bg:#dfe4ff;
+  --sel:#be185d; --flame:#e0620f;
+  --c-drink:#0e7490; --c-pee:#b45309;
+  --bp-bg:#fde9b0; --bp-ink:#6b3a05; --bd-bg:#c4f1fb; --bd-ink:#134e63;
+  --h1:#dbe6fb; --h2:#c3d6f8; --h3:#a9c4f5; --h4:#8fb4f5;
+  --shadow-c:rgba(40,60,120,.14);
+}
+:root[data-theme="dark"]{color-scheme: dark}
 
 /* ---------- base ---------- */
 *{box-sizing:border-box}
@@ -64,14 +78,16 @@ body{
   color:var(--ink); background:var(--bg); min-height:100vh; font-size:16px; line-height:1.4; overflow-x:hidden;
 }
 body::before{
-  content:""; position:fixed; inset:0; z-index:-1;
+  content:""; position:fixed; top:0; right:0; bottom:0; left:0; z-index:-1;
   background:
     radial-gradient(60% 50% at 10% 0%, var(--glow1), transparent 70%),
     radial-gradient(50% 45% at 100% 100%, var(--glow2), transparent 70%);
 }
 button,input{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:3px solid var(--sel); outline-offset:2px; border-radius:10px}
+/* focus ring with a fallback for browsers without :focus-visible */
+button:focus,input:focus,[tabindex]:focus{outline:3px solid var(--sel);outline-offset:2px}
+button:focus:not(:focus-visible),input:focus:not(:focus-visible),[tabindex]:focus:not(:focus-visible){outline:none}
 [hidden]{display:none!important}
 .wrap{max-width:1100px;margin:0 auto;padding:14px 16px 40px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -79,18 +95,20 @@ h1{margin:0;font-size:clamp(1.5rem,6vw,2rem);letter-spacing:-.5px;display:flex;a
 h1 .logo{display:inline-block;width:.8em;height:.8em;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:0 0 16px var(--g1)}
 h1 .sub{font-size:.9rem;font-weight:500;color:var(--muted);letter-spacing:0}
 h2{margin:0 0 10px;font-size:1.1rem;letter-spacing:-.2px}
+h3{margin:0 0 4px;font-size:.95rem}
 header.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 14px}
 .tools{display:flex;gap:8px}
 
-.card{background:var(--card);border-radius:22px;padding:16px;box-shadow:var(--shadow);border:1px solid var(--line);min-width:0}
-.card.glow{box-shadow:0 0 0 3px var(--g1),0 0 28px var(--g1),var(--shadow)}
+.card{background:var(--card);border-radius:22px;padding:16px;box-shadow:0 10px 30px var(--shadow-c);border:1px solid var(--line);min-width:0}
+.card.glow{box-shadow:0 0 0 3px var(--g1),0 0 28px var(--g1),0 10px 30px var(--shadow-c)}
 .btn{border:0;border-radius:14px;padding:10px 18px;min-height:44px;background:linear-gradient(135deg,var(--g1),var(--g2));color:var(--on-g);font-weight:600;transition:transform .1s,filter .15s}
 .btn:hover{filter:brightness(1.1)}
 .btn:active{transform:scale(.97)}
 .btn.alt{background:var(--accent);color:var(--accent-ink)}
 .btn.ghost{background:var(--chip);color:var(--ink);border:1px solid var(--line)}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
-.tool{width:44px;padding:0;font-size:1.15rem;line-height:1}
+.tool{width:44px;padding:0;font-size:1.15rem;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.tool svg{width:22px;height:22px;display:block}
 .tool[aria-pressed="true"]{border-color:var(--g1);box-shadow:inset 0 0 0 1px var(--g1)}
 
 .notice{background:var(--chip);border:1px solid var(--accent);border-radius:16px;padding:10px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
@@ -100,7 +118,7 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:10p
 .status-card{display:grid;grid-template-columns:auto 1fr;gap:12px 16px;align-items:center}
 .ring-col{display:grid;gap:4px;justify-items:center}
 .ring-wrap{width:124px;height:124px;position:relative}
-.ring-wrap.ping::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid var(--sel);animation:ping .9s ease-out}
+.ring-wrap.ping::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;border-radius:50%;border:3px solid var(--sel);animation:ping .9s ease-out}
 .ring{width:100%;height:100%;display:block}
 .ring .trk{fill:none;stroke:var(--chip);stroke-width:10}
 .ring .trk.thin{stroke-width:7}
@@ -140,14 +158,17 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:10p
 [data-discreet="1"] .dot.dry{background:var(--muted);border-color:var(--muted);box-shadow:none}
 [data-discreet="1"] .dot.nd{background:transparent;border:2px solid var(--muted)}
 .legend{font-size:.85rem;color:var(--muted);margin:8px 0 0}
+.err{font-size:.85rem;color:var(--sel);margin:6px 0 0;min-height:0}
+.err:empty{display:none}
 
 /* ---------- day bar (the only blurred surface) ---------- */
 .daybar{position:sticky;top:6px;z-index:20;margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px;border-color:var(--g1);background:var(--card-solid)}
 @supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
-  .daybar{background:var(--card);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .daybar{background:var(--card);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 }
 .daybar h2{margin:0;font-size:1.05rem}
 .daybar small{display:block;color:var(--muted);font-weight:400}
+.daybar .acts{display:flex;gap:8px;flex-wrap:wrap}
 
 /* ---------- layout ---------- */
 .main{display:grid;gap:14px;grid-template-columns:1fr;margin-top:14px}
@@ -155,19 +176,21 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:10p
 .below{margin-top:14px}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 label{font-weight:500}
-input[type=time]{border:1px solid var(--line);background:var(--chip);border-radius:12px;padding:8px 10px;min-height:44px;color:var(--ink)}
+input[type=time],input[type=number]{border:1px solid var(--line);background:var(--chip);border-radius:12px;padding:8px 10px;min-height:44px;color:var(--ink)}
+input[type=number]{width:100px}
+input[aria-invalid="true"]{border-color:var(--sel)}
 #nightCard{scroll-margin-top:96px}
-#nightCard.prompt{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+#nightCard.prompt{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),0 10px 30px var(--shadow-c)}
 .dotk{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
 .dotk.pee{background:var(--c-pee)} .dotk.drink{background:var(--c-drink)}
 
-.sizes{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
-.size{border:1px solid var(--line);background:var(--chip);border-radius:12px;padding:6px 14px;min-height:44px;font-weight:500}
-.size[aria-pressed="true"]{background:linear-gradient(135deg,var(--g1),var(--g2));color:var(--on-g);border-color:transparent}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.preset{border:1px solid var(--line);background:var(--chip);border-radius:12px;padding:6px 14px;min-height:44px;font-weight:500}
+.preset[aria-pressed="true"]{background:linear-gradient(135deg,var(--g1),var(--g2));color:var(--on-g);border-color:transparent}
 .list{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .list li{display:flex;align-items:center;gap:6px;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:0 0 0 14px;font-weight:500;min-height:44px}
-.list .x{border:0;background:transparent;border-radius:50%;width:44px;height:44px;line-height:1;font-weight:700;color:var(--muted)}
-.list .x:hover{color:var(--sel)}
+.x{border:0;background:transparent;border-radius:50%;width:44px;height:44px;line-height:1;font-weight:700;color:var(--muted)}
+.x:hover{color:var(--sel)}
 .list small{color:var(--muted)}
 .list li.empty{background:none;border:0;padding:0;min-height:0;color:var(--muted);font-weight:400}
 .bar.wide{margin:6px 0}
@@ -189,13 +212,17 @@ input[type=time]{border:1px solid var(--line);background:var(--chip);border-radi
 .week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:4px}
 .dow{text-align:center;font-size:.75rem;color:var(--muted);font-weight:600}
 .cell{min-width:0}
-.lv1{--mix:14%} .lv2{--mix:26%} .lv3{--mix:38%} .lv4{--mix:48%}
-.day,.scale i{background:color-mix(in srgb,var(--c-drink) var(--mix,0%),var(--cell))}
-.day{width:100%;position:relative;border:1px solid var(--line);border-radius:10px;min-height:68px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden}
+.day{width:100%;position:relative;border:1px solid var(--line);background:var(--cell);border-radius:10px;min-height:68px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;text-align:center}
+.day.lv1,.scale i.lv1{background:var(--h1)}
+.day.lv2,.scale i.lv2{background:var(--h2)}
+.day.lv3,.scale i.lv3{background:var(--h3)}
+.day.lv4,.scale i.lv4{background:var(--h4)}
+.day .top{display:flex;flex-direction:column;align-items:center;gap:2px}
 .day .n{font-weight:600;font-size:.8125rem;line-height:1}
 .day .ic{width:16px;height:16px;border-radius:50%;background:var(--card-solid);font-size:.6875rem;line-height:16px;font-weight:700;text-align:center;color:var(--ink)}
 .day .ic:empty{background:none}
 .day .ct{display:flex;flex-direction:column;gap:1px;align-items:center;line-height:1;max-width:100%}
+.day .pvs{display:none}
 .b{border-radius:6px;padding:1px 4px;font-size:.6875rem;font-weight:700;line-height:1.25;white-space:nowrap}
 .b-pee{background:var(--bp-bg);color:var(--bp-ink)}
 .b-drink{background:var(--bd-bg);color:var(--bd-ink)}
@@ -206,33 +233,37 @@ input[type=time]{border:1px solid var(--line);background:var(--chip);border-radi
 [data-discreet="1"] .day.dry,[data-discreet="1"] .day.nd{border:1px solid var(--line);box-shadow:none}
 [data-discreet="1"] .day.dry .ic,[data-discreet="1"] .day.nd .ic{color:var(--ink)}
 .day.today .n{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:2px 6px}
-.day.sel{outline:3px solid var(--sel);outline-offset:1px;z-index:1}
-.day:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.day.sel{box-shadow:0 0 0 3px var(--sel);z-index:1}
+.day.sel.dry{box-shadow:0 0 0 3px var(--sel),0 0 12px var(--dry-glow-c)}
+[data-discreet="1"] .day.sel.dry{box-shadow:0 0 0 3px var(--sel)}
+.day:focus{outline:3px solid var(--ink);outline-offset:2px}
+.day:focus:not(:focus-visible){outline:none}
 .day[disabled]{opacity:.35;cursor:default}
 .scale{display:flex;align-items:center;gap:4px;font-size:.75rem;color:var(--muted);margin-top:8px}
-.scale i{display:inline-block;width:16px;height:16px;border-radius:4px;border:1px solid var(--line)}
+.scale i{display:inline-block;width:16px;height:16px;border-radius:4px;border:1px solid var(--line);background:var(--cell)}
 .mstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
 .stat{background:var(--chip);border:1px solid var(--line);border-radius:14px;padding:8px 6px;text-align:center}
 .stat b{display:block;font-size:1.4rem;line-height:1.1}
 .stat small{color:var(--muted);font-size:.75rem;line-height:1.2;display:block}
 
-/* ---------- chart ---------- */
+/* ---------- charts ---------- */
 .charthead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
 .charthead h2{margin:0}
 .seg{display:flex;gap:4px}
 .seg .btn{padding:6px 14px}
 .seg .btn[aria-pressed="false"]{background:var(--chip);color:var(--ink);border:1px solid var(--line)}
+.charts{display:grid;grid-template-columns:1fr;gap:14px}
 .chart{width:100%;height:auto;display:block}
 .chart .grid{stroke:var(--line);stroke-width:1}
+.chart .goal{stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 3}
 .chart .ax{fill:var(--muted);font-size:11px;font-family:inherit}
 .chart .val{fill:var(--ink);font-size:10px;font-family:inherit;text-anchor:middle}
 .chart .bp{fill:var(--c-pee)} .chart .bd{fill:var(--c-drink)}
 .chart .off{opacity:.3}
-.keys{display:flex;gap:14px;font-size:.85rem;color:var(--muted);margin-top:4px}
 
 /* ---------- achievements ---------- */
 .shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.badge{background:var(--chip);border-radius:16px;padding:12px;border:1px solid var(--accent);display:grid;gap:2px;align-content:start}
+.badge{background:var(--chip);border-radius:16px;padding:12px;border:1px solid var(--accent);display:grid;gap:2px;align-content:start;min-width:0}
 .badge .em{font-size:1.8rem;line-height:1.2}
 .badge b{font-size:.95rem}
 .badge small{color:var(--muted);font-size:.8rem;line-height:1.25;display:block}
@@ -240,31 +271,75 @@ input[type=time]{border:1px solid var(--line);background:var(--chip);border-radi
 .badge.locked .em{filter:grayscale(1);opacity:.55}
 .badge.new{animation:pop .7s}
 
-/* ---------- misc ---------- */
-.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);border-radius:14px;padding:8px 8px 8px 18px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);max-width:calc(100vw - 24px)}
+/* ---------- toast, dialogs ---------- */
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);border-radius:14px;padding:8px 8px 8px 18px;display:flex;gap:10px;align-items:center;box-shadow:0 10px 30px var(--shadow-c);max-width:calc(100vw - 24px)}
 .toast .btn{background:var(--accent);color:var(--accent-ink);padding:6px 16px}
-dialog{background:var(--card-solid);color:var(--ink);border:1px solid var(--line);border-radius:20px;max-width:min(92vw,420px);padding:20px;box-shadow:var(--shadow)}
+dialog:not([open]){display:none}
+#dlg{background:var(--card-solid);color:var(--ink);border:1px solid var(--line);border-radius:20px;max-width:min(92vw,420px);padding:20px;box-shadow:0 10px 30px var(--shadow-c)}
 dialog::backdrop{background:rgba(0,0,0,.6)}
-dialog .row{justify-content:flex-end;margin-top:14px}
-canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+#dlg .row{justify-content:flex-end;margin-top:14px}
+canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50}
+
+/* ---------- day timeline (bottom sheet on phones, side panel on desktop) ---------- */
+#tl{position:fixed;margin:0;padding:0;background:var(--card-solid);color:var(--ink);border:1px solid var(--line);
+  box-shadow:0 10px 30px var(--shadow-c);overflow:hidden;flex-direction:column;z-index:40}
+#tl[open]{display:flex}
+@media (max-width:859px){
+  #tl{left:0;right:0;bottom:0;top:auto;width:100%;max-width:none;max-height:none;height:88vh;border-radius:22px 22px 0 0}
+}
+@media (max-width:859px){
+  @supports (height:1dvh){ #tl{height:88dvh} }
+}
+@media (min-width:860px){
+  #tl{top:0;right:0;bottom:0;left:auto;width:460px;max-width:100vw;max-height:none;height:100vh;border-radius:22px 0 0 22px}
+}
+.tl-head{display:flex;align-items:center;gap:8px;padding:12px 14px 8px}
+.tl-head h2{margin:0;flex:1;font-size:1.05rem}
+.tl-pin{padding:0 14px 10px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px}
+.tl-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:26px 14px 20px;position:relative}
+.tl-track{position:relative;margin:0;padding:0;list-style:none}
+.tl-hr{position:absolute;left:0;right:0;border-top:1px solid var(--line);height:0}
+.tl-hr span{position:absolute;top:-8px;left:0;width:44px;font-size:.75rem;color:var(--muted);background:var(--card-solid);padding-right:4px}
+.tl-now{position:absolute;left:44px;right:0;border-top:2px solid var(--sel);height:0}
+.tl-chip{position:absolute;height:44px;display:flex;align-items:center;gap:4px;border-radius:12px;padding:0 0 0 6px;overflow:hidden;border-left:4px solid var(--c-pee);background:var(--bp-bg);color:var(--bp-ink);min-width:0}
+.tl-chip.drink{border-left-color:var(--c-drink);background:var(--bd-bg);color:var(--bd-ink)}
+.tl-ic{font-size:1rem;flex:none}
+.tl-tx{display:flex;flex-direction:column;line-height:1.15;min-width:0;flex:1}
+.tl-tx b{font-size:.8125rem;white-space:nowrap}
+.tl-tx small{font-size:.6875rem;white-space:nowrap}
+.tl-chip .x{flex:none;width:36px;height:44px;border-radius:0;color:inherit;opacity:.8}
+.tl-chip.dense{padding-left:4px;gap:2px}
+.tl-chip.dense .tl-ic{display:none}
+.tl-chip.dense .x{width:26px}
+.tl-empty{position:absolute;left:52px;right:0;top:40px;color:var(--muted);margin:0}
+.tl-add{border-top:1px solid var(--line);padding:10px 14px 14px;display:grid;gap:8px}
+.tl-add .row{align-items:flex-end}
+.fld{display:grid;gap:2px}
+.tl-toast{position:absolute;left:12px;right:12px;bottom:12px;background:var(--ink);color:var(--bg);border-radius:14px;padding:8px 8px 8px 16px;display:flex;gap:10px;align-items:center;justify-content:space-between;z-index:5}
+.tl-toast .btn{background:var(--accent);color:var(--accent-ink);padding:6px 16px}
 
 @keyframes flick{50%{transform:scale(1.12) rotate(-4deg)}}
 @keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
 @keyframes ping{from{transform:scale(1);opacity:1}to{transform:scale(1.35);opacity:0}}
 
 @media (min-width:700px){
-  .day .ct{flex-direction:row;gap:3px;justify-content:center;flex-wrap:wrap}
-  .day{min-height:76px}
+  .day{min-height:96px;align-items:stretch;text-align:left;padding:4px}
+  .day .top{flex-direction:row;justify-content:space-between;align-items:center}
+  .day .ct{display:none}
+  .day .pvs{display:flex;flex-direction:column;gap:1px;font-size:.6875rem;line-height:1.25;color:var(--ink);font-variant-numeric:tabular-nums}
+  .day .pvs .more{color:var(--muted)}
 }
 @media (min-width:860px){
   .hero{grid-template-columns:1.6fr 1fr}
   .main{grid-template-columns:1fr 1fr}
+  .charts{grid-template-columns:1fr 1fr}
   .ring-wrap{width:150px;height:150px}
   .coach{font-size:1.4rem}
   #nightCard{scroll-margin-top:0}
 }
 @media (max-width:420px){
   h1 .sub{display:none}
+  .shelf{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:400px){
   .wrap{padding:10px 14px 30px}
@@ -295,6 +370,39 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
     <button class="btn ghost" id="dlgCancel" type="button">Cancel</button>
     <button class="btn" id="dlgOk" type="button">OK</button>
   </div>
+</dialog>
+
+<dialog id="tl" aria-labelledby="tlTitle">
+  <div class="tl-head">
+    <button class="btn ghost nav" id="tlPrev" type="button" aria-label="Previous day">◀</button>
+    <h2 id="tlTitle"></h2>
+    <button class="btn ghost nav" id="tlNext" type="button" aria-label="Next day">▶</button>
+    <button class="btn ghost nav" id="tlClose" type="button" aria-label="Close timeline">✕</button>
+  </div>
+  <div class="tl-pin">
+    <span class="chip" id="tlNight"></span>
+    <span class="chip" id="tlTotals"></span>
+  </div>
+  <div class="tl-scroll" id="tlScroll" tabindex="0" aria-label="Timeline of this day">
+    <ol class="tl-track" id="tlTrack"></ol>
+  </div>
+  <form class="tl-add" id="tlForm" aria-label="Add to this day">
+    <div class="row" role="group" aria-label="Entry type">
+      <button class="preset" id="tlTypeDrink" type="button" aria-pressed="true">Drink</button>
+      <button class="preset" id="tlTypePee" type="button" aria-pressed="false">Pee</button>
+    </div>
+    <div class="row">
+      <div class="fld"><label for="tlTime">Time</label><input type="time" id="tlTime"></div>
+      <div class="fld" id="tlMlWrap"><label for="tlMl">Amount (ml)</label><input type="number" id="tlMl" inputmode="numeric" min="10" max="2000" step="10" value="250"></div>
+      <button class="btn" id="tlAdd" type="submit">Add</button>
+    </div>
+    <p class="err" id="tlErr" role="alert"></p>
+  </form>
+  <div class="tl-toast" id="tlToast" role="status" hidden>
+    <span id="tlToastText"></span>
+    <button class="btn" id="tlToastUndo" type="button" hidden>Undo</button>
+  </div>
+  <div class="sr" id="tlLive" role="status" aria-live="polite" aria-atomic="true"></div>
 </dialog>
 
 <div class="wrap">
@@ -336,12 +444,12 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
         <div class="chips" id="chips"></div>
         <div>
           <div class="xp-top"><span id="lvTitle"></span><span id="xpText"></span></div>
-          <div class="bar" aria-hidden="true"><i id="xpBar"></i></div>
+          <div class="bar" id="xpBarWrap" aria-hidden="true"><i id="xpBar"></i></div>
         </div>
       </div>
       <div class="quick" role="group" aria-label="Quick log for today">
         <button class="btn" id="quickPee" type="button"></button>
-        <button class="btn alt" id="quickDrink" type="button">+ Drink</button>
+        <button class="btn alt" id="quickDrink" type="button"></button>
         <button class="btn ghost" id="quickNight" type="button"></button>
       </div>
     </div>
@@ -357,7 +465,10 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
 
   <section class="card daybar" id="dayBar" aria-label="Day being edited">
     <h2 id="dayTitle"></h2>
-    <button class="btn ghost" id="todayBtn" type="button" hidden>Jump to today</button>
+    <div class="acts">
+      <button class="btn ghost" id="tlBtn" type="button"></button>
+      <button class="btn ghost" id="todayBtn" type="button" hidden>Jump to today</button>
+    </div>
   </section>
 
   <div class="main">
@@ -386,12 +497,20 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
         <b id="goalText"></b>
         <div class="bar blue wide" aria-hidden="true"><i id="fill"></i></div>
         <p class="legend" id="earlyText"></p>
-        <div class="sizes" role="group" aria-label="Cup size" id="sizes"></div>
+        <div class="presets" role="group" aria-label="Quick amounts" id="presets"></div>
         <div class="row">
+          <label for="mlInput">Amount (ml)</label>
+          <input type="number" id="mlInput" inputmode="numeric" min="10" max="2000" step="10" value="250">
           <label for="drinkTime">Time</label>
           <input type="time" id="drinkTime">
           <button class="btn alt" id="drinkAdd" type="button">Log drink</button>
         </div>
+        <p class="err" id="mlErr" role="alert"></p>
+        <div class="row">
+          <label for="goalInput">Daily goal (ml)</label>
+          <input type="number" id="goalInput" inputmode="numeric" min="500" max="5000" step="100" value="1500">
+        </div>
+        <p class="err" id="goalErr" role="alert"></p>
         <p class="legend">Tip: getting most of your water before 4pm works best.</p>
         <ul class="list" id="drinkList"></ul>
       </section>
@@ -409,20 +528,22 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
         <p class="legend" id="calLegend"></p>
         <div class="mstats" id="mstats"></div>
       </section>
-
-      <section class="card" aria-labelledby="chartTitle">
-        <div class="charthead">
-          <h2 id="chartTitle">Trends</h2>
-          <div class="seg" role="group" aria-label="Chart range">
-            <button class="btn" type="button" id="rWeek" aria-pressed="true">7 days</button>
-            <button class="btn" type="button" id="rMonth" aria-pressed="false">Month</button>
-          </div>
-        </div>
-        <div id="chart"></div>
-        <div class="keys"><span><span class="dotk pee" aria-hidden="true"></span><span id="keyPee"></span></span><span><span class="dotk drink" aria-hidden="true"></span>Water (cups)</span></div>
-      </section>
     </div>
   </div>
+
+  <section class="card below" aria-labelledby="chartTitle">
+    <div class="charthead">
+      <h2 id="chartTitle">Trends</h2>
+      <div class="seg" role="group" aria-label="Chart range">
+        <button class="btn" type="button" id="rWeek" aria-pressed="true">7 days</button>
+        <button class="btn" type="button" id="rMonth" aria-pressed="false">Month</button>
+      </div>
+    </div>
+    <div class="charts">
+      <div><h3><span class="dotk drink" aria-hidden="true"></span>Water (ml)</h3><div id="chartWater"></div></div>
+      <div><h3><span class="dotk pee" aria-hidden="true"></span><span id="keyPee"></span></h3><div id="chartPee"></div></div>
+    </div>
+  </section>
 
   <section class="card below" aria-labelledby="badgeTitle">
     <h2 id="badgeTitle">Achievements</h2>
@@ -452,15 +573,18 @@ var MUTE_KEY = "weeTracker.muted";
 var THEME_KEY = "weeTracker.theme";
 var DISCREET_KEY = "weeTracker.discreet";
 var TIP_KEY = "weeTracker.eveningTip";
-var GOAL = 6;                 // cups per day
+var DEFAULT_GOAL = 1500;      // ml per day
+var GOAL_MIN = 500, GOAL_MAX = 5000;
+var ML_MIN = 10, ML_MAX = 2000;
 var EARLY_CUTOFF = "16:00";   // drinks before this count as "early"
 var MAX_ENTRY_XP = 8;         // entries per day that earn XP
 var MAX_LEVEL = 15;
-var SIZES = [
-  { id: "s", label: "Sip", weight: 0.5, text: "½" },
-  { id: "m", label: "Cup", weight: 1, text: "1" },
-  { id: "l", label: "Big", weight: 1.5, text: "1½" }
+var PRESETS = [
+  { label: "Sip", ml: 100 },
+  { label: "Cup", ml: 250 },
+  { label: "Bottle", ml: 500 }
 ];
+var LEGACY_ML = { s: 100, m: 250, l: 375 };   // old sip / cup / big sizes
 var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 var LEVEL_TITLES = ["Rookie", "Rising", "Steady", "On Track", "Locked In", "Grinder", "Focused", "Sharp",
                     "Pro", "Clutch", "Elite", "Prime", "Mythic", "Titan", "Legend"];
@@ -468,6 +592,7 @@ var XP = { pee: 2, drink: 2, night: 10, dry: 15, goal: 20, sticker: 50 };
 var PEE_LINES = ["Logged.", "Got it.", "Noted.", "Logged. Nice."];
 var KEY_RE = /^\d{4}-\d{2}-\d{2}$/;
 var TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+var HOUR_PX = 64, CHIP_H = 44, GUTTER = 52;     // timeline geometry
 
 var reducedQuery = null;
 try { reducedQuery = window.matchMedia("(prefers-reduced-motion: reduce)"); } catch (e) {}
@@ -497,6 +622,7 @@ function nowTime() {
   var d = new Date();
   return pad(d.getHours()) + ":" + pad(d.getMinutes());
 }
+function minutesOf(t) { return +t.slice(0, 2) * 60 + +t.slice(3); }
 function dayDiff(a, b) { return Math.round((parseKey(b) - parseKey(a)) / 864e5); }
 function monthOf(k) {
   var d = parseKey(k);
@@ -514,33 +640,38 @@ function longDate(k) {
 function shortDate(k) {
   return parseKey(k).toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
 }
-function fmt(n) { return n % 1 === 0 ? String(n) : n.toFixed(1); }
 function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
 function plural(n, word) { return n + " " + word + (n === 1 ? "" : "s"); }
-function sizeInfo(id) {
-  for (var i = 0; i < SIZES.length; i++) { if (SIZES[i].id === id) return SIZES[i]; }
-  return SIZES[1];
+function mlOf(drinks) {
+  return drinks.reduce(function (sum, d) { return sum + d.ml; }, 0);
 }
-function cupsOf(drinks) {
-  return drinks.reduce(function (sum, d) { return sum + sizeInfo(d.s).weight; }, 0);
-}
-function earlyCupsOf(drinks) {
-  return cupsOf(drinks.filter(function (d) { return d.t < EARLY_CUTOFF; }));
+function earlyMlOf(drinks) {
+  return mlOf(drinks.filter(function (d) { return d.t < EARLY_CUTOFF; }));
 }
 function byTime(a, b) { return a.t < b.t ? -1 : a.t > b.t ? 1 : 0; }
 
 /* Wording. In discreet mode every personal word becomes neutral. */
 function W() {
   return discreet
-    ? { pee: "break", section: "Breaks", log: "Log break", quick: "+ Break", key: "Breaks" }
-    : { pee: "pee", section: "Bathroom", log: "Log pee", quick: "+ Pee", key: "Pee" };
+    ? { pee: "break", Pee: "Break", section: "Breaks", log: "Log break", quick: "+ Break", key: "Breaks" }
+    : { pee: "pee", Pee: "Pee", section: "Bathroom", log: "Log pee", quick: "+ Pee", key: "Pee" };
+}
+function entryIcon(type) {
+  if (type === "drink") return "💧";
+  return discreet ? "◆" : "🚽";
 }
 
 /* =========================================================
    Storage (every access guarded; falls back to memory)
    ========================================================= */
+function sanitizeDrink(x) {
+  if (!x || typeof x !== "object" || typeof x.t !== "string" || !TIME_RE.test(x.t)) return null;
+  var ml = Math.round(Number(x.ml));
+  if (!(ml >= ML_MIN && ml <= ML_MAX)) ml = LEGACY_ML[x.s] || 250;   // migrate old sizes
+  return { t: x.t, ml: ml };
+}
 function sanitize(raw) {
-  var out = { days: {}, stickers: {}, maxLevel: 1 };
+  var out = { days: {}, stickers: {}, maxLevel: 1, goalMl: DEFAULT_GOAL, lastMl: 250 };
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
 
   if (raw.days && typeof raw.days === "object" && !Array.isArray(raw.days)) {
@@ -555,9 +686,8 @@ function sanitize(raw) {
       }
       if (Array.isArray(d.drinks)) {
         d.drinks.forEach(function (x) {
-          if (x && typeof x === "object" && typeof x.t === "string" && TIME_RE.test(x.t)) {
-            day.drinks.push({ t: x.t, s: (x.s === "s" || x.s === "l") ? x.s : "m" });
-          }
+          var drink = sanitizeDrink(x);
+          if (drink) day.drinks.push(drink);
         });
       }
       if (d.night === "dry" || d.night === "wet") day.night = d.night;
@@ -573,6 +703,10 @@ function sanitize(raw) {
   }
   var ml = Math.floor(Number(raw.maxLevel));
   if (ml >= 1) out.maxLevel = Math.min(ml, MAX_LEVEL);
+  var goal = Math.round(Number(raw.goalMl));
+  if (goal >= GOAL_MIN && goal <= GOAL_MAX) out.goalMl = goal;
+  var last = Math.round(Number(raw.lastMl));
+  if (last >= ML_MIN && last <= ML_MAX) out.lastMl = last;
   return out;
 }
 
@@ -648,13 +782,14 @@ var view = monthOf(today);
 var override = null;           // temporary coach message
 var newStickers = {};          // ids to animate on next render
 var calFocus = false;
-var size = "m";
 var chartMode = "week";
 var lastXp = 0;
-var touched = { weeTime: false, drinkTime: false };
+var touched = { weeTime: false, drinkTime: false, tlTime: false };
 var tabTarget = null;
 var toastAction = null;
 var dialogAction = null;
+var tlType = "drink";
+var tlReturn = null;
 
 function getDay(k, create) {
   var d = data.days[k];
@@ -669,6 +804,17 @@ function pruneDay(k) {
 }
 function pastKeys() {
   return Object.keys(data.days).filter(function (k) { return k <= today; });
+}
+function goal() { return data.goalMl || DEFAULT_GOAL; }
+function dayEntries(d) {
+  var list = [];
+  d.wees.forEach(function (t, i) { list.push({ type: "pee", t: t, idx: i }); });
+  d.drinks.forEach(function (x, i) { list.push({ type: "drink", t: x.t, ml: x.ml, idx: i }); });
+  list.sort(function (a, b) {
+    if (a.t !== b.t) return a.t < b.t ? -1 : 1;
+    return a.type < b.type ? -1 : 1;
+  });
+  return list;
 }
 
 /* =========================================================
@@ -707,11 +853,11 @@ function overall() {
   s.perfectDays = 0;
   pastKeys().forEach(function (k) {
     var d = data.days[k];
-    var goal = cupsOf(d.drinks) >= GOAL;
-    var early = earlyCupsOf(d.drinks) >= 3;
-    if (goal) { s.goalDays++; goalKeys.push(k); }
+    var hit = mlOf(d.drinks) >= goal();
+    var early = earlyMlOf(d.drinks) >= goal() / 2;
+    if (hit) { s.goalDays++; goalKeys.push(k); }
     if (early) s.earlyDays++;
-    if (goal && early && d.night === "dry") s.perfectDays++;
+    if (hit && early && d.night === "dry") s.perfectDays++;
     if (d.wees.length || d.drinks.length || d.night) s.logged++;
   });
   s.goalRun = longestRun(goalKeys);
@@ -726,7 +872,7 @@ function xpTotal() {
     xp += Math.min(d.wees.length, MAX_ENTRY_XP) * XP.pee + Math.min(d.drinks.length, MAX_ENTRY_XP) * XP.drink;
     if (d.night) xp += XP.night;
     if (d.night === "dry") xp += XP.dry;
-    if (cupsOf(d.drinks) >= GOAL) xp += XP.goal;
+    if (mlOf(d.drinks) >= goal()) xp += XP.goal;
   });
   xp += Object.keys(data.stickers).length * XP.sticker;
   return xp;
@@ -743,6 +889,7 @@ function levelView() {
   var next = isMax ? floor : 60 * level * level;
   return {
     level: level, xp: xp, floor: floor, next: next, isMax: isMax,
+    kept: xp < floor,
     title: LEVEL_TITLES[level - 1],
     pct: isMax ? 100 : Math.max(0, Math.min(100, (xp - floor) / (next - floor) * 100))
   };
@@ -763,11 +910,11 @@ var BADGES = [
   { id: "d30", em: "👑", name: "Iron Will", max: 30, val: function (s) { return s.best; },
     hint: function () { return "30 " + dryWord() + " in a row"; } },
   { id: "h1", em: "💧", name: "Full Tank", max: 1, val: function (s) { return s.goalDays; },
-    hint: function () { return "Hit your water goal"; } },
+    hint: function () { return "Hit your daily water goal"; } },
   { id: "h5", em: "🌊", name: "Tidal Wave", max: 5, val: function (s) { return s.goalDays; },
     hint: function () { return "Hit your water goal on 5 days"; } },
   { id: "early", em: "🌅", name: "Early Bird", max: 3, val: function (s) { return s.earlyDays; },
-    hint: function () { return "3+ cups before 4pm, on 3 days"; } },
+    hint: function () { return "Half your goal before 4pm, on 3 days"; } },
   { id: "log7", em: "📈", name: "Daily Driver", max: 7, val: function (s) { return s.logged; },
     hint: function () { return "Log something on 7 days"; } },
   { id: "log60", em: "🎖️", name: "Veteran", max: 60, val: function (s) { return s.logged; },
@@ -913,6 +1060,10 @@ function pingRing() {
   wrap.classList.add("ping");
   setTimeout(function () { wrap.classList.remove("ping"); }, 1000);
 }
+function announce(text) {
+  $("live").textContent = text;
+  $("tlLive").textContent = text;
+}
 
 /* =========================================================
    Coach messages
@@ -921,10 +1072,10 @@ function autoMessage() {
   var d = getDay(selected);
   var isToday = selected === today;
   var s = streaks();
-  var cups = cupsOf(d.drinks);
+  var ml = mlOf(d.drinks);
   var hour = new Date().getHours();
 
-  if (cups >= GOAL) return "Hydration on point 💧";
+  if (ml >= goal()) return "Hydration on point 💧";
   if (d.night) {
     if (discreet) return "Night logged. Nice and consistent.";
     if (d.night === "dry") {
@@ -936,8 +1087,8 @@ function autoMessage() {
     if (discreet) return hour < 12 ? "Morning. Quick night check?" : "Check in whenever you're ready.";
     return hour < 12 ? "Morning. Last night: dry?" : "Check in when you're ready: last night?";
   }
-  if (cups >= GOAL / 2) return "Halfway to the water goal. Keep it rolling.";
-  if (cups > 0) return "Good start. Keep the water coming.";
+  if (ml >= goal() / 2) return "Halfway to the water goal. Keep it rolling.";
+  if (ml > 0) return "Good start. Keep the water coming.";
   return "Fill in this day to keep your stats accurate.";
 }
 
@@ -952,26 +1103,34 @@ function setArc(id, circumference, fraction) {
 function renderCoach() {
   $("coach").textContent = override || autoMessage();
   var d = getDay(selected);
-  var cups = cupsOf(d.drinks);
+  var ml = mlOf(d.drinks);
   var nightChip;
   if (discreet) nightChip = d.night ? "Night logged" : "Night not logged";
   else nightChip = d.night === "dry" ? "Dry night" : d.night === "wet" ? "Not dry" : "Night not logged";
   $("chips").innerHTML =
     '<span class="chip">' + plural(d.wees.length, W().pee) + '</span>' +
-    '<span class="chip">' + fmt(cups) + ' / ' + GOAL + ' cups</span>' +
+    '<span class="chip">' + ml + ' / ' + goal() + ' ml</span>' +
     '<span class="chip">' + esc(nightChip) + '</span>';
 
   var info = levelView();
-  setArc("arcWater", 326.7, cups / GOAL);
+  setArc("arcWater", 326.7, ml / goal());
   setArc("arcXp", 251.3, info.pct / 100);
   $("lvN").textContent = info.level;
   $("lvTitle").textContent = "Lvl " + info.level + " · " + info.title;
-  $("xpText").textContent = info.isMax ? info.xp + " XP · MAX" : info.xp + " / " + info.next + " XP";
-  $("xpBar").style.setProperty("--p", info.pct + "%");
-  $("ring").setAttribute("aria-label", "Outer ring: water, " + fmt(cups) + " of " + GOAL + " cups. Inner ring: XP. Level " + info.level + ".");
+  if (info.kept) {
+    $("xpText").textContent = "Level kept";
+    $("xpBarWrap").hidden = true;
+  } else {
+    $("xpText").textContent = info.isMax ? info.xp + " XP · MAX" : info.xp + " / " + info.next + " XP";
+    $("xpBarWrap").hidden = false;
+    $("xpBar").style.setProperty("--p", info.pct + "%");
+  }
+  $("ring").setAttribute("aria-label", "Outer ring: water, " + ml + " of " + goal() + " ml. Inner ring: XP. Level " + info.level + ".");
   lastXp = info.xp;
 
   $("quickPee").textContent = W().quick;
+  $("quickDrink").textContent = "+ " + data.lastMl + " ml";
+  $("quickDrink").setAttribute("aria-label", "Log a drink of " + data.lastMl + " ml now");
   var tn = getDay(today).night;
   var label;
   if (discreet) label = tn === "dry" ? "Night ●" : tn === "wet" ? "Night ○" : "Night check";
@@ -980,16 +1139,16 @@ function renderCoach() {
 }
 
 function recapText() {
-  var dry = 0, cups = 0, logged = 0;
+  var dry = 0, ml = 0, logged = 0;
   for (var i = 0; i < 7; i++) {
     var d = getDay(addDays(today, -i));
     if (d.night === "dry") dry++;
-    cups += cupsOf(d.drinks);
+    ml += mlOf(d.drinks);
     if (d.wees.length || d.drinks.length || d.night) logged++;
   }
-  var avg = logged ? fmt(Math.round(cups / logged * 10) / 10) : "0";
+  var avg = logged ? Math.round(ml / logged / 10) * 10 : 0;
   var nights = discreet ? dry + " nights ●" : plural(dry, "dry night");
-  return "This week: " + nights + " · " + avg + " cups/day · " + logged + "/7 days logged";
+  return "This week: " + nights + " · " + avg + " ml/day · " + logged + "/7 days logged";
 }
 
 function renderTop() {
@@ -1020,6 +1179,7 @@ function renderDay() {
 
   $("dayTitle").innerHTML = (isToday ? "Editing: Today" : "Editing") + "<small>" + esc(longDate(selected)) + "</small>";
   $("todayBtn").hidden = isToday;
+  $("tlBtn").textContent = isToday ? "Today's timeline" : "Day timeline";
 
   var title;
   if (discreet) title = isToday ? "Night check" : "Night check · " + shortDate(selected);
@@ -1042,17 +1202,27 @@ function renderDay() {
   $("weeTitle").innerHTML = '<span class="dotk pee" aria-hidden="true"></span>' + esc(words.section);
   $("weeAdd").textContent = words.log;
   $("keyPee").textContent = words.key;
+  $("tlTypePee").textContent = words.Pee;
   renderLists(d);
 
-  var cups = cupsOf(d.drinks);
-  $("fill").style.setProperty("--p", Math.min(100, cups / GOAL * 100) + "%");
-  $("goalText").textContent = cups >= GOAL
-    ? "Goal hit · " + fmt(cups) + " cups"
-    : fmt(cups) + " of " + GOAL + " cups";
-  var early = earlyCupsOf(d.drinks);
+  var ml = mlOf(d.drinks);
+  $("fill").style.setProperty("--p", Math.min(100, ml / goal() * 100) + "%");
+  $("goalText").textContent = ml >= goal()
+    ? "Goal hit · " + ml + " ml"
+    : ml + " of " + goal() + " ml";
+  var early = earlyMlOf(d.drinks);
   $("earlyText").textContent = early > 0
-    ? fmt(early) + " cup" + (early === 1 ? "" : "s") + " before 4pm. Counts toward Early Bird."
-    : "Cups before 4pm count toward Early Bird.";
+    ? early + " ml before 4pm. Counts toward Early Bird."
+    : "Water before 4pm counts toward Early Bird.";
+  renderPresets();
+}
+
+function renderPresets() {
+  var current = Number($("mlInput").value);
+  $("presets").innerHTML = PRESETS.map(function (p) {
+    return '<button type="button" class="preset" data-ml="' + p.ml + '" aria-pressed="' + (current === p.ml) + '">' +
+      esc(p.label) + ' ' + p.ml + ' ml</button>';
+  }).join("");
 }
 
 function renderLists(d) {
@@ -1066,19 +1236,24 @@ function renderLists(d) {
 
   $("drinkList").innerHTML = d.drinks.length
     ? d.drinks.map(function (x, i) {
-        var sz = sizeInfo(x.s);
-        return '<li><span>' + esc(prettyTime(x.t)) + ' <small>' + esc(sz.label) + ' (' + sz.text + ')</small></span>' +
-          '<button class="x" type="button" data-del-drink="' + i + '" aria-label="Remove ' + esc(sz.label) + ' drink at ' + esc(prettyTime(x.t)) + '">✕</button></li>';
+        return '<li><span>' + esc(prettyTime(x.t)) + ' · ' + x.ml + ' ml</span>' +
+          '<button class="x" type="button" data-del-drink="' + i + '" aria-label="Remove drink of ' + x.ml + ' ml at ' + esc(prettyTime(x.t)) + '">✕</button></li>';
       }).join("")
     : '<li class="empty">Nothing logged yet.</li>';
 }
 
-function cupLevel(cups) {
-  if (cups <= 0) return 0;
-  if (cups < 2) return 1;
-  if (cups < 4) return 2;
-  if (cups < GOAL) return 3;
+function mlLevel(ml) {
+  if (ml <= 0) return 0;
+  var r = ml / goal();
+  if (r < 0.25) return 1;
+  if (r < 0.5) return 2;
+  if (r < 0.75) return 3;
   return 4;
+}
+
+function entryAria(e) {
+  var who = e.type === "drink" ? "drink " + e.ml + " ml" : W().pee;
+  return prettyTime(e.t) + " " + who;
 }
 
 function dayCellHtml(k) {
@@ -1089,12 +1264,12 @@ function dayCellHtml(k) {
   if (future) {
     return '<div class="cell" role="gridcell" aria-selected="false">' +
       '<button type="button" class="day" data-date="' + k + '" tabindex="-1" disabled aria-label="' + esc(base + ", in the future") + '">' +
-      '<span class="n">' + parseKey(k).getDate() + '</span><span class="ic"></span><span class="ct"></span></button></div>';
+      '<span class="top"><span class="n">' + parseKey(k).getDate() + '</span><span class="ic"></span></span></button></div>';
   }
 
   var day = getDay(k);
-  var cups = cupsOf(day.drinks);
-  var lv = cupLevel(cups);
+  var ml = mlOf(day.drinks);
+  var lv = mlLevel(ml);
   var cls = "day" + (lv ? " lv" + lv : "") + (day.night === "dry" ? " dry" : day.night === "wet" ? " nd" : "") +
             (k === today ? " today" : "") + (isSel ? " sel" : "");
   var glyph = day.night === "dry" ? (discreet ? "●" : "✓") : day.night === "wet" ? "○" : "";
@@ -1102,16 +1277,25 @@ function dayCellHtml(k) {
   var nightText;
   if (discreet) nightText = day.night === "dry" ? "Night check yes. " : day.night === "wet" ? "Night check no. " : "Night not logged. ";
   else nightText = day.night === "dry" ? "Dry night before. " : day.night === "wet" ? "Not dry the night before. " : "Night not logged. ";
-  var label = base + ". " + nightText + plural(day.wees.length, W().pee) + ", " + fmt(cups) + " cups." + (isSel ? " Selected." : "");
+
+  var entries = dayEntries(day);
+  var times = entries.length ? " Logged: " + entries.map(entryAria).join("; ") + "." : " Nothing logged.";
+  var label = base + ". " + nightText + plural(day.wees.length, W().pee) + ", " + ml + " ml." + times + (isSel ? " Selected." : "");
 
   var counts = "";
   if (day.wees.length) counts += '<span class="b b-pee">' + Math.min(day.wees.length, 99) + '</span>';
-  if (cups) counts += '<span class="b b-drink">' + fmt(Math.min(cups, 99)) + '</span>';
+  if (ml) counts += '<span class="b b-drink">' + ml + '</span>';
+
+  var preview = entries.slice(0, 3).map(function (e) {
+    return '<span>' + e.t + ' ' + entryIcon(e.type) + '</span>';
+  }).join("");
+  if (entries.length > 3) preview += '<span class="more">+' + (entries.length - 3) + '</span>';
 
   return '<div class="cell" role="gridcell" aria-selected="' + isSel + '">' +
     '<button type="button" class="' + cls + '" data-date="' + k + '" tabindex="' + (k === tabTarget ? 0 : -1) + '"' +
     (k === today ? ' aria-current="date"' : "") + ' aria-label="' + esc(label) + '">' +
-    '<span class="n">' + parseKey(k).getDate() + '</span><span class="ic" aria-hidden="true">' + glyph + '</span>' +
+    '<span class="top"><span class="n">' + parseKey(k).getDate() + '</span><span class="ic" aria-hidden="true">' + glyph + '</span></span>' +
+    '<span class="pvs" aria-hidden="true">' + preview + '</span>' +
     '<span class="ct" aria-hidden="true">' + counts + '</span></button></div>';
 }
 
@@ -1137,7 +1321,7 @@ function renderCal() {
   var i, d;
   for (i = 0; i < offset; i++) cells.push('<div class="cell" role="gridcell"></div>');
 
-  var dryN = 0, peeSum = 0, cupSum = 0, logged = 0;
+  var dryN = 0, peeSum = 0, mlSum = 0, logged = 0;
   for (d = 1; d <= count; d++) {
     var k = prefix + pad(d);
     cells.push(dayCellHtml(k));
@@ -1147,7 +1331,7 @@ function renderCal() {
       if (day.wees.length || day.drinks.length) {
         logged++;
         peeSum += day.wees.length;
-        cupSum += cupsOf(day.drinks);
+        mlSum += mlOf(day.drinks);
       }
     }
   }
@@ -1158,14 +1342,18 @@ function renderCal() {
   $("cal").innerHTML = html;
 
   $("calLegend").textContent = discreet
-    ? "The mark on a day is the night check for the night before that date: ● yes, ○ no. Shade = cups of water. Amber = " + W().key.toLowerCase() + ", blue = cups. Arrow keys move between days."
-    : "The mark on a day is for the night before that date: glowing ✓ = dry, ○ = not dry. Shade = cups of water. Amber = " + W().key.toLowerCase() + ", blue = cups. Arrow keys move between days.";
+    ? "Tap a day to open its timeline. The mark on a day is the night check for the night before that date: ● yes, ○ no. Blue shade = water. Arrow keys move between days."
+    : "Tap a day to open its timeline. The mark on a day is for the night before that date: green ✓ = dry, ○ = not dry. Blue shade = water. Arrow keys move between days.";
 
-  function avg(total) { return logged ? fmt(Math.round(total / logged * 10) / 10) : "–"; }
+  function avg(total, round) {
+    if (!logged) return "–";
+    var v = total / logged;
+    return String(round ? Math.round(v / 10) * 10 : Math.round(v * 10) / 10);
+  }
   $("mstats").innerHTML =
     '<div class="stat"><b>' + dryN + '</b><small>' + (discreet ? "nights ●" : "dry nights") + '</small></div>' +
-    '<div class="stat"><b>' + avg(peeSum) + '</b><small>' + W().pee + 's per logged day</small></div>' +
-    '<div class="stat"><b>' + avg(cupSum) + '</b><small>cups per logged day</small></div>';
+    '<div class="stat"><b>' + avg(peeSum, false) + '</b><small>' + W().pee + 's per logged day</small></div>' +
+    '<div class="stat"><b>' + avg(mlSum, true) + '</b><small>avg ml per logged day</small></div>';
 
   if (calFocus) {
     calFocus = false;
@@ -1174,7 +1362,62 @@ function renderCal() {
   }
 }
 
-/* Hand-drawn SVG grouped bar chart: counts of breaks and weighted cups of water */
+/* Chooses a "nice" axis step so there are at most 4 intervals (0/500/1000, 0/1/2/3...). */
+function niceStep(max) {
+  var steps = [1, 2, 5, 10, 20, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000];
+  for (var i = 0; i < steps.length; i++) {
+    if (max / steps[i] <= 4) return steps[i];
+  }
+  return steps[steps.length - 1];
+}
+
+/* Hand-drawn SVG bar chart for one series. opts: {values, cls, minMax, goalLine, round} */
+function barChartSvg(series, opts) {
+  var rawMax = opts.minMax;
+  series.forEach(function (s) { rawMax = Math.max(rawMax, s[opts.key]); });
+  if (opts.goalLine) rawMax = Math.max(rawMax, opts.goalLine);
+  var step = niceStep(rawMax);
+  var max = step * Math.ceil(rawMax / step);
+
+  var W2 = 300, H = 120, left = 34, right = 4, top = 14, bottom = 20;
+  var plotW = W2 - left - right, plotH = H - top - bottom;
+  var group = plotW / series.length;
+  var barW = Math.max(3, Math.min(22, group * 0.6));
+  var weekly = chartMode === "week";
+  var showValues = weekly && window.innerWidth >= 520;
+  var svg = '', v;
+
+  for (v = 0; v <= max; v += step) {
+    var y = top + plotH * (1 - v / max);
+    svg += '<line class="grid" x1="' + left + '" x2="' + (W2 - right) + '" y1="' + y + '" y2="' + y + '"/>';
+    svg += '<text class="ax" x="' + (left - 4) + '" y="' + (y + 4) + '" text-anchor="end">' + v + '</text>';
+  }
+  if (opts.goalLine) {
+    var gy = top + plotH * (1 - opts.goalLine / max);
+    svg += '<line class="goal" x1="' + left + '" x2="' + (W2 - right) + '" y1="' + gy + '" y2="' + gy + '"/>';
+  }
+
+  series.forEach(function (s, idx) {
+    var cx = left + group * idx + group / 2;
+    var val = s[opts.key];
+    var h = plotH * val / max;
+    if (val) {
+      svg += '<rect class="' + opts.cls + (s.future ? " off" : "") + '" x="' + (cx - barW / 2) + '" y="' + (top + plotH - h) +
+             '" width="' + barW + '" height="' + h + '" rx="2"/>';
+      if (showValues) {
+        var shown = opts.round ? Math.round(val / 10) * 10 : val;
+        svg += '<text class="val" x="' + cx + '" y="' + (top + plotH - h - 3) + '">' + shown + '</text>';
+      }
+    }
+    var dnum = parseKey(s.k).getDate();
+    if (weekly || dnum === 1 || dnum % 5 === 0) {
+      var lab = weekly ? parseKey(s.k).toLocaleDateString(undefined, { weekday: "short" }).slice(0, 3) : String(dnum);
+      svg += '<text class="ax" x="' + cx + '" y="' + (H - 6) + '" text-anchor="middle">' + esc(lab) + '</text>';
+    }
+  });
+  return { svg: svg, W: W2, H: H };
+}
+
 function renderChart() {
   var days = [], i;
   if (chartMode === "week") {
@@ -1186,53 +1429,21 @@ function renderChart() {
   var series = days.map(function (key) {
     var d = getDay(key);
     var future = key > today;
-    return { k: key, pee: future ? 0 : d.wees.length, cups: future ? 0 : cupsOf(d.drinks), future: future };
+    return { k: key, pee: future ? 0 : d.wees.length, ml: future ? 0 : mlOf(d.drinks), future: future };
   });
-  var rawMax = 1, peeTotal = 0, cupTotal = 0;
-  series.forEach(function (s) {
-    rawMax = Math.max(rawMax, s.pee, s.cups);
-    peeTotal += s.pee;
-    cupTotal += s.cups;
-  });
-  var step = Math.max(1, Math.ceil(rawMax / 4));          // integer ticks only
-  var max = step * Math.ceil(rawMax / step);
+  var peeTotal = 0, mlTotal = 0;
+  series.forEach(function (s) { peeTotal += s.pee; mlTotal += s.ml; });
+  var rangeLabel = chartMode === "week" ? "last 7 days" : MONTHS[view.m] + " " + view.y;
 
-  var W2 = 300, H = 150, left = 22, right = 4, top = 16, bottom = 20;
-  var plotW = W2 - left - right, plotH = H - top - bottom;
-  var group = plotW / series.length;
-  var barW = Math.max(2, Math.min(14, group * 0.38));
-  var weekly = chartMode === "week";
-  var showValues = weekly && window.innerWidth >= 520;
-  var svg = '', v;
-
-  for (v = 0; v <= max; v += step) {
-    var y = top + plotH * (1 - v / max);
-    svg += '<line class="grid" x1="' + left + '" x2="' + (W2 - right) + '" y1="' + y + '" y2="' + y + '"/>';
-    svg += '<text class="ax" x="' + (left - 4) + '" y="' + (y + 4) + '" text-anchor="end">' + v + '</text>';
+  var water = barChartSvg(series, { key: "ml", cls: "bd", minMax: 500, goalLine: goal(), round: true });
+  var pee = barChartSvg(series, { key: "pee", cls: "bp", minMax: 4, goalLine: 0, round: false });
+  function wrap(c, label) {
+    return '<svg class="chart" viewBox="0 0 ' + c.W + ' ' + c.H + '" role="img" aria-label="' + esc(label) + '">' + c.svg + '</svg>';
   }
-
-  series.forEach(function (s, idx) {
-    var cx = left + group * idx + group / 2;
-    var hp = plotH * s.pee / max, hd = plotH * s.cups / max;
-    var cls = s.future ? " off" : "";
-    if (s.pee) svg += '<rect class="bp' + cls + '" x="' + (cx - barW - 0.5) + '" y="' + (top + plotH - hp) + '" width="' + barW + '" height="' + hp + '" rx="2"/>';
-    if (s.cups) svg += '<rect class="bd' + cls + '" x="' + (cx + 0.5) + '" y="' + (top + plotH - hd) + '" width="' + barW + '" height="' + hd + '" rx="2"/>';
-    if (showValues) {
-      if (s.pee) svg += '<text class="val" x="' + (cx - barW / 2 - 0.5) + '" y="' + (top + plotH - hp - 2) + '">' + s.pee + '</text>';
-      if (s.cups) svg += '<text class="val" x="' + (cx + barW / 2 + 0.5) + '" y="' + (top + plotH - hd - 2) + '">' + fmt(s.cups) + '</text>';
-    }
-    var dnum = parseKey(s.k).getDate();
-    if (weekly || dnum === 1 || dnum % 5 === 0) {
-      var lab = weekly ? parseKey(s.k).toLocaleDateString(undefined, { weekday: "short" }).slice(0, 3) : String(dnum);
-      svg += '<text class="ax" x="' + cx + '" y="' + (H - 6) + '" text-anchor="middle">' + esc(lab) + '</text>';
-    }
-  });
-
-  var rangeLabel = weekly ? "last 7 days" : MONTHS[view.m] + " " + view.y;
-  var summary = "Bar chart, " + rangeLabel + ". Total " + W().pee + "s " + peeTotal + ", total water " + fmt(cupTotal) + " cups.";
-  $("chart").innerHTML = '<svg class="chart" viewBox="0 0 ' + W2 + ' ' + H + '" role="img" aria-label="' + esc(summary) + '">' + svg + '</svg>';
-  $("rWeek").setAttribute("aria-pressed", String(weekly));
-  $("rMonth").setAttribute("aria-pressed", String(!weekly));
+  $("chartWater").innerHTML = wrap(water, "Bar chart of water in ml, " + rangeLabel + ". Total " + mlTotal + " ml. Dashed line is your goal of " + goal() + " ml.");
+  $("chartPee").innerHTML = wrap(pee, "Bar chart of " + W().pee + " counts, " + rangeLabel + ". Total " + peeTotal + ".");
+  $("rWeek").setAttribute("aria-pressed", String(chartMode === "week"));
+  $("rMonth").setAttribute("aria-pressed", String(chartMode !== "week"));
 }
 
 function renderShelf() {
@@ -1258,6 +1469,13 @@ function renderShelf() {
   }).join("");
 }
 
+var EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+  '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+var EYE_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+  '<path d="M17.94 17.94A10.9 10.9 0 0 1 12 19C5 19 1 12 1 12a18.5 18.5 0 0 1 5.06-5.94"/>' +
+  '<path d="M9.9 4.24A10.9 10.9 0 0 1 12 5c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19"/>' +
+  '<path d="M14.12 14.12A3 3 0 1 1 9.88 9.88"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
 function renderTools() {
   var sound = $("soundBtn");
   sound.textContent = muted ? "🔇" : "🔊";
@@ -1273,7 +1491,7 @@ function renderTools() {
 
   var dis = $("discreetBtn");
   dis.setAttribute("aria-pressed", String(discreet));
-  dis.textContent = discreet ? "🙈" : "👁";
+  dis.innerHTML = discreet ? EYE_OFF : EYE;
   if (discreet) document.documentElement.setAttribute("data-discreet", "1");
   else document.documentElement.removeAttribute("data-discreet");
 }
@@ -1281,6 +1499,126 @@ function renderTools() {
 function renderTimes() {
   if (!touched.weeTime) $("weeTime").value = nowTime();
   if (!touched.drinkTime) $("drinkTime").value = nowTime();
+  if (!touched.tlTime) $("tlTime").value = nowTime();
+}
+
+/* ---------- day timeline ---------- */
+function isTlOpen() { return $("tl").hasAttribute("open"); }
+
+function renderTimeline() {
+  if (!isTlOpen()) return;
+  var d = getDay(selected);
+  var isToday = selected === today;
+  var entries = dayEntries(d);
+
+  $("tlTitle").textContent = (isToday ? "Today · " : "") + longDate(selected);
+  $("tlNext").disabled = selected >= today;
+
+  var night;
+  if (discreet) night = "Night check: " + (d.night === "dry" ? "yes" : d.night === "wet" ? "no" : "not logged");
+  else night = "Night before: " + (d.night === "dry" ? "dry" : d.night === "wet" ? "not dry" : "not logged");
+  $("tlNight").textContent = night;
+  $("tlTotals").textContent = plural(d.wees.length, W().pee) + " · " + mlOf(d.drinks) + " / " + goal() + " ml";
+
+  // visible hours: 06:00-22:00 by default, widened to fit every entry
+  var startH = 6, endH = 22;
+  entries.forEach(function (e) {
+    var m = minutesOf(e.t);
+    startH = Math.min(startH, Math.floor(m / 60));
+    endH = Math.max(endH, Math.ceil((m + 1) / 60));
+  });
+  endH = Math.min(endH, 24);
+  var height = (endH - startH) * HOUR_PX;
+
+  var html = "", h;
+  for (h = startH; h <= endH; h++) {
+    html += '<li class="tl-hr" aria-hidden="true" style="top:' + (h - startH) * HOUR_PX + 'px"><span>' + pad(h % 24) + ':00</span></li>';
+  }
+  if (isToday) {
+    var nowM = minutesOf(nowTime());
+    if (nowM >= startH * 60 && nowM <= endH * 60) {
+      html += '<li class="tl-now" aria-hidden="true" style="top:' + (nowM - startH * 60) / 60 * HOUR_PX + 'px"></li>';
+    }
+  }
+
+  // place chips; entries close in time sit side by side in lanes
+  var cluster = null, clusters = [];
+  entries.forEach(function (e) {
+    e.top = (minutesOf(e.t) - startH * 60) / 60 * HOUR_PX - CHIP_H / 2;
+    if (!cluster || e.top >= cluster.bottom) {
+      cluster = { lanes: [], bottom: -Infinity };
+      clusters.push(cluster);
+    }
+    var lane = 0;
+    while (cluster.lanes[lane] !== undefined && cluster.lanes[lane] > e.top) lane++;
+    cluster.lanes[lane] = e.top + CHIP_H;
+    cluster.bottom = Math.max(cluster.bottom, e.top + CHIP_H);
+    e.lane = lane;
+    e.cluster = cluster;
+  });
+  entries.forEach(function (e) {
+    var lanes = e.cluster.lanes.length;
+    var frac = 1 / lanes;
+    var left = "calc(" + GUTTER + "px + (100% - " + GUTTER + "px) * " + (e.lane * frac).toFixed(4) + ")";
+    var width = "calc((100% - " + GUTTER + "px) * " + frac.toFixed(4) + " - 4px)";
+    var label = e.type === "drink" ? "drink " + e.ml + " ml" : W().pee;
+    var sub = e.type === "drink" ? e.ml + " ml" : W().Pee;
+    var del = e.type === "drink" ? 'data-tl-drink="' + e.idx + '"' : 'data-tl-wee="' + e.idx + '"';
+    html += '<li class="tl-chip ' + e.type + (lanes >= 3 ? ' dense' : '') + '" style="top:' + e.top + 'px;left:' + left + ';width:' + width + '">' +
+      '<span class="tl-ic" aria-hidden="true">' + entryIcon(e.type) + '</span>' +
+      '<span class="tl-tx"><b>' + esc(e.t) + '</b><small>' + esc(sub) + '</small></span>' +
+      '<button class="x" type="button" ' + del + ' aria-label="Remove ' + esc(label) + ' at ' + esc(prettyTime(e.t)) + '">✕</button></li>';
+  });
+  if (!entries.length) {
+    html += '<li class="tl-empty">Nothing logged yet. Add something below.</li>';
+  }
+
+  var track = $("tlTrack");
+  track.style.height = height + "px";
+  track.innerHTML = html;
+  track.setAttribute("aria-label", "Entries in time order");
+  track._startH = startH;
+  track._firstTop = entries.length ? entries[0].top : null;
+}
+
+function renderTlForm() {
+  $("tlTypeDrink").setAttribute("aria-pressed", String(tlType === "drink"));
+  $("tlTypePee").setAttribute("aria-pressed", String(tlType === "pee"));
+  $("tlMlWrap").hidden = tlType !== "drink";
+}
+
+function openTimeline() {
+  var dlg = $("tl");
+  tlReturn = document.activeElement;
+  renderTlForm();
+  if (typeof dlg.showModal === "function") {
+    if (!isTlOpen()) dlg.showModal();
+  } else {
+    dlg.setAttribute("open", "");
+  }
+  if (!touched.tlTime) $("tlTime").value = nowTime();
+  $("tlMl").value = data.lastMl;
+  renderTimeline();
+  var track = $("tlTrack");
+  var target = track._firstTop;
+  if (target === null && selected === today) {
+    target = (minutesOf(nowTime()) - track._startH * 60) / 60 * HOUR_PX - 120;
+  }
+  $("tlScroll").scrollTop = Math.max(0, (target || 0) - 40);
+}
+function onTimelineClosed() {
+  hideToast();
+  $("tlErr").textContent = "";
+  var btn = $("cal").querySelector('[data-date="' + selected + '"]');
+  if (tlReturn && tlReturn.closest && tlReturn.closest("#cal") && btn) btn.focus();
+  else if (tlReturn && document.body.contains(tlReturn) && tlReturn.focus) tlReturn.focus();
+  else if (btn) btn.focus();
+  tlReturn = null;
+}
+function closeTimeline() {
+  var dlg = $("tl");
+  if (typeof dlg.close === "function") dlg.close();
+  else { dlg.removeAttribute("open"); onTimelineClosed(); }
 }
 
 function renderAll() {
@@ -1290,22 +1628,26 @@ function renderAll() {
   renderChart();
   renderShelf();
   renderCoach();
+  renderTimeline();
 }
 
 /* =========================================================
-   Toast and dialog
+   Toast and dialog (the timeline has its own toast, because
+   a modal dialog makes the rest of the page inert)
    ========================================================= */
 var toastTimer = 0;
 function showToast(text, undoFn) {
-  $("toastText").textContent = text;
+  var prefix = isTlOpen() ? "tlToast" : "toast";
+  hideToast();
+  $(prefix + "Text").textContent = text;
   toastAction = undoFn || null;
-  $("toastUndo").hidden = !undoFn;
-  $("toast").hidden = false;
-  clearTimeout(toastTimer);
+  $(prefix + "Undo").hidden = !undoFn;
+  $(prefix).hidden = false;
   toastTimer = setTimeout(hideToast, 5000);
 }
 function hideToast() {
   $("toast").hidden = true;
+  $("tlToast").hidden = true;
   toastAction = null;
   clearTimeout(toastTimer);
 }
@@ -1353,7 +1695,7 @@ function commit(ev) {
   override = text || null;
   renderAll();
   newStickers = {};
-  if (text) $("live").textContent = text;
+  if (text) announce(text);
 
   if (ev.quiet && !won.length && !leveled) return;
   if (won.length) sfx("unlock");
@@ -1374,6 +1716,21 @@ function resetTime(inputId) {
   $(inputId).value = nowTime();
 }
 
+/* Reads and validates an ml field; shows a friendly message when it is not usable. */
+function readMl(input, errEl) {
+  var raw = String(input.value).trim();
+  var n = Number(raw);
+  if (raw === "" || !isFinite(n) || n < ML_MIN || n > ML_MAX) {
+    errEl.textContent = "Please enter an amount between " + ML_MIN + " and " + ML_MAX + " ml.";
+    input.setAttribute("aria-invalid", "true");
+    input.focus();
+    return null;
+  }
+  errEl.textContent = "";
+  input.removeAttribute("aria-invalid");
+  return Math.round(n);
+}
+
 function addPee(forcedTime) {
   var d = getDay(selected, true);
   d.wees.push(forcedTime || chosenTime("weeTime"));
@@ -1382,17 +1739,17 @@ function addPee(forcedTime) {
   commit({ text: pick(PEE_LINES), sound: "log" });
 }
 
-function addDrink(forcedTime) {
-  var time = forcedTime || chosenTime("drinkTime");
+function addDrink(time, ml) {
   var d = getDay(selected, true);
-  var before = cupsOf(d.drinks);
-  d.drinks.push({ t: time, s: size });
+  var before = mlOf(d.drinks);
+  d.drinks.push({ t: time, ml: ml });
   d.drinks.sort(byTime);
+  data.lastMl = ml;
   resetTime("drinkTime");
 
-  var after = cupsOf(d.drinks);
+  var after = mlOf(d.drinks);
   var ev = { sound: "log" };
-  if (before < GOAL && after >= GOAL) {
+  if (before < goal() && after >= goal()) {
     ev.text = "Hydration on point 💧 Goal hit.";
     ev.big = true;
   } else if (time < EARLY_CUTOFF) {
@@ -1404,12 +1761,20 @@ function addDrink(forcedTime) {
     ev.text = "Logged.";
   }
   commit(ev);
+  $("mlInput").value = ml;
+  renderPresets();
+}
+
+function addDrinkFromCard() {
+  var ml = readMl($("mlInput"), $("mlErr"));
+  if (ml === null) return;
+  addDrink(chosenTime("drinkTime"), ml);
 }
 
 function quickAdd(kind) {
   if (selected !== today) selectDay(today, {});
   if (kind === "pee") addPee(nowTime());
-  else addDrink(nowTime());
+  else addDrink(nowTime(), data.lastMl);
 }
 
 function setNight(value) {
@@ -1456,7 +1821,8 @@ function deleteEntry(kind, index) {
   renderAll();
 
   var when = prettyTime(kind === "wee" ? item : item.t);
-  showToast("Removed " + (kind === "wee" ? W().pee : "drink") + " at " + when, function () {
+  var what = kind === "wee" ? W().pee : "drink";
+  showToast("Removed " + what + " at " + when, function () {
     var target = getDay(day, true);
     var arr = kind === "wee" ? target.wees : target.drinks;
     arr.push(item);
@@ -1473,9 +1839,6 @@ function selectDay(k, opts) {
   view = monthOf(k);
   calFocus = !!opts.focus;
   renderAll();
-  if (opts.scroll && window.matchMedia("(max-width: 859px)").matches) {
-    $("nightCard").scrollIntoView({ behavior: isReduced() ? "auto" : "smooth", block: "start" });
-  }
 }
 
 function shiftMonth(n) {
@@ -1486,6 +1849,33 @@ function shiftMonth(n) {
   renderCal();
   renderChart();
 }
+
+function commitGoal() {
+  var input = $("goalInput");
+  var n = Number(String(input.value).trim());
+  if (!isFinite(n) || n < GOAL_MIN || n > GOAL_MAX || String(input.value).trim() === "") {
+    $("goalErr").textContent = "Pick a goal between " + GOAL_MIN + " and " + GOAL_MAX + " ml.";
+    input.setAttribute("aria-invalid", "true");
+    return;
+  }
+  $("goalErr").textContent = "";
+  input.removeAttribute("aria-invalid");
+  data.goalMl = Math.round(n);
+  save();
+  // A blur-triggered change fires between mousedown and mouseup. Re-rendering then would
+  // replace the element being clicked and swallow the click, so wait for the pointer.
+  if (pointerDown) pendingRender = true;
+  else renderAll();
+}
+var pointerDown = false, pendingRender = false;
+document.addEventListener("pointerdown", function () { pointerDown = true; }, true);
+document.addEventListener("pointerup", function () {
+  pointerDown = false;
+  setTimeout(function () {
+    if (pendingRender) { pendingRender = false; renderAll(); }
+  }, 60);
+}, true);
+document.addEventListener("pointercancel", function () { pointerDown = false; }, true);
 
 /* =========================================================
    Backup: export / import
@@ -1533,11 +1923,15 @@ function importData(file) {
           if (!data.stickers[id]) data.stickers[id] = imported.stickers[id];
         });
         data.maxLevel = Math.max(data.maxLevel || 1, imported.maxLevel || 1);
+        data.goalMl = imported.goalMl;
+        data.lastMl = imported.lastMl;
         data.days = imported.days;
         awardStickers();
         data.maxLevel = Math.max(data.maxLevel, levelFromXp(xpTotal()));
         save();
         override = null;
+        $("goalInput").value = data.goalMl;
+        $("mlInput").value = data.lastMl;
         renderAll();
         showToast("Imported " + plural(importedCount, "day") + ".");
       }
@@ -1573,20 +1967,20 @@ function refreshClock() {
    Events
    ========================================================= */
 $("weeAdd").addEventListener("click", function () { addPee(); });
-$("drinkAdd").addEventListener("click", function () { addDrink(); });
+$("drinkAdd").addEventListener("click", addDrinkFromCard);
 $("quickPee").addEventListener("click", function () { quickAdd("pee"); });
 $("quickDrink").addEventListener("click", function () { quickAdd("drink"); });
 $("quickNight").addEventListener("click", function () {
   if (selected !== today) selectDay(today, {});
-  var card = $("nightCard");
-  card.scrollIntoView({ behavior: isReduced() ? "auto" : "smooth", block: "start" });
+  $("nightCard").scrollIntoView({ behavior: isReduced() ? "auto" : "smooth", block: "start" });
   var target = getDay(today).night === "wet" ? $("nWet") : $("nDry");
   target.focus({ preventScroll: true });
 });
 $("nDry").addEventListener("click", function () { setNight("dry"); });
 $("nWet").addEventListener("click", function () { setNight("wet"); });
 $("nClear").addEventListener("click", clearNight);
-$("todayBtn").addEventListener("click", function () { selectDay(today, { scroll: false }); });
+$("todayBtn").addEventListener("click", function () { selectDay(today, {}); });
+$("tlBtn").addEventListener("click", openTimeline);
 $("prev").addEventListener("click", function () { shiftMonth(-1); });
 $("next").addEventListener("click", function () { shiftMonth(1); });
 $("rWeek").addEventListener("click", function () { chartMode = "week"; renderChart(); });
@@ -1594,6 +1988,26 @@ $("rMonth").addEventListener("click", function () { chartMode = "month"; renderC
 
 $("weeTime").addEventListener("input", function () { touched.weeTime = true; });
 $("drinkTime").addEventListener("input", function () { touched.drinkTime = true; });
+$("tlTime").addEventListener("input", function () { touched.tlTime = true; });
+$("mlInput").addEventListener("input", function () {
+  $("mlErr").textContent = "";
+  this.removeAttribute("aria-invalid");
+  renderPresets();
+});
+$("tlMl").addEventListener("input", function () {
+  $("tlErr").textContent = "";
+  this.removeAttribute("aria-invalid");
+});
+$("goalInput").addEventListener("change", commitGoal);
+$("presets").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-ml]");
+  if (!b) return;
+  $("mlInput").value = b.getAttribute("data-ml");
+  $("mlErr").textContent = "";
+  $("mlInput").removeAttribute("aria-invalid");
+  sfx("click");
+  renderPresets();
+});
 
 $("soundBtn").addEventListener("click", function () {
   muted = !muted;
@@ -1615,6 +2029,7 @@ $("discreetBtn").addEventListener("click", function () {
   override = null;
   renderTools();
   renderAll();
+  renderTlForm();
 });
 
 $("weeList").addEventListener("click", function (e) {
@@ -1626,25 +2041,14 @@ $("drinkList").addEventListener("click", function (e) {
   if (b) deleteEntry("drink", +b.getAttribute("data-del-drink"));
 });
 
-$("sizes").innerHTML = SIZES.map(function (z) {
-  return '<button type="button" class="size" data-size="' + z.id + '" aria-pressed="' + (z.id === size) + '">' +
-    esc(z.label) + ' (' + z.text + ')</button>';
-}).join("");
-$("sizes").addEventListener("click", function (e) {
-  var b = e.target.closest("[data-size]");
-  if (!b) return;
-  size = b.getAttribute("data-size");
-  sfx("click");
-  Array.prototype.forEach.call($("sizes").children, function (c) {
-    c.setAttribute("aria-pressed", String(c === b));
-  });
-});
-
 $("cal").addEventListener("click", function (e) {
   var b = e.target.closest("[data-date]");
-  if (!b) return;
+  if (!b || b.disabled) return;
   sfx("click");
-  selectDay(b.getAttribute("data-date"), { focus: true, scroll: true });
+  selectDay(b.getAttribute("data-date"), {});
+  tlReturn = null;
+  openTimeline();
+  tlReturn = $("cal");                         // return focus to the day cell on close
 });
 $("cal").addEventListener("keydown", function (e) {
   var b = e.target.closest("[data-date]");
@@ -1674,6 +2078,37 @@ $("cal").addEventListener("keydown", function (e) {
   selectDay(next, { focus: true });
 });
 
+/* timeline events */
+$("tlClose").addEventListener("click", closeTimeline);
+$("tl").addEventListener("close", onTimelineClosed);
+$("tl").addEventListener("click", function (e) {
+  if (e.target === $("tl")) closeTimeline();      // click on the backdrop
+});
+$("tlPrev").addEventListener("click", function () { selectDay(addDays(selected, -1), {}); });
+$("tlNext").addEventListener("click", function () { selectDay(addDays(selected, 1), {}); });
+$("tlTypeDrink").addEventListener("click", function () { tlType = "drink"; renderTlForm(); });
+$("tlTypePee").addEventListener("click", function () { tlType = "pee"; renderTlForm(); });
+$("tlTrack").addEventListener("click", function (e) {
+  var w = e.target.closest("[data-tl-wee]");
+  var dr = e.target.closest("[data-tl-drink]");
+  if (w) deleteEntry("wee", +w.getAttribute("data-tl-wee"));
+  else if (dr) deleteEntry("drink", +dr.getAttribute("data-tl-drink"));
+});
+$("tlForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var time = TIME_RE.test($("tlTime").value) ? $("tlTime").value : nowTime();
+  if (tlType === "pee") {
+    addPee(time);
+  } else {
+    var ml = readMl($("tlMl"), $("tlErr"));
+    if (ml === null) return;
+    addDrink(time, ml);
+    $("tlMl").value = ml;
+  }
+  touched.tlTime = false;
+  $("tlTime").value = nowTime();
+});
+
 $("exportBtn").addEventListener("click", exportData);
 $("importBtn").addEventListener("click", function () { $("importFile").click(); });
 $("importFile").addEventListener("change", function () {
@@ -1682,18 +2117,21 @@ $("importFile").addEventListener("change", function () {
 });
 $("noticeClose").addEventListener("click", function () { $("notice").hidden = true; });
 
-$("toastUndo").addEventListener("click", function () {
+$("toastUndo").addEventListener("click", runToastUndo);
+$("tlToastUndo").addEventListener("click", runToastUndo);
+function runToastUndo() {
   var fn = toastAction;
   hideToast();
   if (fn) fn();
-});
-$("dlgCancel").addEventListener("click", function () { dialogAction = null; closeDialog(); });
+}
+$("dlgCancel").addEventListener("click", closeDialog);
 $("dlgOk").addEventListener("click", function () {
   var fn = dialogAction;
   dialogAction = null;
   closeDialog();
   if (fn) fn();
 });
+$("dlg").addEventListener("close", function () { dialogAction = null; });   // also covers Esc
 
 var resizeTimer = 0;
 window.addEventListener("resize", function () {
@@ -1707,6 +2145,7 @@ window.addEventListener("focus", refreshClock);
 window.addEventListener("storage", function (e) {
   if (e.key === STORE_KEY || e.key === null) {
     data = load(true);
+    $("goalInput").value = data.goalMl;
     renderAll();
   } else if (e.key === MUTE_KEY) {
     muted = readFlag(MUTE_KEY, "0") === "1";
@@ -1730,6 +2169,9 @@ setInterval(refreshClock, 30000);
   awardStickers();                                           // silently catch up
   data.maxLevel = Math.max(data.maxLevel || 1, levelFromXp(xpTotal()));
   if (JSON.stringify(data.stickers) + data.maxLevel !== before) save();
+  $("goalInput").value = data.goalMl;
+  $("mlInput").value = data.lastMl;
+  $("tlMl").value = data.lastMl;
   renderTools();
   renderTimes();
   renderAll();
