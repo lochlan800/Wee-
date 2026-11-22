@@ -95,10 +95,6 @@ button:focus:not(:focus-visible),input:focus:not(:focus-visible),[tabindex]:focu
 .wrap{max-width:1100px;margin:0 auto;padding:14px 16px 40px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 h1{margin:0;font-size:clamp(1.5rem,6vw,2rem);letter-spacing:-.5px;display:flex;align-items:center;gap:10px;white-space:nowrap}
-/* both names exist; discreet mode swaps them in CSS so nothing flashes */
-.nm-b{display:none}
-[data-discreet="1"] .nm-a{display:none}
-[data-discreet="1"] .nm-b{display:inline}
 h1 .logo{display:inline-block;width:.8em;height:.8em;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:0 0 16px var(--g1)}
 h1 .sub{font-size:.9rem;font-weight:500;color:var(--muted);letter-spacing:0}
 h2{margin:0 0 10px;font-size:1.1rem;letter-spacing:-.2px}
@@ -267,6 +263,8 @@ input[aria-invalid="true"]{border-color:var(--sel)}
 .chart .val{fill:var(--ink);font-size:10px;font-family:inherit;text-anchor:middle}
 .chart .bp{fill:var(--c-pee)} .chart .bd{fill:var(--c-drink)}
 .chart .off{opacity:.3}
+.goalkey{font-weight:400;color:var(--muted);font-size:.8125rem;margin-left:8px;white-space:nowrap}
+.goalkey i{display:inline-block;width:16px;border-top:2px dashed var(--accent);vertical-align:middle;margin-right:4px}
 
 /* ---------- achievements ---------- */
 .shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -309,11 +307,12 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
 .tl-head h2{margin:0;flex:1;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .tl-pin{padding:0 14px 8px;border-bottom:1px solid var(--line);display:grid;gap:2px}
 .tl-night{display:flex;align-items:center;gap:6px}
-.tl-lbl{flex:1;font-size:.8125rem;color:var(--muted);font-weight:600}
+.tl-lbl{flex:1;min-width:0;font-size:.75rem;color:var(--muted);font-weight:600}
 .mini{width:44px;height:44px;padding:0;border-radius:12px;border:1px solid var(--line);background:var(--chip);font-size:1.05rem;font-weight:700;line-height:1}
 .mini[aria-pressed="true"]{background:linear-gradient(135deg,var(--g1),var(--g2));color:var(--on-g);border-color:transparent}
 .mini[disabled]{opacity:.45}
-.tl-sub{font-size:.8125rem;color:var(--muted);margin:0}
+.mini.txt{width:auto;padding:0 10px;font-size:.875rem;font-weight:600;white-space:nowrap}
+.tl-sub{font-size:.8125rem;color:var(--muted);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tl-ntime{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .tl-ntime label{font-size:.8125rem;color:var(--muted)}
 .tl-band{display:flex;align-items:center;gap:8px;margin:0 0 14px;min-height:36px}
@@ -415,8 +414,8 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
   <div class="tl-pin">
     <div class="tl-night" role="group" aria-labelledby="tlNightLbl">
       <span class="tl-lbl" id="tlNightLbl"></span>
-      <button class="mini" id="tlNDry" type="button" aria-pressed="false"></button>
-      <button class="mini" id="tlNWet" type="button" aria-pressed="false"></button>
+      <button class="mini txt" id="tlNDry" type="button" aria-pressed="false"></button>
+      <button class="mini txt" id="tlNWet" type="button" aria-pressed="false"></button>
       <button class="mini" id="tlNClear" type="button" aria-label="Clear night answer">✕</button>
     </div>
     <div class="tl-ntime" id="tlNightTimeRow" hidden>
@@ -424,7 +423,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
       <input type="time" id="tlNightTime">
       <button class="mini" id="tlNightTimeClear" type="button" aria-label="Clear night time">✕</button>
     </div>
-    <p class="tl-sub"><span id="tlNightStatus"></span> · <span id="tlTotals"></span></p>
+    <p class="tl-sub" id="tlSub"></p>
   </div>
   <div class="tl-toast" id="tlToast" role="status" hidden>
     <span id="tlToastText"></span>
@@ -451,7 +450,8 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
 
 <div class="wrap">
   <header class="top">
-    <h1><span class="logo" aria-hidden="true"></span><span id="appName"><span class="nm-a">haPENIS</span><span class="nm-b">Loop</span></span> <span class="sub">daily tracker</span></h1>
+    <h1><span class="logo" aria-hidden="true"></span><span id="appName"></span> <span class="sub">daily tracker</span></h1>
+    <script>document.getElementById("appName").textContent = document.documentElement.hasAttribute("data-discreet") ? "Loop" : "haPENIS";</script>
     <div class="tools">
       <button class="btn ghost tool" id="discreetBtn" type="button" aria-pressed="false" aria-label="Discreet mode" title="Discreet mode"></button>
       <button class="btn ghost tool" id="themeBtn" type="button"></button>
@@ -559,7 +559,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
         <div id="goalEditor" hidden>
           <div class="row">
             <label for="goalInput">Daily goal (ml)</label>
-            <input type="number" id="goalInput" inputmode="numeric" min="1000" max="4000" step="100" value="1500">
+            <input type="number" id="goalInput" inputmode="numeric" min="1200" max="4000" step="100" value="1500">
             <button class="btn" id="goalSave" type="button">Save</button>
             <button class="btn ghost" id="goalCancel" type="button">Cancel</button>
           </div>
@@ -594,7 +594,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
       </div>
     </div>
     <div class="charts">
-      <div><h3><span class="dotk drink" aria-hidden="true"></span>Water (ml)</h3><div id="chartWater"></div></div>
+      <div><h3><span class="dotk drink" aria-hidden="true"></span>Water (ml) <small class="goalkey"><i aria-hidden="true"></i>current goal</small></h3><div id="chartWater"></div></div>
       <div><h3><span class="dotk pee" aria-hidden="true"></span><span id="keyPee"></span></h3><div id="chartPee"></div></div>
     </div>
   </section>
@@ -629,8 +629,8 @@ var DISCREET_KEY = "weeTracker.discreet";
 var TIP_KEY = "weeTracker.eveningTip";
 var DEFAULT_GOAL = 1500;      // ml per day
 var GOAL_MIN = 500, GOAL_MAX = 5000;          // tolerated when loading saved data
-var GOAL_UI_MIN = 1000, GOAL_UI_MAX = 4000;   // what the goal editor accepts
-var GOAL_COUNT_MIN = 1200;                    // goal hits only count against at least this much
+var GOAL_COUNT_MIN = 1200;                    // no goal is ever lower than this, so display and rewards agree
+var GOAL_UI_MIN = GOAL_COUNT_MIN, GOAL_UI_MAX = 4000;   // what the goal editor accepts
 var ML_MIN = 10, ML_MAX = 2000;
 var EARLY_CUTOFF = "16:00";   // drinks before this count as "early"
 var MAX_ENTRY_XP = 8;         // entries per day that earn XP
@@ -759,7 +759,10 @@ function sanitize(raw) {
       if (d.night === "dry" || d.night === "wet") day.night = d.night;
       if (day.night === "wet" && typeof d.nightTime === "string" && TIME_RE.test(d.nightTime)) day.nightTime = d.nightTime;
       var dayGoal = Math.round(Number(d.goalMl));
-      if (dayGoal >= GOAL_MIN && dayGoal <= GOAL_MAX) day.goalMl = dayGoal;
+      if (dayGoal >= GOAL_MIN && dayGoal <= GOAL_MAX) {
+        day.goalMl = Math.max(dayGoal, GOAL_COUNT_MIN);
+        if (dayGoal < GOAL_COUNT_MIN) migrated = true;     // raised, so save it
+      }
       day.wees.sort();
       day.drinks.sort(byTime);
       out.days[k] = day;
@@ -773,7 +776,10 @@ function sanitize(raw) {
   var ml = Math.floor(Number(raw.maxLevel));
   if (ml >= 1) out.maxLevel = Math.min(ml, MAX_LEVEL);
   var goal = Math.round(Number(raw.goalMl));
-  if (goal >= GOAL_MIN && goal <= GOAL_MAX) out.goalMl = goal;
+  if (goal >= GOAL_MIN && goal <= GOAL_MAX) {
+    out.goalMl = Math.max(goal, GOAL_COUNT_MIN);
+    if (goal < GOAL_COUNT_MIN) migrated = true;
+  }
   var last = Math.round(Number(raw.lastMl));
   if (last >= ML_MIN && last <= ML_MAX) out.lastMl = last;
   if (!(Number(raw.v) >= 5)) {
@@ -887,13 +893,13 @@ function pastKeys() {
    Older days without one use the default, never the current goal. */
 function goalFor(k) {
   var d = data.days[k];
-  if (d && d.goalMl) return d.goalMl;
-  if (d && d.drinks.length) return DEFAULT_GOAL;
-  return data.goalMl || DEFAULT_GOAL;
+  var g;
+  if (d && d.goalMl) g = d.goalMl;
+  else if (d && d.drinks.length) g = DEFAULT_GOAL;
+  else g = data.goalMl || DEFAULT_GOAL;
+  return Math.max(g, GOAL_COUNT_MIN);
 }
 function goal() { return goalFor(selected); }
-/* Goal hits (XP, achievements) never count against less than GOAL_COUNT_MIN. */
-function countGoal(k) { return Math.max(goalFor(k), GOAL_COUNT_MIN); }
 function dayEntries(d) {
   var list = [];
   d.wees.forEach(function (t, i) { list.push({ type: "pee", t: t, idx: i }); });
@@ -941,8 +947,8 @@ function overall() {
   s.perfectDays = 0;
   pastKeys().forEach(function (k) {
     var d = data.days[k];
-    var hit = mlOf(d.drinks) >= countGoal(k);
-    var early = earlyMlOf(d.drinks) >= countGoal(k) / 2;
+    var hit = mlOf(d.drinks) >= goalFor(k);
+    var early = hit && earlyMlOf(d.drinks) >= goalFor(k) / 2;
     if (hit) { s.goalDays++; goalKeys.push(k); }
     if (early) s.earlyDays++;
     if (hit && early && d.night === "dry") s.perfectDays++;
@@ -960,7 +966,7 @@ function xpTotal() {
     xp += Math.min(d.wees.length, MAX_ENTRY_XP) * XP.pee + Math.min(d.drinks.length, MAX_ENTRY_XP) * XP.drink;
     if (d.night) xp += XP.night;
     if (d.night === "dry") xp += XP.dry;
-    if (mlOf(d.drinks) >= countGoal(k)) xp += XP.goal;
+    if (mlOf(d.drinks) >= goalFor(k)) xp += XP.goal;
   });
   xp += Object.keys(data.stickers).length * XP.sticker;
   return xp;
@@ -1002,7 +1008,7 @@ var BADGES = [
   { id: "h5", em: "🌊", name: "Tidal Wave", max: 5, val: function (s) { return s.goalDays; },
     hint: function () { return "Hit your water goal on 5 days"; } },
   { id: "early", em: "🌅", name: "Early Bird", max: 3, val: function (s) { return s.earlyDays; },
-    hint: function () { return "Half your goal before 4pm, on 3 days"; } },
+    hint: function () { return "Hit your goal with half of it before 4pm, on 3 days"; } },
   { id: "log7", em: "📈", name: "Daily Driver", max: 7, val: function (s) { return s.logged; },
     hint: function () { return "Log something on 7 days"; } },
   { id: "log60", em: "🎖️", name: "Veteran", max: 60, val: function (s) { return s.logged; },
@@ -1491,7 +1497,6 @@ function barChartSvg(series, opts) {
   if (opts.goalLine) {
     var gy = top + plotH * (1 - opts.goalLine / max);
     svg += '<line class="goal" x1="' + left + '" x2="' + (W2 - right) + '" y1="' + gy + '" y2="' + gy + '"/>';
-    svg += '<text class="ax" x="' + (W2 - right) + '" y="' + (gy - 3) + '" text-anchor="end">current goal</text>';
   }
 
   series.forEach(function (s, idx) {
@@ -1592,6 +1597,7 @@ function renderTools() {
   if (discreet) document.documentElement.setAttribute("data-discreet", "1");
   else document.documentElement.removeAttribute("data-discreet");
   var appName = discreet ? "Loop" : "haPENIS";      // neutral name while discreet
+  $("appName").textContent = appName;
   document.title = appName;
 }
 
@@ -1607,28 +1613,23 @@ function isTlOpen() { return $("tl").hasAttribute("open"); }
 var tlExpanded = [];      // open groups, tracked by the minutes they cover so they stay open as entries change
 var ROW_H = 44;
 
-function nightStatusText(d) {
-  var t = d.nightTime ? prettyTime(d.nightTime) : "";
-  if (discreet) {
-    if (d.night === "dry") return "Night check: ●";
-    if (d.night === "wet") return "Night check: ○" + (t ? " · " + t : "");
-    return "Night check: not logged";
-  }
-  if (d.night === "dry") return "Dry night";
-  if (d.night === "wet") return "Not dry" + (t ? " · ~" + t : "");
-  return "Night not logged";
+/* One short line for the sheet header. The pressed button already says dry / not dry,
+   so a not-dry night only adds its time. */
+function nightStatusPart(d) {
+  if (d.night === "wet") return d.nightTime ? "○ " + prettyTime(d.nightTime) : "";
+  if (d.night === "dry") return discreet ? "Night check ●" : "Dry night";
+  return discreet ? "Night check: not logged" : "Night not logged";
 }
 
 function renderTlNight(d) {
   $("tlNightLbl").textContent = discreet ? "Night check" : "Night before";
-  $("tlNDry").textContent = discreet ? "●" : "✓";
-  $("tlNWet").textContent = "○";
+  $("tlNDry").textContent = discreet ? "● Yes" : "✓ Dry";
+  $("tlNWet").textContent = discreet ? "○ No" : "○ Not dry";
   $("tlNDry").setAttribute("aria-label", discreet ? "Night check yes" : "Dry night");
   $("tlNWet").setAttribute("aria-label", discreet ? "Night check no" : "Not dry");
   $("tlNDry").setAttribute("aria-pressed", String(d.night === "dry"));
   $("tlNWet").setAttribute("aria-pressed", String(d.night === "wet"));
   $("tlNClear").disabled = !d.night;
-  $("tlNightStatus").textContent = nightStatusText(d);
 
   var wet = d.night === "wet";
   $("tlNightTimeRow").hidden = !wet;
@@ -1700,7 +1701,11 @@ function renderTimeline() {
     : (isToday ? "Today · " : "") + longDate(selected);
   $("tlNext").disabled = selected >= today;
   renderTlNight(d);
-  $("tlTotals").textContent = plural(d.wees.length, W().pee) + " · " + fmtMl(mlOf(d.drinks)) + " / " + fmtMl(goal());
+  $("tlSub").textContent = [
+    nightStatusPart(d),
+    plural(d.wees.length, W().pee),
+    fmtMl(mlOf(d.drinks)) + " / " + fmtMl(goal())
+  ].filter(Boolean).join(" · ");
 
   // visible hours: 06:00-22:00 by default, widened to fit every entry
   var startH = 6, endH = 22;
@@ -1798,6 +1803,10 @@ function renderTimeline() {
 
 function scrollTimelineToStart() {
   var track = $("tlTrack");
+  if (getDay(selected).nightTime) {          // keep the Night band in view
+    $("tlScroll").scrollTop = 0;
+    return;
+  }
   var target = track._firstTop;
   if (target === null && selected === today) {
     target = (minutesOf(nowTime()) - track._startH * 60) / 60 * HOUR_PX - 120;
