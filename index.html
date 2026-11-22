@@ -3,14 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Loop Tracker</title>
-<meta name="description" content="Loop: a sleek daily tracker for hydration, breaks and dry nights.">
+<title>haPENIS</title>
+<meta name="description" content="A sleek daily tracker.">
 <script>
 /* Set theme and discreet mode before first paint (no flash). */
 try {
   var t = localStorage.getItem("weeTracker.theme");
   document.documentElement.setAttribute("data-theme", (t === "light" || t === "dark") ? t : "auto");
-  if (localStorage.getItem("weeTracker.discreet") === "1") document.documentElement.setAttribute("data-discreet", "1");
+  if (localStorage.getItem("weeTracker.discreet") === "1") {
+    document.documentElement.setAttribute("data-discreet", "1");
+    document.title = "Loop";          // neutral name while discreet
+  }
 } catch (e) {
   document.documentElement.setAttribute("data-theme", "auto");
 }
@@ -274,8 +277,13 @@ input[aria-invalid="true"]{border-color:var(--sel)}
 /* ---------- toast, dialogs ---------- */
 .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);border-radius:14px;padding:8px 8px 8px 18px;display:flex;gap:10px;align-items:center;box-shadow:0 10px 30px var(--shadow-c);max-width:calc(100vw - 24px)}
 .toast .btn{background:var(--accent);color:var(--accent-ink);padding:6px 16px}
+.pd.pee{background:var(--c-pee)} .pd.drink{background:var(--c-drink)}
+[data-discreet="1"] .pd.pee{background:transparent;border:2px solid var(--muted)}
+.linkbtn{background:none;border:0;color:var(--ink);font-weight:600;text-decoration:underline;padding:10px 6px;min-height:44px}
+#fbBackdrop{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:35}
+body.modal-open{overflow:hidden}
 dialog:not([open]){display:none}
-#dlg{background:var(--card-solid);color:var(--ink);border:1px solid var(--line);border-radius:20px;max-width:min(92vw,420px);padding:20px;box-shadow:0 10px 30px var(--shadow-c)}
+#dlg{position:fixed;top:50%;left:50%;margin:0;transform:translate(-50%,-50%);z-index:70;width:min(92vw,420px);background:var(--card-solid);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 10px 30px var(--shadow-c)}
 dialog::backdrop{background:rgba(0,0,0,.6)}
 #dlg .row{justify-content:flex-end;margin-top:14px}
 canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50}
@@ -294,8 +302,10 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
   #tl{top:0;right:0;bottom:0;left:auto;width:460px;max-width:100vw;max-height:none;height:100vh;border-radius:22px 0 0 22px}
 }
 .tl-head{display:flex;align-items:center;gap:8px;padding:12px 14px 8px}
-.tl-head h2{margin:0;flex:1;font-size:1.05rem}
-.tl-pin{padding:0 14px 10px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px}
+.tl-head h2{margin:0;flex:1;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tl-pin{padding:0 14px 10px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tl-night{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tl-night .preset{padding:4px 12px}
 .tl-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:26px 14px 20px;position:relative}
 .tl-track{position:relative;margin:0;padding:0;list-style:none}
 .tl-hr{position:absolute;left:0;right:0;border-top:1px solid var(--line);height:0}
@@ -304,18 +314,22 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
 .tl-chip{position:absolute;height:44px;display:flex;align-items:center;gap:4px;border-radius:12px;padding:0 0 0 6px;overflow:hidden;border-left:4px solid var(--c-pee);background:var(--bp-bg);color:var(--bp-ink);min-width:0}
 .tl-chip.drink{border-left-color:var(--c-drink);background:var(--bd-bg);color:var(--bd-ink)}
 .tl-ic{font-size:1rem;flex:none}
-.tl-tx{display:flex;flex-direction:column;line-height:1.15;min-width:0;flex:1}
-.tl-tx b{font-size:.8125rem;white-space:nowrap}
+.tl-tx{display:flex;flex-direction:column;line-height:1.15;min-width:0;flex:1;overflow:hidden}
+.tl-tx b{font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tl-tx small{font-size:.6875rem;white-space:nowrap}
-.tl-chip .x{flex:none;width:36px;height:44px;border-radius:0;color:inherit;opacity:.8}
-.tl-chip.dense{padding-left:4px;gap:2px}
-.tl-chip.dense .tl-ic{display:none}
-.tl-chip.dense .x{width:26px}
+.tl-chip .x{flex:none;width:44px;height:44px;border-radius:0;color:inherit;opacity:.8}
+.tl-group{position:absolute;left:52px;right:0;z-index:2;border-radius:12px;border:1px solid var(--line);border-left:4px solid var(--c-drink);background:var(--card-solid);overflow:hidden}
+.tl-gh{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;background:var(--bd-bg);color:var(--bd-ink);border:0;padding:4px 10px;text-align:left;font-size:.75rem;line-height:1.25;font-weight:600}
+.tl-gh .chev{margin-left:auto;flex:none}
+.tl-row{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:44px;padding-left:12px;border-top:1px solid var(--line);font-size:.875rem}
+.tl-row.pee{border-left:4px solid var(--c-pee)}
+.tl-row.drink{border-left:4px solid var(--c-drink)}
+.tl-row .x{flex:none}
 .tl-empty{position:absolute;left:52px;right:0;top:40px;color:var(--muted);margin:0}
 .tl-add{border-top:1px solid var(--line);padding:10px 14px 14px;display:grid;gap:8px}
 .tl-add .row{align-items:flex-end}
 .fld{display:grid;gap:2px}
-.tl-toast{position:absolute;left:12px;right:12px;bottom:12px;background:var(--ink);color:var(--bg);border-radius:14px;padding:8px 8px 8px 16px;display:flex;gap:10px;align-items:center;justify-content:space-between;z-index:5}
+.tl-toast{margin:8px 14px 0;background:var(--ink);color:var(--bg);border-radius:14px;padding:4px 4px 4px 16px;display:flex;gap:10px;align-items:center;justify-content:space-between}
 .tl-toast .btn{background:var(--accent);color:var(--accent-ink);padding:6px 16px}
 
 @keyframes flick{50%{transform:scale(1.12) rotate(-4deg)}}
@@ -328,6 +342,8 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
   .day .ct{display:none}
   .day .pvs{display:flex;flex-direction:column;gap:1px;font-size:.6875rem;line-height:1.25;color:var(--ink);font-variant-numeric:tabular-nums}
   .day .pvs .more{color:var(--muted)}
+  .day .pvs .pv{display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pd{flex:none;width:7px;height:7px;border-radius:50%}
 }
 @media (min-width:860px){
   .hero{grid-template-columns:1.6fr 1fr}
@@ -363,6 +379,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
   <button class="btn" id="toastUndo" type="button" hidden>Undo</button>
 </div>
 
+<div id="fbBackdrop" hidden></div>
 <dialog id="dlg" aria-labelledby="dlgTitle">
   <h2 id="dlgTitle"></h2>
   <p id="dlgText"></p>
@@ -380,13 +397,22 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
     <button class="btn ghost nav" id="tlClose" type="button" aria-label="Close timeline">✕</button>
   </div>
   <div class="tl-pin">
-    <span class="chip" id="tlNight"></span>
+    <div class="tl-night" role="group" aria-labelledby="tlNightLbl">
+      <span class="chip" id="tlNightLbl"></span>
+      <button class="preset" id="tlNDry" type="button" aria-pressed="false"></button>
+      <button class="preset" id="tlNWet" type="button" aria-pressed="false"></button>
+      <button class="preset" id="tlNClear" type="button">Clear</button>
+    </div>
     <span class="chip" id="tlTotals"></span>
   </div>
-  <div class="tl-scroll" id="tlScroll" tabindex="0" aria-label="Timeline of this day">
+  <div class="tl-toast" id="tlToast" role="status" hidden>
+    <span id="tlToastText"></span>
+    <button class="btn" id="tlToastUndo" type="button" hidden>Undo</button>
+  </div>
+  <div class="tl-scroll" id="tlScroll" tabindex="0" role="region" aria-label="Timeline of this day">
     <ol class="tl-track" id="tlTrack"></ol>
   </div>
-  <form class="tl-add" id="tlForm" aria-label="Add to this day">
+  <form class="tl-add" id="tlForm" novalidate aria-label="Add to this day">
     <div class="row" role="group" aria-label="Entry type">
       <button class="preset" id="tlTypeDrink" type="button" aria-pressed="true">Drink</button>
       <button class="preset" id="tlTypePee" type="button" aria-pressed="false">Pee</button>
@@ -398,16 +424,12 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
     </div>
     <p class="err" id="tlErr" role="alert"></p>
   </form>
-  <div class="tl-toast" id="tlToast" role="status" hidden>
-    <span id="tlToastText"></span>
-    <button class="btn" id="tlToastUndo" type="button" hidden>Undo</button>
-  </div>
   <div class="sr" id="tlLive" role="status" aria-live="polite" aria-atomic="true"></div>
 </dialog>
 
 <div class="wrap">
   <header class="top">
-    <h1><span class="logo" aria-hidden="true"></span>Loop <span class="sub">daily tracker</span></h1>
+    <h1><span class="logo" aria-hidden="true"></span><span id="appName">haPENIS</span> <span class="sub">daily tracker</span></h1>
     <div class="tools">
       <button class="btn ghost tool" id="discreetBtn" type="button" aria-pressed="false" aria-label="Discreet mode" title="Discreet mode"></button>
       <button class="btn ghost tool" id="themeBtn" type="button"></button>
@@ -489,7 +511,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
           <input type="time" id="weeTime">
           <button class="btn" id="weeAdd" type="button"></button>
         </div>
-        <ul class="list" id="weeList"></ul>
+        <ul class="list" id="weeList" tabindex="-1"></ul>
       </section>
 
       <section class="card" aria-labelledby="drinkTitle">
@@ -506,13 +528,18 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
           <button class="btn alt" id="drinkAdd" type="button">Log drink</button>
         </div>
         <p class="err" id="mlErr" role="alert"></p>
-        <div class="row">
-          <label for="goalInput">Daily goal (ml)</label>
-          <input type="number" id="goalInput" inputmode="numeric" min="500" max="5000" step="100" value="1500">
+        <p class="legend">Goal for new days: <button class="linkbtn" id="goalBtn" type="button" aria-expanded="false" aria-controls="goalEditor"></button></p>
+        <div id="goalEditor" hidden>
+          <div class="row">
+            <label for="goalInput">Daily goal (ml)</label>
+            <input type="number" id="goalInput" inputmode="numeric" min="500" max="5000" step="100" value="1500">
+            <button class="btn" id="goalSave" type="button">Save</button>
+            <button class="btn ghost" id="goalCancel" type="button">Cancel</button>
+          </div>
+          <p class="err" id="goalErr" role="alert"></p>
         </div>
-        <p class="err" id="goalErr" role="alert"></p>
         <p class="legend">Tip: getting most of your water before 4pm works best.</p>
-        <ul class="list" id="drinkList"></ul>
+        <ul class="list" id="drinkList" tabindex="-1"></ul>
       </section>
     </div>
 
@@ -584,7 +611,7 @@ var PRESETS = [
   { label: "Cup", ml: 250 },
   { label: "Bottle", ml: 500 }
 ];
-var LEGACY_ML = { s: 100, m: 250, l: 375 };   // old sip / cup / big sizes
+var LEGACY_ML = { s: 125, m: 250, l: 375 };   // old sip / cup / big sizes
 var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 var LEVEL_TITLES = ["Rookie", "Rising", "Steady", "On Track", "Locked In", "Grinder", "Focused", "Sharp",
                     "Pro", "Clutch", "Elite", "Prime", "Mythic", "Titan", "Legend"];
@@ -592,7 +619,7 @@ var XP = { pee: 2, drink: 2, night: 10, dry: 15, goal: 20, sticker: 50 };
 var PEE_LINES = ["Logged.", "Got it.", "Noted.", "Logged. Nice."];
 var KEY_RE = /^\d{4}-\d{2}-\d{2}$/;
 var TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
-var HOUR_PX = 64, CHIP_H = 44, GUTTER = 52;     // timeline geometry
+var HOUR_PX = 88, CHIP_H = 44, GUTTER = 52;     // timeline geometry
 
 var reducedQuery = null;
 try { reducedQuery = window.matchMedia("(prefers-reduced-motion: reduce)"); } catch (e) {}
@@ -628,11 +655,13 @@ function monthOf(k) {
   var d = parseKey(k);
   return { y: d.getFullYear(), m: d.getMonth() };
 }
+var timeFmt = null;
+try { timeFmt = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }); } catch (e) {}
+/* The one time formatter, using the device locale. */
 function prettyTime(t) {
+  if (timeFmt) return timeFmt.format(new Date(2000, 0, 1, +t.slice(0, 2), +t.slice(3)));
   var h = +t.slice(0, 2);
-  var suffix = h >= 12 ? "pm" : "am";
-  h = h % 12 || 12;
-  return h + ":" + t.slice(3) + " " + suffix;
+  return (h % 12 || 12) + ":" + t.slice(3) + (h >= 12 ? " pm" : " am");
 }
 function longDate(k) {
   return parseKey(k).toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
@@ -691,6 +720,8 @@ function sanitize(raw) {
         });
       }
       if (d.night === "dry" || d.night === "wet") day.night = d.night;
+      var dayGoal = Math.round(Number(d.goalMl));
+      if (dayGoal >= GOAL_MIN && dayGoal <= GOAL_MAX) day.goalMl = dayGoal;
       day.wees.sort();
       day.drinks.sort(byTime);
       out.days[k] = day;
@@ -805,7 +836,15 @@ function pruneDay(k) {
 function pastKeys() {
   return Object.keys(data.days).filter(function (k) { return k <= today; });
 }
-function goal() { return data.goalMl || DEFAULT_GOAL; }
+/* Each day is judged against the goal stamped on it when its first drink was logged.
+   Older days without one use the default, never the current goal. */
+function goalFor(k) {
+  var d = data.days[k];
+  if (d && d.goalMl) return d.goalMl;
+  if (d && d.drinks.length) return DEFAULT_GOAL;
+  return data.goalMl || DEFAULT_GOAL;
+}
+function goal() { return goalFor(selected); }
 function dayEntries(d) {
   var list = [];
   d.wees.forEach(function (t, i) { list.push({ type: "pee", t: t, idx: i }); });
@@ -853,8 +892,8 @@ function overall() {
   s.perfectDays = 0;
   pastKeys().forEach(function (k) {
     var d = data.days[k];
-    var hit = mlOf(d.drinks) >= goal();
-    var early = earlyMlOf(d.drinks) >= goal() / 2;
+    var hit = mlOf(d.drinks) >= goalFor(k);
+    var early = earlyMlOf(d.drinks) >= goalFor(k) / 2;
     if (hit) { s.goalDays++; goalKeys.push(k); }
     if (early) s.earlyDays++;
     if (hit && early && d.night === "dry") s.perfectDays++;
@@ -872,7 +911,7 @@ function xpTotal() {
     xp += Math.min(d.wees.length, MAX_ENTRY_XP) * XP.pee + Math.min(d.drinks.length, MAX_ENTRY_XP) * XP.drink;
     if (d.night) xp += XP.night;
     if (d.night === "dry") xp += XP.dry;
-    if (mlOf(d.drinks) >= goal()) xp += XP.goal;
+    if (mlOf(d.drinks) >= goalFor(k)) xp += XP.goal;
   });
   xp += Object.keys(data.stickers).length * XP.sticker;
   return xp;
@@ -1214,6 +1253,8 @@ function renderDay() {
   $("earlyText").textContent = early > 0
     ? early + " ml before 4pm. Counts toward Early Bird."
     : "Water before 4pm counts toward Early Bird.";
+  $("goalBtn").textContent = data.goalMl + " ml ✎";
+  $("goalBtn").setAttribute("aria-label", "Goal for new days: " + data.goalMl + " ml. Edit");
   renderPresets();
 }
 
@@ -1242,9 +1283,9 @@ function renderLists(d) {
     : '<li class="empty">Nothing logged yet.</li>';
 }
 
-function mlLevel(ml) {
+function mlLevel(ml, g) {
   if (ml <= 0) return 0;
-  var r = ml / goal();
+  var r = ml / g;
   if (r < 0.25) return 1;
   if (r < 0.5) return 2;
   if (r < 0.75) return 3;
@@ -1269,7 +1310,7 @@ function dayCellHtml(k) {
 
   var day = getDay(k);
   var ml = mlOf(day.drinks);
-  var lv = mlLevel(ml);
+  var lv = mlLevel(ml, goalFor(k));
   var cls = "day" + (lv ? " lv" + lv : "") + (day.night === "dry" ? " dry" : day.night === "wet" ? " nd" : "") +
             (k === today ? " today" : "") + (isSel ? " sel" : "");
   var glyph = day.night === "dry" ? (discreet ? "●" : "✓") : day.night === "wet" ? "○" : "";
@@ -1287,7 +1328,7 @@ function dayCellHtml(k) {
   if (ml) counts += '<span class="b b-drink">' + ml + '</span>';
 
   var preview = entries.slice(0, 3).map(function (e) {
-    return '<span>' + e.t + ' ' + entryIcon(e.type) + '</span>';
+    return '<span class="pv"><i class="pd ' + e.type + '"></i>' + esc(prettyTime(e.t)) + '</span>';
   }).join("");
   if (entries.length > 3) preview += '<span class="more">+' + (entries.length - 3) + '</span>';
 
@@ -1435,12 +1476,12 @@ function renderChart() {
   series.forEach(function (s) { peeTotal += s.pee; mlTotal += s.ml; });
   var rangeLabel = chartMode === "week" ? "last 7 days" : MONTHS[view.m] + " " + view.y;
 
-  var water = barChartSvg(series, { key: "ml", cls: "bd", minMax: 500, goalLine: goal(), round: true });
+  var water = barChartSvg(series, { key: "ml", cls: "bd", minMax: 500, goalLine: data.goalMl, round: true });
   var pee = barChartSvg(series, { key: "pee", cls: "bp", minMax: 4, goalLine: 0, round: false });
   function wrap(c, label) {
     return '<svg class="chart" viewBox="0 0 ' + c.W + ' ' + c.H + '" role="img" aria-label="' + esc(label) + '">' + c.svg + '</svg>';
   }
-  $("chartWater").innerHTML = wrap(water, "Bar chart of water in ml, " + rangeLabel + ". Total " + mlTotal + " ml. Dashed line is your goal of " + goal() + " ml.");
+  $("chartWater").innerHTML = wrap(water, "Bar chart of water in ml, " + rangeLabel + ". Total " + mlTotal + " ml. Dashed line is your current goal of " + data.goalMl + " ml.");
   $("chartPee").innerHTML = wrap(pee, "Bar chart of " + W().pee + " counts, " + rangeLabel + ". Total " + peeTotal + ".");
   $("rWeek").setAttribute("aria-pressed", String(chartMode === "week"));
   $("rMonth").setAttribute("aria-pressed", String(chartMode !== "week"));
@@ -1494,6 +1535,9 @@ function renderTools() {
   dis.innerHTML = discreet ? EYE_OFF : EYE;
   if (discreet) document.documentElement.setAttribute("data-discreet", "1");
   else document.documentElement.removeAttribute("data-discreet");
+  var appName = discreet ? "Loop" : "haPENIS";      // neutral name while discreet
+  $("appName").textContent = appName;
+  document.title = appName;
 }
 
 function renderTimes() {
@@ -1505,19 +1549,67 @@ function renderTimes() {
 /* ---------- day timeline ---------- */
 function isTlOpen() { return $("tl").hasAttribute("open"); }
 
+var tlExpanded = {};
+
+function renderTlNight(d) {
+  $("tlNightLbl").textContent = discreet ? "Night check" : "Night before";
+  $("tlNDry").textContent = discreet ? "● Yes" : "✓ Dry";
+  $("tlNWet").textContent = discreet ? "○ No" : "○ Not dry";
+  $("tlNDry").setAttribute("aria-pressed", String(d.night === "dry"));
+  $("tlNWet").setAttribute("aria-pressed", String(d.night === "wet"));
+  $("tlNClear").disabled = !d.night;
+}
+
+function chipDeleteAttr(e) {
+  return e.type === "drink" ? 'data-tl-drink="' + e.idx + '"' : 'data-tl-wee="' + e.idx + '"';
+}
+function entryLabel(e) {
+  return e.type === "drink" ? "drink " + e.ml + " ml" : W().pee;
+}
+
+/* A crowded cluster becomes one chip that expands into a readable list. */
+function groupHtml(cluster) {
+  var items = cluster.items;
+  var first = items[0], last = items[items.length - 1];
+  var drinks = items.filter(function (e) { return e.type === "drink"; });
+  var pees = items.filter(function (e) { return e.type === "pee"; });
+  var key = "g" + first.t;
+  var open = !!tlExpanded[key];
+  var parts = [];
+  if (drinks.length) {
+    var total = drinks.reduce(function (sum, e) { return sum + e.ml; }, 0);
+    parts.push(plural(drinks.length, "drink") + " · " + total.toLocaleString() + " ml");
+  }
+  if (pees.length) parts.push(plural(pees.length, W().pee));
+  var title = prettyTime(first.t) + "–" + prettyTime(last.t) + " · " + parts.join(" · ");
+  var id = "tlg-" + key.slice(1).replace(":", "");
+
+  var html = '<li class="tl-group' + (open ? " open" : "") + '" style="top:' + first.top + 'px">' +
+    '<button class="tl-gh" type="button" data-tl-group="' + key + '" aria-expanded="' + open + '" aria-controls="' + id + '">' +
+    '<span>' + esc(title) + '</span><span class="chev" aria-hidden="true">' + (open ? "▴" : "▾") + '</span></button>';
+  if (open) {
+    html += '<div id="' + id + '">' + items.map(function (e) {
+      var sub = e.type === "drink" ? e.ml + " ml" : W().Pee;
+      return '<div class="tl-row ' + e.type + '"><span>' + entryIcon(e.type) + ' ' + esc(prettyTime(e.t)) + ' · ' + esc(sub) + '</span>' +
+        '<button class="x" type="button" ' + chipDeleteAttr(e) + ' aria-label="Remove ' + esc(entryLabel(e)) + ' at ' + esc(prettyTime(e.t)) + '">✕</button></div>';
+    }).join("") + '</div>';
+  }
+  return html + '</li>';
+}
+
 function renderTimeline() {
   if (!isTlOpen()) return;
   var d = getDay(selected);
   var isToday = selected === today;
   var entries = dayEntries(d);
+  var narrow = window.innerWidth < 480;
+  var maxLanes = window.innerWidth >= 860 ? 3 : 2;
 
-  $("tlTitle").textContent = (isToday ? "Today · " : "") + longDate(selected);
+  $("tlTitle").textContent = narrow
+    ? (isToday ? "Today, " : "") + shortDate(selected)
+    : (isToday ? "Today · " : "") + longDate(selected);
   $("tlNext").disabled = selected >= today;
-
-  var night;
-  if (discreet) night = "Night check: " + (d.night === "dry" ? "yes" : d.night === "wet" ? "no" : "not logged");
-  else night = "Night before: " + (d.night === "dry" ? "dry" : d.night === "wet" ? "not dry" : "not logged");
-  $("tlNight").textContent = night;
+  renderTlNight(d);
   $("tlTotals").textContent = plural(d.wees.length, W().pee) + " · " + mlOf(d.drinks) + " / " + goal() + " ml";
 
   // visible hours: 06:00-22:00 by default, widened to fit every entry
@@ -1541,33 +1633,37 @@ function renderTimeline() {
     }
   }
 
-  // place chips; entries close in time sit side by side in lanes
+  // cluster entries that overlap in time, assign lanes inside each cluster
   var cluster = null, clusters = [];
   entries.forEach(function (e) {
     e.top = (minutesOf(e.t) - startH * 60) / 60 * HOUR_PX - CHIP_H / 2;
     if (!cluster || e.top >= cluster.bottom) {
-      cluster = { lanes: [], bottom: -Infinity };
+      cluster = { lanes: [], bottom: -Infinity, items: [] };
       clusters.push(cluster);
     }
     var lane = 0;
     while (cluster.lanes[lane] !== undefined && cluster.lanes[lane] > e.top) lane++;
     cluster.lanes[lane] = e.top + CHIP_H;
     cluster.bottom = Math.max(cluster.bottom, e.top + CHIP_H);
+    cluster.items.push(e);
     e.lane = lane;
-    e.cluster = cluster;
   });
-  entries.forEach(function (e) {
-    var lanes = e.cluster.lanes.length;
-    var frac = 1 / lanes;
-    var left = "calc(" + GUTTER + "px + (100% - " + GUTTER + "px) * " + (e.lane * frac).toFixed(4) + ")";
-    var width = "calc((100% - " + GUTTER + "px) * " + frac.toFixed(4) + " - 4px)";
-    var label = e.type === "drink" ? "drink " + e.ml + " ml" : W().pee;
-    var sub = e.type === "drink" ? e.ml + " ml" : W().Pee;
-    var del = e.type === "drink" ? 'data-tl-drink="' + e.idx + '"' : 'data-tl-wee="' + e.idx + '"';
-    html += '<li class="tl-chip ' + e.type + (lanes >= 3 ? ' dense' : '') + '" style="top:' + e.top + 'px;left:' + left + ';width:' + width + '">' +
-      '<span class="tl-ic" aria-hidden="true">' + entryIcon(e.type) + '</span>' +
-      '<span class="tl-tx"><b>' + esc(e.t) + '</b><small>' + esc(sub) + '</small></span>' +
-      '<button class="x" type="button" ' + del + ' aria-label="Remove ' + esc(label) + ' at ' + esc(prettyTime(e.t)) + '">✕</button></li>';
+
+  clusters.forEach(function (c) {
+    if (c.lanes.length > maxLanes) {
+      html += groupHtml(c);
+      return;
+    }
+    var frac = 1 / c.lanes.length;
+    c.items.forEach(function (e) {
+      var left = "calc(" + GUTTER + "px + (100% - " + GUTTER + "px) * " + (e.lane * frac).toFixed(4) + ")";
+      var width = "calc((100% - " + GUTTER + "px) * " + frac.toFixed(4) + " - 4px)";
+      var sub = e.type === "drink" ? e.ml + " ml" : W().Pee;
+      html += '<li class="tl-chip ' + e.type + '" style="top:' + e.top + 'px;left:' + left + ';width:' + width + '">' +
+        '<span class="tl-ic" aria-hidden="true">' + entryIcon(e.type) + '</span>' +
+        '<span class="tl-tx"><b>' + esc(prettyTime(e.t)) + '</b><small>' + esc(sub) + '</small></span>' +
+        '<button class="x" type="button" ' + chipDeleteAttr(e) + ' aria-label="Remove ' + esc(entryLabel(e)) + ' at ' + esc(prettyTime(e.t)) + '">✕</button></li>';
+    });
   });
   if (!entries.length) {
     html += '<li class="tl-empty">Nothing logged yet. Add something below.</li>';
@@ -1581,24 +1677,7 @@ function renderTimeline() {
   track._firstTop = entries.length ? entries[0].top : null;
 }
 
-function renderTlForm() {
-  $("tlTypeDrink").setAttribute("aria-pressed", String(tlType === "drink"));
-  $("tlTypePee").setAttribute("aria-pressed", String(tlType === "pee"));
-  $("tlMlWrap").hidden = tlType !== "drink";
-}
-
-function openTimeline() {
-  var dlg = $("tl");
-  tlReturn = document.activeElement;
-  renderTlForm();
-  if (typeof dlg.showModal === "function") {
-    if (!isTlOpen()) dlg.showModal();
-  } else {
-    dlg.setAttribute("open", "");
-  }
-  if (!touched.tlTime) $("tlTime").value = nowTime();
-  $("tlMl").value = data.lastMl;
-  renderTimeline();
+function scrollTimelineToStart() {
   var track = $("tlTrack");
   var target = track._firstTop;
   if (target === null && selected === today) {
@@ -1606,8 +1685,24 @@ function openTimeline() {
   }
   $("tlScroll").scrollTop = Math.max(0, (target || 0) - 40);
 }
+
+function renderTlForm() {
+  $("tlTypeDrink").setAttribute("aria-pressed", String(tlType === "drink"));
+  $("tlTypePee").setAttribute("aria-pressed", String(tlType === "pee"));
+  $("tlMlWrap").hidden = tlType !== "drink";
+}
+
+function openTimeline() {
+  tlReturn = document.activeElement;
+  renderTlForm();
+  openDlg($("tl"));
+  if (!touched.tlTime) $("tlTime").value = nowTime();
+  $("tlMl").value = data.lastMl;
+  renderTimeline();
+  scrollTimelineToStart();
+}
 function onTimelineClosed() {
-  hideToast();
+  hideToast(true);
   $("tlErr").textContent = "";
   var btn = $("cal").querySelector('[data-date="' + selected + '"]');
   if (tlReturn && tlReturn.closest && tlReturn.closest("#cal") && btn) btn.focus();
@@ -1616,9 +1711,7 @@ function onTimelineClosed() {
   tlReturn = null;
 }
 function closeTimeline() {
-  var dlg = $("tl");
-  if (typeof dlg.close === "function") dlg.close();
-  else { dlg.removeAttribute("open"); onTimelineClosed(); }
+  closeDlg($("tl"));
 }
 
 function renderAll() {
@@ -1636,35 +1729,72 @@ function renderAll() {
    a modal dialog makes the rest of the page inert)
    ========================================================= */
 var toastTimer = 0;
+var toastFallback = null;      // where focus goes when the toast disappears
 function showToast(text, undoFn) {
   var prefix = isTlOpen() ? "tlToast" : "toast";
-  hideToast();
+  hideToast(true);
   $(prefix + "Text").textContent = text;
   toastAction = undoFn || null;
   $(prefix + "Undo").hidden = !undoFn;
   $(prefix).hidden = false;
-  toastTimer = setTimeout(hideToast, 5000);
+  toastTimer = setTimeout(function () { hideToast(); }, 5000);
 }
-function hideToast() {
+function hideToast(keepFocus) {
+  var active = document.activeElement;
+  var hadFocus = active === $("toastUndo") || active === $("tlToastUndo");
   $("toast").hidden = true;
   $("tlToast").hidden = true;
   toastAction = null;
   clearTimeout(toastTimer);
+  if (hadFocus && !keepFocus) {
+    var fb = (isTlOpen() ? $("tlScroll") : toastFallback) || document.body;
+    if (fb.focus) fb.focus();
+  }
+}
+
+/* Modal helpers. Native <dialog> where available; otherwise a manual fallback
+   with its own backdrop, an inert page, and Esc to close. */
+var fallbackOpen = [];
+function syncFallback() {
+  var on = fallbackOpen.length > 0;
+  var wrap = document.querySelector(".wrap");
+  $("fbBackdrop").hidden = !on;
+  document.body.classList.toggle("modal-open", on);
+  if (on) wrap.setAttribute("aria-hidden", "true"); else wrap.removeAttribute("aria-hidden");
+  if ("inert" in wrap) wrap.inert = on;
+  else wrap.style.pointerEvents = on ? "none" : "";
+}
+function openDlg(dlg) {
+  if (typeof dlg.showModal === "function") {
+    if (!dlg.hasAttribute("open")) dlg.showModal();
+    return;
+  }
+  dlg.setAttribute("open", "");
+  if (fallbackOpen.indexOf(dlg) < 0) fallbackOpen.push(dlg);
+  syncFallback();
+  var first = dlg.querySelector("button, input, [tabindex]");
+  if (first) first.focus();
+}
+function closeDlg(dlg) {
+  if (typeof dlg.close === "function") {
+    dlg.close();
+    return;
+  }
+  dlg.removeAttribute("open");
+  fallbackOpen = fallbackOpen.filter(function (d) { return d !== dlg; });
+  syncFallback();
+  dlg.dispatchEvent(new Event("close"));
 }
 
 function showDialog(title, text, okLabel, onOk) {
-  var dlg = $("dlg");
   $("dlgTitle").textContent = title;
   $("dlgText").textContent = text;
   $("dlgOk").textContent = okLabel;
   dialogAction = onOk;
-  if (typeof dlg.showModal === "function") dlg.showModal();
-  else dlg.setAttribute("open", "");
+  openDlg($("dlg"));
 }
 function closeDialog() {
-  var dlg = $("dlg");
-  if (typeof dlg.close === "function") dlg.close();
-  else dlg.removeAttribute("open");
+  closeDlg($("dlg"));
 }
 
 /* =========================================================
@@ -1731,25 +1861,26 @@ function readMl(input, errEl) {
   return Math.round(n);
 }
 
-function addPee(forcedTime) {
+function addPee(forcedTime, external) {
   var d = getDay(selected, true);
   d.wees.push(forcedTime || chosenTime("weeTime"));
   d.wees.sort();
-  resetTime("weeTime");
+  if (!external) resetTime("weeTime");      // quick and timeline adds leave the card's field alone
   commit({ text: pick(PEE_LINES), sound: "log" });
 }
 
-function addDrink(time, ml) {
+function addDrink(time, ml, external) {
   var d = getDay(selected, true);
   var before = mlOf(d.drinks);
+  if (!d.drinks.length) d.goalMl = data.goalMl;     // the day keeps the goal it started with
   d.drinks.push({ t: time, ml: ml });
   d.drinks.sort(byTime);
   data.lastMl = ml;
-  resetTime("drinkTime");
+  if (!external) resetTime("drinkTime");
 
   var after = mlOf(d.drinks);
   var ev = { sound: "log" };
-  if (before < goal() && after >= goal()) {
+  if (before < goalFor(selected) && after >= goalFor(selected)) {
     ev.text = "Hydration on point 💧 Goal hit.";
     ev.big = true;
   } else if (time < EARLY_CUTOFF) {
@@ -1761,7 +1892,7 @@ function addDrink(time, ml) {
     ev.text = "Logged.";
   }
   commit(ev);
-  $("mlInput").value = ml;
+  if (!external) $("mlInput").value = ml;
   renderPresets();
 }
 
@@ -1773,8 +1904,8 @@ function addDrinkFromCard() {
 
 function quickAdd(kind) {
   if (selected !== today) selectDay(today, {});
-  if (kind === "pee") addPee(nowTime());
-  else addDrink(nowTime(), data.lastMl);
+  if (kind === "pee") addPee(nowTime(), true);
+  else addDrink(nowTime(), data.lastMl, true);
 }
 
 function setNight(value) {
@@ -1808,27 +1939,73 @@ function clearNight() {
   renderAll();
 }
 
-function deleteEntry(kind, index) {
+function entryButton(ctx, e) {
+  var root = ctx === "tl" ? $("tlTrack") : (e.type === "pee" ? $("weeList") : $("drinkList"));
+  var attr = ctx === "tl"
+    ? (e.type === "pee" ? "data-tl-wee" : "data-tl-drink")
+    : (e.type === "pee" ? "data-del-wee" : "data-del-drink");
+  return root.querySelector("[" + attr + '="' + e.idx + '"]');
+}
+
+/* After a delete, focus moves to the next entry's delete button, else the previous,
+   else the Undo button, else the list/timeline itself. It never falls to <body>. */
+function focusAfterDelete(ctx, target) {
+  var el = target ? entryButton(ctx, target) : null;
+  if (!el && ctx === "tl") el = $("tlTrack").querySelector("[data-tl-group]");
+  if (!el) {
+    var undo = ctx === "tl" ? $("tlToastUndo") : $("toastUndo");
+    if (!undo.hidden && !undo.closest("[hidden]")) el = undo;
+  }
+  if (!el) el = toastFallback;
+  if (el && el.focus) el.focus();
+}
+
+function deleteEntry(kind, index, ctx) {
   var d = getDay(selected);
   var list = kind === "wee" ? d.wees : d.drinks;
-  var item = list.splice(index, 1)[0];
+  var type = kind === "wee" ? "pee" : "drink";
+  var item = list[index];
   if (item === undefined) return;
   var day = selected;
+  var goalWas = d.goalMl;
+  var pos = -1;
+  if (ctx === "tl") {
+    dayEntries(d).forEach(function (e, i) { if (e.type === type && e.idx === index) pos = i; });
+  }
+
+  list.splice(index, 1);
+  if (kind === "drink" && !d.drinks.length) delete d.goalMl;   // the next first drink re-stamps the goal
   pruneDay(day);
   override = null;
   sfx("remove");
   save();
   renderAll();
 
+  // who gets focus next
+  var after = getDay(day);
+  var target = null;
+  if (ctx === "tl") {
+    var rest = dayEntries(after);
+    target = rest[pos] || rest[pos - 1] || null;
+  } else {
+    var arr = kind === "wee" ? after.wees : after.drinks;
+    if (arr.length) target = { type: type, idx: index < arr.length ? index : index - 1 };
+  }
+  toastFallback = ctx === "tl" ? $("tlScroll") : (kind === "wee" ? $("weeList") : $("drinkList"));
+
   var when = prettyTime(kind === "wee" ? item : item.t);
   var what = kind === "wee" ? W().pee : "drink";
   showToast("Removed " + what + " at " + when, function () {
-    var target = getDay(day, true);
-    var arr = kind === "wee" ? target.wees : target.drinks;
-    arr.push(item);
-    if (kind === "wee") arr.sort(); else arr.sort(byTime);
+    var restored = getDay(day, true);
+    var arr2 = kind === "wee" ? restored.wees : restored.drinks;
+    arr2.push(item);
+    if (kind === "wee") arr2.sort(); else arr2.sort(byTime);
+    if (kind === "drink" && arr2.length === 1 && goalWas) restored.goalMl = goalWas;
     commit({ quiet: true });                 // re-checks achievements and levels
+    var el = entryButton(ctx, { type: type, idx: arr2.indexOf(item) }) || toastFallback;
+    if (el && el.focus) el.focus();
   });
+  focusAfterDelete(ctx, target);
 }
 
 function selectDay(k, opts) {
@@ -1836,6 +2013,7 @@ function selectDay(k, opts) {
   if (!isValidKey(k) || k > today) return;
   selected = k;
   override = null;
+  tlExpanded = {};
   view = monthOf(k);
   calFocus = !!opts.focus;
   renderAll();
@@ -1850,32 +2028,36 @@ function shiftMonth(n) {
   renderChart();
 }
 
+function openGoalEditor(open) {
+  $("goalEditor").hidden = !open;
+  $("goalBtn").setAttribute("aria-expanded", String(open));
+  if (open) {
+    $("goalInput").value = data.goalMl;
+    $("goalErr").textContent = "";
+    $("goalInput").focus();
+  } else {
+    $("goalBtn").focus();
+  }
+}
+/* A new goal applies to today (if it already has drinks) and to future days only. */
 function commitGoal() {
   var input = $("goalInput");
-  var n = Number(String(input.value).trim());
-  if (!isFinite(n) || n < GOAL_MIN || n > GOAL_MAX || String(input.value).trim() === "") {
+  var raw = String(input.value).trim();
+  var n = Number(raw);
+  if (raw === "" || !isFinite(n) || n < GOAL_MIN || n > GOAL_MAX) {
     $("goalErr").textContent = "Pick a goal between " + GOAL_MIN + " and " + GOAL_MAX + " ml.";
     input.setAttribute("aria-invalid", "true");
+    input.focus();
     return;
   }
-  $("goalErr").textContent = "";
   input.removeAttribute("aria-invalid");
   data.goalMl = Math.round(n);
+  var todayDay = data.days[today];
+  if (todayDay && todayDay.drinks.length) todayDay.goalMl = data.goalMl;
   save();
-  // A blur-triggered change fires between mousedown and mouseup. Re-rendering then would
-  // replace the element being clicked and swallow the click, so wait for the pointer.
-  if (pointerDown) pendingRender = true;
-  else renderAll();
+  renderAll();
+  openGoalEditor(false);
 }
-var pointerDown = false, pendingRender = false;
-document.addEventListener("pointerdown", function () { pointerDown = true; }, true);
-document.addEventListener("pointerup", function () {
-  pointerDown = false;
-  setTimeout(function () {
-    if (pendingRender) { pendingRender = false; renderAll(); }
-  }, 60);
-}, true);
-document.addEventListener("pointercancel", function () { pointerDown = false; }, true);
 
 /* =========================================================
    Backup: export / import
@@ -1910,7 +2092,7 @@ function importData(file) {
     } catch (e) {}
     var importedCount = imported ? Object.keys(imported.days).length : 0;
     if (!imported || !importedCount) {
-      showToast("That file isn't a usable Loop backup. Nothing was changed.");
+      showToast("That file isn't a usable backup. Nothing was changed.");
       return;
     }
     var currentCount = Object.keys(data.days).length;
@@ -1998,7 +2180,13 @@ $("tlMl").addEventListener("input", function () {
   $("tlErr").textContent = "";
   this.removeAttribute("aria-invalid");
 });
-$("goalInput").addEventListener("change", commitGoal);
+$("goalBtn").addEventListener("click", function () { openGoalEditor($("goalEditor").hidden); });
+$("goalSave").addEventListener("click", commitGoal);
+$("goalCancel").addEventListener("click", function () { openGoalEditor(false); });
+$("goalInput").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") { e.preventDefault(); commitGoal(); }
+  else if (e.key === "Escape") { e.preventDefault(); openGoalEditor(false); }
+});
 $("presets").addEventListener("click", function (e) {
   var b = e.target.closest("[data-ml]");
   if (!b) return;
@@ -2034,11 +2222,11 @@ $("discreetBtn").addEventListener("click", function () {
 
 $("weeList").addEventListener("click", function (e) {
   var b = e.target.closest("[data-del-wee]");
-  if (b) deleteEntry("wee", +b.getAttribute("data-del-wee"));
+  if (b) deleteEntry("wee", +b.getAttribute("data-del-wee"), "main");
 });
 $("drinkList").addEventListener("click", function (e) {
   var b = e.target.closest("[data-del-drink]");
-  if (b) deleteEntry("drink", +b.getAttribute("data-del-drink"));
+  if (b) deleteEntry("drink", +b.getAttribute("data-del-drink"), "main");
 });
 
 $("cal").addEventListener("click", function (e) {
@@ -2084,25 +2272,35 @@ $("tl").addEventListener("close", onTimelineClosed);
 $("tl").addEventListener("click", function (e) {
   if (e.target === $("tl")) closeTimeline();      // click on the backdrop
 });
-$("tlPrev").addEventListener("click", function () { selectDay(addDays(selected, -1), {}); });
-$("tlNext").addEventListener("click", function () { selectDay(addDays(selected, 1), {}); });
+$("tlPrev").addEventListener("click", function () { selectDay(addDays(selected, -1), {}); scrollTimelineToStart(); });
+$("tlNext").addEventListener("click", function () { selectDay(addDays(selected, 1), {}); scrollTimelineToStart(); });
+$("tlNDry").addEventListener("click", function () { setNight("dry"); });
+$("tlNWet").addEventListener("click", function () { setNight("wet"); });
+$("tlNClear").addEventListener("click", clearNight);
 $("tlTypeDrink").addEventListener("click", function () { tlType = "drink"; renderTlForm(); });
 $("tlTypePee").addEventListener("click", function () { tlType = "pee"; renderTlForm(); });
 $("tlTrack").addEventListener("click", function (e) {
+  var g = e.target.closest("[data-tl-group]");
   var w = e.target.closest("[data-tl-wee]");
   var dr = e.target.closest("[data-tl-drink]");
-  if (w) deleteEntry("wee", +w.getAttribute("data-tl-wee"));
-  else if (dr) deleteEntry("drink", +dr.getAttribute("data-tl-drink"));
+  if (g) {
+    var key = g.getAttribute("data-tl-group");
+    tlExpanded[key] = !tlExpanded[key];
+    renderTimeline();
+    var again = $("tlTrack").querySelector('[data-tl-group="' + key + '"]');
+    if (again) again.focus();
+  } else if (w) deleteEntry("wee", +w.getAttribute("data-tl-wee"), "tl");
+  else if (dr) deleteEntry("drink", +dr.getAttribute("data-tl-drink"), "tl");
 });
 $("tlForm").addEventListener("submit", function (e) {
   e.preventDefault();
   var time = TIME_RE.test($("tlTime").value) ? $("tlTime").value : nowTime();
   if (tlType === "pee") {
-    addPee(time);
+    addPee(time, true);
   } else {
     var ml = readMl($("tlMl"), $("tlErr"));
     if (ml === null) return;
-    addDrink(time, ml);
+    addDrink(time, ml, true);
     $("tlMl").value = ml;
   }
   touched.tlTime = false;
@@ -2132,11 +2330,18 @@ $("dlgOk").addEventListener("click", function () {
   if (fn) fn();
 });
 $("dlg").addEventListener("close", function () { dialogAction = null; });   // also covers Esc
+$("fbBackdrop").addEventListener("click", function () {
+  var top = fallbackOpen[fallbackOpen.length - 1];
+  if (top) closeDlg(top);
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape" && fallbackOpen.length) closeDlg(fallbackOpen[fallbackOpen.length - 1]);
+});
 
 var resizeTimer = 0;
 window.addEventListener("resize", function () {
   clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(function () { sizeCanvas(); renderChart(); }, 150);
+  resizeTimer = setTimeout(function () { sizeCanvas(); renderChart(); renderTimeline(); }, 150);
 });
 document.addEventListener("visibilitychange", function () {
   if (!document.hidden) refreshClock();
