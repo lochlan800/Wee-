@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wee Tracker</title>
+<meta name="description" content="A friendly daily tracker for wees, water and dry nights.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e8f6ff; --bg2:#fff3d6; --card:#ffffff; --ink:#1d3557; --muted:#4b607a;
+  --line:#cfe3f3; --primary:#1e88e5; --primary-ink:#ffffff; --accent:#ff9f1c; --accent-ink:#2b1d00;
+  --good:#1b9e5a; --good-bg:#dcf7e8; --soft:#fff1c9; --wet:#5c6bc0; --wet-bg:#e3e6fb;
+  --water:#39a7ff; --water2:#7cc8ff; --sel:#ff6fa8; --shadow:0 6px 18px rgba(30,80,140,.14);
+  --chip:#eef6fd;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1b2d; --bg2:#1d1a33; --card:#1a2a42; --ink:#eef5ff; --muted:#b4c4da;
+    --line:#2e4566; --primary:#5fb0ff; --primary-ink:#06213d; --accent:#ffb84d; --accent-ink:#2b1d00;
+    --good:#58e0a0; --good-bg:#17402f; --soft:#3a3320; --wet:#a6b1ff; --wet-bg:#2a2f5a;
+    --water:#4db3ff; --water2:#8fd0ff; --sel:#ff8fbd; --shadow:0 6px 18px rgba(0,0,0,.4);
+    --chip:#223756; color-scheme: dark;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; font-family:"Fredoka","Baloo 2","Trebuchet MS","Comic Sans MS",system-ui,sans-serif;
+  color:var(--ink); background:var(--bg); background-image:linear-gradient(160deg,var(--bg),var(--bg2));
+  background-attachment:fixed; min-height:100vh; font-size:17px; line-height:1.35; overflow-x:hidden;
+}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:4px solid var(--sel); outline-offset:2px; border-radius:10px}
+.wrap{max-width:1080px;margin:0 auto;padding:14px 16px 40px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 14px}
+h1{margin:0;font-size:clamp(1.6rem,6vw,2.4rem);letter-spacing:.5px}
+h1 span{display:inline-block;animation:bob 3s ease-in-out infinite}
+h2{margin:0 0 10px;font-size:1.25rem}
+.card{background:var(--card);border-radius:24px;padding:16px;box-shadow:var(--shadow);border:2px solid var(--line);min-width:0}
+.btn{border:0;border-radius:999px;padding:10px 18px;background:var(--primary);color:var(--primary-ink);font-weight:600;box-shadow:0 3px 0 rgba(0,0,0,.18);transition:transform .1s}
+.btn:active{transform:translateY(2px);box-shadow:none}
+.btn.alt{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:var(--chip);color:var(--ink);box-shadow:none;border:2px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.sound{font-size:1.2rem;padding:8px 14px}
+.hero{display:grid;gap:14px;grid-template-columns:1fr}
+.mascot-card{display:flex;gap:12px;align-items:center}
+.mascot{width:96px;height:112px;flex:none;animation:bob 3s ease-in-out infinite}
+.bubble{position:relative;background:var(--soft);border-radius:18px;padding:12px 14px;font-weight:500;flex:1;min-height:64px;display:flex;align-items:center}
+.bubble::before{content:"";position:absolute;left:-10px;top:50%;margin-top:-8px;border:8px solid transparent;border-right-color:var(--soft);border-left:0}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big{background:var(--chip);border-radius:18px;padding:10px 12px;text-align:center}
+.big b{display:block;font-size:2rem;line-height:1.1}
+.big small{color:var(--muted);font-size:.9rem}
+.flame{display:inline-block;animation:flick 1.2s ease-in-out infinite;transform-origin:50% 90%}
+.main{display:grid;gap:14px;grid-template-columns:1fr;margin-top:14px}
+.col{display:grid;gap:14px;align-content:start;min-width:0}
+.dayhead{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.dayhead h2{margin:0}
+.pill{display:inline-block;background:var(--chip);border-radius:999px;padding:3px 12px;font-size:.9rem;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+label{font-weight:500}
+input[type=time]{border:2px solid var(--line);background:var(--chip);border-radius:14px;padding:8px 10px;min-height:44px;color:var(--ink)}
+.sizes{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.size{border:2px solid var(--line);background:var(--chip);border-radius:16px;padding:6px 12px;min-height:44px;font-weight:500}
+.size[aria-pressed="true"]{background:var(--water);color:#031a2e;border-color:var(--water)}
+.list{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.list li{display:flex;align-items:center;gap:6px;background:var(--chip);border-radius:999px;padding:4px 4px 4px 12px;font-weight:500}
+.list .x{border:0;background:var(--card);border-radius:50%;width:32px;height:32px;line-height:1;font-weight:700;color:var(--muted)}
+.list .x:hover{color:#d33}
+.empty{color:var(--muted);margin:10px 0 0}
+.wee-top{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.bottle-wrap{display:flex;gap:14px;align-items:center;margin-bottom:6px}
+.glass{position:relative;width:64px;height:96px;flex:none;border:4px solid var(--water);border-top-width:4px;border-radius:8px 8px 22px 22px;overflow:hidden;background:var(--chip)}
+.glass .fill{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(var(--water2),var(--water));transition:height .8s cubic-bezier(.3,1.4,.5,1)}
+.glass .fill::before{content:"";position:absolute;left:-20%;top:-8px;width:140%;height:16px;background:var(--water2);border-radius:50%;animation:wave 2.4s ease-in-out infinite}
+.night-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.night{border:3px solid var(--line);background:var(--chip);border-radius:20px;padding:12px 8px;font-weight:600;font-size:1.05rem;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:84px}
+.night .em{font-size:2rem}
+.night[aria-pressed="true"].dry{background:var(--good-bg);border-color:var(--good)}
+.night[aria-pressed="true"].wet{background:var(--wet-bg);border-color:var(--wet)}
+.clear{margin-top:8px}
+.calhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.calhead h2{margin:0;text-align:center;flex:1}
+.nav{width:44px;height:44px;padding:0;font-size:1.2rem}
+.dows,.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.dows div{text-align:center;font-size:.8rem;color:var(--muted);font-weight:600}
+.cal{margin-top:4px}
+.day{position:relative;border:2px solid var(--line);background:var(--chip);border-radius:12px;min-height:62px;padding:3px 2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;font-size:.78rem}
+.day .n{font-weight:700;font-size:.95rem;line-height:1}
+.day .ic{font-size:1.05rem;line-height:1;min-height:1.05em}
+.day .ct{display:flex;gap:3px;line-height:1;white-space:nowrap}
+.day.dry{background:var(--good-bg)} .day.wet{background:var(--wet-bg)}
+.day.today .n{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:2px 6px}
+.day.sel{border-color:var(--sel);box-shadow:0 0 0 3px var(--sel);transform:scale(1.04);z-index:1}
+.day[disabled]{opacity:.35;cursor:default}
+.blank{min-height:1px}
+.legend{font-size:.85rem;color:var(--muted);margin-top:8px}
+.mstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.mstats .big b{font-size:1.5rem}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.badge{background:var(--chip);border-radius:18px;padding:10px;text-align:center;border:2px solid var(--accent)}
+.badge .em{font-size:2.2rem;display:block}
+.badge b{display:block;font-size:.95rem}
+.badge small{color:var(--muted);font-size:.78rem}
+.badge.locked{border-color:var(--line);filter:grayscale(1);opacity:.65}
+.badge.new{animation:pop .7s}
+canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@keyframes flick{50%{transform:scale(1.15) rotate(-4deg)}}
+@keyframes wave{50%{transform:translateX(10%)}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.bounce{animation:pop .5s}
+@media (min-width:860px){
+  .hero{grid-template-columns:1.4fr 1fr}
+  .main{grid-template-columns:1fr 1fr}
+  .day{min-height:72px}
+}
+@media (max-width:400px){
+  .wrap{padding:10px 16px 30px}
+  .mascot{width:76px;height:90px}
+  .day{font-size:.68rem;min-height:56px}
+  .day .ct{gap:1px}
+  .mstats{grid-template-columns:1fr 1fr 1fr}
+  .mstats .big{padding:8px 4px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="wrap">
+  <header class="top">
+    <h1><span aria-hidden="true">💧</span> Wee Tracker</h1>
+    <button class="btn ghost sound" id="soundBtn" type="button" aria-pressed="true" aria-label="Sound effects"></button>
+  </header>
+
+  <section class="hero" aria-label="Your progress">
+    <div class="card mascot-card">
+      <svg class="mascot" id="mascot" viewBox="0 0 100 120" role="img" aria-label="Droplet buddy">
+        <path d="M50 6 C50 6 12 52 12 78 a38 38 0 0 0 76 0 C88 52 50 6 50 6Z" fill="#39a7ff" stroke="#1e6fc0" stroke-width="4"/>
+        <ellipse cx="32" cy="70" rx="7" ry="11" fill="#fff" opacity=".35" transform="rotate(20 32 70)"/>
+        <g id="eyes"></g>
+        <g id="mouth"></g>
+        <ellipse cx="28" cy="88" rx="6" ry="4" fill="#ff8fb3" opacity=".7"/>
+        <ellipse cx="72" cy="88" rx="6" ry="4" fill="#ff8fb3" opacity=".7"/>
+      </svg>
+      <div class="bubble" id="bubble" role="status" aria-live="polite"></div>
+    </div>
+    <div class="card">
+      <div class="stats-row">
+        <div class="big"><b><span class="flame" aria-hidden="true">🔥</span> <span id="streak">0</span></b><small>dry night streak</small></div>
+        <div class="big"><b><span aria-hidden="true">🏆</span> <span id="best">0</span></b><small>best streak</small></div>
+      </div>
+      <p class="legend" id="streakNote"></p>
+    </div>
+  </section>
+
+  <div class="main">
+    <div class="col">
+      <section class="card" aria-labelledby="dayTitle">
+        <div class="dayhead">
+          <h2 id="dayTitle">Today</h2>
+          <button class="btn ghost" id="todayBtn" type="button">Jump to today</button>
+        </div>
+        <p class="legend" id="dayNote" style="margin:4px 0 0"></p>
+      </section>
+
+      <section class="card" aria-labelledby="nightTitle">
+        <h2 id="nightTitle">🌙 Did I wee the bed last night?</h2>
+        <div class="night-btns">
+          <button class="night dry" id="nDry" type="button" aria-pressed="false"><span class="em" aria-hidden="true">☀️</span>No, dry night!</button>
+          <button class="night wet" id="nWet" type="button" aria-pressed="false"><span class="em" aria-hidden="true">🌧️</span>Yes, a wet one</button>
+        </div>
+        <button class="btn ghost clear" id="nClear" type="button">Clear answer</button>
+      </section>
+
+      <section class="card" aria-labelledby="weeTitle">
+        <h2 id="weeTitle">🚽 Wees</h2>
+        <div class="row">
+          <label for="weeTime">Time</label>
+          <input type="time" id="weeTime">
+          <button class="btn" id="weeAdd" type="button">Add wee</button>
+        </div>
+        <ul class="list" id="weeList"></ul>
+      </section>
+
+      <section class="card" aria-labelledby="drinkTitle">
+        <h2 id="drinkTitle">🥤 Water</h2>
+        <div class="bottle-wrap">
+          <div class="glass" aria-hidden="true"><div class="fill" id="fill"></div></div>
+          <div><b id="goalText"></b><div class="legend" style="margin:0">Daily goal: <span id="goalN"></span> drinks</div></div>
+        </div>
+        <div class="sizes" role="group" aria-label="Cup size" id="sizes"></div>
+        <div class="row">
+          <label for="drinkTime">Time</label>
+          <input type="time" id="drinkTime">
+          <button class="btn alt" id="drinkAdd" type="button">Add drink</button>
+        </div>
+        <ul class="list" id="drinkList"></ul>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="card" aria-labelledby="calTitle">
+        <div class="calhead">
+          <button class="btn ghost nav" id="prev" type="button" aria-label="Previous month">◀</button>
+          <h2 id="calTitle" aria-live="polite"></h2>
+          <button class="btn ghost nav" id="next" type="button" aria-label="Next month">▶</button>
+        </div>
+        <div class="dows" aria-hidden="true"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div>
+        <div class="cal" id="cal" role="grid" aria-labelledby="calTitle"></div>
+        <p class="legend">☀️ dry night · 🌧️ wet night · 💦 wees · 🥤 drinks. Use arrow keys to move around.</p>
+        <div class="mstats" id="mstats"></div>
+      </section>
+
+      <section class="card" aria-labelledby="badgeTitle">
+        <h2 id="badgeTitle">🏅 My stickers</h2>
+        <div class="shelf" id="shelf"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- constants & helpers ---------- */
+var STORE_KEY="weeTracker.v1", MUTE_KEY="weeTracker.muted", GOAL=6;
+var SIZES=[{id:"s",emoji:"🥛",label:"Small sip"},{id:"m",emoji:"🥤",label:"Medium cup"},{id:"l",emoji:"🫗",label:"Big cup"}];
+var MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+var reduced=false;
+try{ reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function pad(n){return (n<10?"0":"")+n;}
+function keyOf(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function parseKey(k){var p=k.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+function addDays(k,n){var d=parseKey(k);d.setDate(d.getDate()+n);return keyOf(d);}
+function todayKey(){return keyOf(new Date());}
+function nowTime(){var d=new Date();return pad(d.getHours())+":"+pad(d.getMinutes());}
+function dayDiff(a,b){return Math.round((parseKey(b)-parseKey(a))/864e5);}
+var KEY_RE=/^\d{4}-\d{2}-\d{2}$/, TIME_RE=/^([01]\d|2[0-3]):[0-5]\d$/;
+function prettyTime(t){var h=+t.slice(0,2),m=t.slice(3);var ap=h>=12?"pm":"am";h=h%12||12;return h+":"+m+" "+ap;}
+
+/* ---------- storage (always safe) ---------- */
+var memory={days:{}}, memMuted=false;
+function sanitize(raw){
+  var out={days:{}};
+  if(!raw||typeof raw!=="object"||!raw.days||typeof raw.days!=="object")return out;
+  Object.keys(raw.days).forEach(function(k){
+    if(!KEY_RE.test(k))return;
+    var d=raw.days[k]; if(!d||typeof d!=="object")return;
+    var day={wees:[],drinks:[],night:null};
+    if(Array.isArray(d.wees))d.wees.forEach(function(t){if(typeof t==="string"&&TIME_RE.test(t))day.wees.push(t);});
+    if(Array.isArray(d.drinks))d.drinks.forEach(function(x){
+      if(x&&typeof x==="object"&&typeof x.t==="string"&&TIME_RE.test(x.t)){
+        day.drinks.push({t:x.t,s:(x.s==="s"||x.s==="l")?x.s:"m"});
+      }});
+    if(d.night==="dry"||d.night==="wet")day.night=d.night;
+    day.wees.sort(); day.drinks.sort(function(a,b){return a.t<b.t?-1:a.t>b.t?1:0;});
+    out.days[k]=day;
+  });
+  return out;
+}
+function load(){
+  try{
+    var s=localStorage.getItem(STORE_KEY);
+    if(s)return sanitize(JSON.parse(s));
+  }catch(e){}
+  return {days:{}};
+}
+function save(){ memory=data; try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){} }
+function loadMuted(){ try{ return localStorage.getItem(MUTE_KEY)==="1"; }catch(e){ return memMuted; } }
+function saveMuted(){ memMuted=muted; try{localStorage.setItem(MUTE_KEY,muted?"1":"0");}catch(e){} }
+
+var data=load(), muted=loadMuted();
+var today=todayKey(), selected=today;
+var view=(function(){var d=new Date();return {y:d.getFullYear(),m:d.getMonth()};})();
+var override=null; // temporary mascot message
+
+function getDay(k,create){
+  var d=data.days[k];
+  if(!d&&create){d=data.days[k]={wees:[],drinks:[],night:null};}
+  return d||{wees:[],drinks:[],night:null};
+}
+function pruneDay(k){
+  var d=data.days[k]; if(d&&!d.wees.length&&!d.drinks.length&&!d.night)delete data.days[k];
+}
+
+/* ---------- stats / streaks / badges ---------- */
+function streaks(){
+  var dry=Object.keys(data.days).filter(function(k){return data.days[k].night==="dry";}).sort();
+  var best=0,run=0,prev=null;
+  dry.forEach(function(k){ run=(prev&&dayDiff(prev,k)===1)?run+1:1; if(run>best)best=run; prev=k; });
+  var cur=0,k=todayKey();
+  var tn=getDay(k).night;
+  if(tn==="wet")cur=0;
+  else{
+    if(tn!=="dry")k=addDays(k,-1);
+    while(getDay(k).night==="dry"){cur++;k=addDays(k,-1);}
+  }
+  return {cur:cur,best:Math.max(best,cur),dryTotal:dry.length};
+}
+function overall(){
+  var s=streaks(),goalDays=0,logged=0;
+  Object.keys(data.days).forEach(function(k){
+    var d=data.days[k];
+    if(d.drinks.length>=GOAL)goalDays++;
+    if(d.wees.length||d.drinks.length||d.night)logged++;
+  });
+  s.goalDays=goalDays;s.logged=logged;return s;
+}
+var BADGES=[
+  {id:"first",em:"🌟",name:"First Dry Night",hint:"Have a dry night",ok:function(s){return s.dryTotal>=1;}},
+  {id:"d3",em:"🥉",name:"3 Dry Nights in a Row",hint:"3 dry nights in a row",ok:function(s){return s.best>=3;}},
+  {id:"d7",em:"🔥",name:"7-Day Streak",hint:"7 dry nights in a row",ok:function(s){return s.best>=7;}},
+  {id:"d14",em:"🏆",name:"Champion",hint:"14 dry nights in a row",ok:function(s){return s.best>=14;}},
+  {id:"d10",em:"🌙",name:"Moon Master",hint:"10 dry nights in total",ok:function(s){return s.dryTotal>=10;}},
+  {id:"h1",em:"💧",name:"Hydration Hero",hint:"Reach the water goal once",ok:function(s){return s.goalDays>=1;}},
+  {id:"h5",em:"🧙",name:"Water Wizard",hint:"Reach the water goal 5 days",ok:function(s){return s.goalDays>=5;}},
+  {id:"log",em:"📒",name:"Super Logger",hint:"Log 7 different days",ok:function(s){return s.logged>=7;}}
+];
+function earnedSet(){var s=overall(),o={};BADGES.forEach(function(b){if(b.ok(s))o[b.id]=1;});return o;}
+
+/* ---------- sound ---------- */
+var actx=null;
+function tone(freq,start,dur,type,vol){
+  if(!actx)return;
+  var o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime+start;
+  o.type=type||"sine";o.frequency.setValueAtTime(freq,t);
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol||0.15,t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+dur+0.05);
+}
+function sfx(kind){
+  if(muted)return;
+  try{
+    if(!actx){var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;actx=new AC();}
+    if(actx.state==="suspended")actx.resume();
+    if(kind==="pop"){tone(520,0,.12,"sine");tone(780,.07,.12,"sine");}
+    else if(kind==="splash"){tone(400,0,.1,"triangle");tone(600,.08,.14,"triangle");}
+    else if(kind==="soft"){tone(392,0,.25,"sine",.1);tone(440,.2,.35,"sine",.1);}
+    else if(kind==="remove"){tone(300,0,.1,"sine",.08);}
+    else if(kind==="win"){[523,659,784,1047].forEach(function(f,i){tone(f,i*.11,.25,"triangle",.14);});}
+  }catch(e){}
+}
+
+/* ---------- confetti ---------- */
+var cv=$("fx"),cx=null,parts=[],raf=0;
+try{cx=cv.getContext("2d");}catch(e){}
+function sizeCanvas(){cv.width=window.innerWidth;cv.height=window.innerHeight;}
+sizeCanvas();window.addEventListener("resize",sizeCanvas);
+function confetti(){
+  if(!cx)return;
+  var n=reduced?30:150, cols=["#ff6fa8","#ffb84d","#39a7ff","#58e0a0","#b388ff","#ffe066"];
+  for(var i=0;i<n;i++){
+    var a=Math.random()*Math.PI*2, sp=reduced?2+Math.random()*3:4+Math.random()*9;
+    parts.push({x:cv.width/2,y:cv.height*0.35,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-(reduced?1:5),
+      s:5+Math.random()*7,c:cols[i%cols.length],r:Math.random()*6,vr:reduced?0:(Math.random()-.5)*.4,
+      life:reduced?50:110+Math.random()*60});
+  }
+  if(!raf)raf=requestAnimationFrame(step);
+}
+function step(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  parts=parts.filter(function(p){return p.life>0&&p.y<cv.height+20;});
+  parts.forEach(function(p){
+    p.vy+=reduced?.05:.22;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life--;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);
+    cx.globalAlpha=Math.min(1,p.life/30);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/3,p.s,p.s*.66);cx.restore();
+  });
+  if(parts.length)raf=requestAnimationFrame(step);else{raf=0;cx.clearRect(0,0,cv.width,cv.height);}
+}
+
+/* ---------- mascot ---------- */
+function drawMascot(mood){
+  var eyes,mouth;
+  var dot=function(x){return '<circle cx="'+x+'" cy="70" r="5" fill="#12304f"/><circle cx="'+(x+1.8)+'" cy="68" r="1.8" fill="#fff"/>';};
+  if(mood==="party"){
+    var star=function(x){return '<path d="M'+x+' 62 l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6-4.4-4.2 6-.8z" fill="#ffe066" stroke="#12304f" stroke-width="1.5"/>';};
+    eyes=star(34)+star(66);
+    mouth='<path d="M36 86 Q50 106 64 86 Z" fill="#12304f"/><path d="M42 94 Q50 100 58 94" fill="#ff6fa8"/>';
+  }else if(mood==="happy"){
+    eyes=dot(36)+dot(64);
+    mouth='<path d="M38 86 Q50 100 62 86" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/>';
+  }else if(mood==="hug"){
+    eyes='<path d="M30 72 Q36 64 42 72" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/><path d="M58 72 Q64 64 70 72" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/>';
+    mouth='<path d="M40 90 Q50 97 60 90" fill="none" stroke="#12304f" stroke-width="4" stroke-linecap="round"/>';
+  }else{
+    eyes=dot(36)+dot(64);
+    mouth='<ellipse cx="50" cy="90" rx="6" ry="4" fill="#12304f"/>';
+  }
+  $("eyes").innerHTML=eyes;$("mouth").innerHTML=mouth;
+}
+function autoMessage(){
+  var d=getDay(selected),isToday=selected===today,s=streaks(),dn=d.drinks.length;
+  if(d.night==="dry")return {m:"happy",t:"Dry night! You're a star! ⭐"+(s.cur>=3&&isToday?" That's "+s.cur+" in a row!":"")};
+  if(d.night==="wet")return {m:"hug",t:"That's okay, tomorrow is a new night! 💙"};
+  if(dn>=GOAL)return {m:"party",t:"Water goal reached! Splashtastic! 💦"};
+  if(dn>=Math.ceil(GOAL/2))return {m:"happy",t:"Halfway there! Just "+(GOAL-dn)+" more drink"+(GOAL-dn===1?"":"s")+"!"};
+  if(dn>0)return {m:"happy",t:"Nice sipping! Keep it up! 🥤"};
+  if(!d.night&&!d.wees.length)return {m:"calm",t:isToday?"Hi friend! Ready for a great day? 😄":"Let's fill in this day together!"};
+  return {m:"happy",t:"You're doing great! 🌈"};
+}
+function say(text,mood){override={t:text,m:mood||"happy"};renderMascot();}
+function renderMascot(){
+  var a=override||autoMessage();
+  $("bubble").textContent=a.t;drawMascot(a.m);
+}
+
+/* ---------- rendering ---------- */
+function renderTop(){
+  var s=streaks();
+  $("streak").textContent=s.cur;$("best").textContent=s.best;
+  $("streakNote").textContent=s.cur>0?"Every dry night is a win. Keep shining!":"Your next dry night starts a new streak!";
+}
+function renderDay(){
+  var d=getDay(selected),isToday=selected===today;
+  var dt=parseKey(selected).toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"});
+  $("dayTitle").textContent=isToday?"Today · "+dt:dt;
+  $("dayNote").textContent=isToday?"Everything you add goes on today.":"You are editing a past day.";
+  $("todayBtn").style.display=isToday?"none":"";
+  $("nDry").setAttribute("aria-pressed",d.night==="dry");
+  $("nWet").setAttribute("aria-pressed",d.night==="wet");
+  $("nClear").disabled=!d.night;
+  // wees
+  var wl=$("weeList");
+  wl.innerHTML=d.wees.length?d.wees.map(function(t,i){
+    return '<li><span>💦 '+esc(prettyTime(t))+'</span><button class="x" type="button" data-del-wee="'+i+'" aria-label="Remove wee at '+esc(prettyTime(t))+'">✕</button></li>';
+  }).join(""):'<li class="empty" style="background:none;padding:0">No wees logged yet.</li>';
+  // drinks
+  var dl=$("drinkList");
+  dl.innerHTML=d.drinks.length?d.drinks.map(function(x,i){
+    var sz=SIZES.filter(function(z){return z.id===x.s;})[0]||SIZES[1];
+    return '<li><span>'+sz.emoji+' '+esc(prettyTime(x.t))+' <small>'+esc(sz.label)+'</small></span><button class="x" type="button" data-del-drink="'+i+'" aria-label="Remove drink at '+esc(prettyTime(x.t))+'">✕</button></li>';
+  }).join(""):'<li class="empty" style="background:none;padding:0">No drinks logged yet.</li>';
+  var n=d.drinks.length;
+  $("fill").style.height=Math.min(100,n/GOAL*100)+"%";
+  $("goalText").textContent=n>=GOAL?"Goal reached! 🎉 ("+n+")":n+" of "+GOAL+" drinks";
+  $("goalN").textContent=GOAL;
+}
+var calFocus=false;
+function renderCal(){
+  var y=view.y,m=view.m,first=new Date(y,m,1),count=new Date(y,m+1,0).getDate();
+  var off=(first.getDay()+6)%7, html="", now=new Date();
+  $("calTitle").textContent=MONTHS[m]+" "+y;
+  $("next").disabled=(y===now.getFullYear()&&m===now.getMonth())||(y>now.getFullYear())||(y===now.getFullYear()&&m>now.getMonth());
+  var tabKey=null;
+  if(selected.slice(0,7)===y+"-"+pad(m+1))tabKey=selected;
+  else tabKey=y+"-"+pad(m+1)+"-01";
+  for(var i=0;i<off;i++)html+='<div class="blank" role="gridcell" aria-hidden="true"></div>';
+  var dryN=0,weeSum=0,drinkSum=0,logged=0;
+  for(var d=1;d<=count;d++){
+    var k=y+"-"+pad(m+1)+"-"+pad(d),day=getDay(k),future=k>today;
+    var cls="day"+(day.night==="dry"?" dry":day.night==="wet"?" wet":"")+(k===today?" today":"")+(k===selected?" sel":"");
+    var ic=day.night==="dry"?"☀️":day.night==="wet"?"🌧️":"";
+    var label=parseKey(k).toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"})+
+      (k===today?", today":"")+(future?", in the future":"")+". "+
+      (day.night==="dry"?"Dry night. ":day.night==="wet"?"Wet night. ":"Night not logged. ")+day.wees.length+" wees, "+day.drinks.length+" drinks.";
+    html+='<div role="gridcell"><button type="button" class="'+cls+'" style="width:100%" data-date="'+k+'" tabindex="'+(k===tabKey?0:-1)+'"'+
+      (future?' disabled':'')+' aria-pressed="'+(k===selected)+'" aria-label="'+esc(label)+'"'+(k===today?' aria-current="date"':'')+'>'+
+      '<span class="n">'+d+'</span><span class="ic" aria-hidden="true">'+ic+'</span>'+
+      '<span class="ct" aria-hidden="true">'+(day.wees.length?'<span>💦'+day.wees.length+'</span>':'')+(day.drinks.length?'<span>🥤'+day.drinks.length+'</span>':'')+'</span></button></div>';
+    if(!future){
+      if(day.night==="dry")dryN++;
+      if(day.wees.length||day.drinks.length){logged++;weeSum+=day.wees.length;drinkSum+=day.drinks.length;}
+    }
+  }
+  $("cal").innerHTML=html;
+  var avg=function(v){return logged?(Math.round(v/logged*10)/10).toString():"–";};
+  $("mstats").innerHTML=
+    '<div class="big"><b>'+dryN+'</b><small>dry nights</small></div>'+
+    '<div class="big"><b>'+avg(weeSum)+'</b><small>wees / day</small></div>'+
+    '<div class="big"><b>'+avg(drinkSum)+'</b><small>drinks / day</small></div>';
+  if(calFocus){calFocus=false;var b=$("cal").querySelector('[data-date="'+selected+'"]');if(b)b.focus();}
+}
+var newBadges={};
+function renderShelf(){
+  var s=overall();
+  $("shelf").innerHTML=BADGES.map(function(b){
+    var ok=b.ok(s);
+    return '<div class="badge'+(ok?"":" locked")+(newBadges[b.id]?" new":"")+'"><span class="em" aria-hidden="true">'+(ok?b.em:"🔒")+'</span><b>'+esc(b.name)+'</b><small>'+(ok?"Earned!":esc(b.hint))+'</small><span class="sr">'+(ok?"Unlocked":"Locked")+'</span></div>';
+  }).join("");
+}
+function renderSound(){
+  var b=$("soundBtn");b.textContent=muted?"🔇":"🔊";b.setAttribute("aria-pressed",String(!muted));
+  b.setAttribute("aria-label",muted?"Sound effects off":"Sound effects on");
+}
+function renderAll(){renderTop();renderDay();renderCal();renderShelf();renderMascot();}
+
+/* ---------- actions ---------- */
+function afterChange(before,extraWin){
+  save();
+  var after=earnedSet(),won=[];
+  BADGES.forEach(function(b){if(after[b.id]&&!before[b.id]){won.push(b);newBadges[b.id]=1;}});
+  renderAll();newBadges={};
+  if(won.length){
+    say("New sticker: "+won[0].name+" "+won[0].em,"party");confetti();sfx("win");
+  }else if(extraWin){confetti();sfx("win");}
+}
+function addWee(){
+  var t=$("weeTime").value;if(!TIME_RE.test(t))t=nowTime();
+  var before=earnedSet(),d=getDay(selected,true);
+  d.wees.push(t);d.wees.sort();sfx("pop");override=null;
+  afterChange(before,false);
+  $("weeTime").value=nowTime();
+}
+var size="m";
+function addDrink(){
+  var t=$("drinkTime").value;if(!TIME_RE.test(t))t=nowTime();
+  var before=earnedSet(),d=getDay(selected,true),was=d.drinks.length;
+  d.drinks.push({t:t,s:size});d.drinks.sort(function(a,b){return a.t<b.t?-1:a.t>b.t?1:0;});
+  override=null;sfx("splash");
+  var hit=was<GOAL&&d.drinks.length>=GOAL;
+  afterChange(before,hit);
+  $("drinkTime").value=nowTime();
+  if(hit)say("Water goal reached! Splashtastic! 💦","party");
+}
+function setNight(v){
+  var d=getDay(selected,true),before=earnedSet(),was=d.night;
+  if(d.night===v){d.night=null;pruneDay(selected);override=null;save();renderAll();return;}
+  d.night=v;override=null;
+  if(v==="dry"){
+    afterChange(before,was!=="dry");
+    if(was!=="dry"){var s=streaks();say("Dry night! You're a star! ⭐"+(s.cur>1?" "+s.cur+" nights in a row!":""),"party");}
+  }else{
+    sfx("soft");afterChange(before,false);
+  }
+}
+function selectDay(k,focus){
+  if(k>today||!KEY_RE.test(k))return;
+  selected=k;override=null;
+  var d=parseKey(k);view={y:d.getFullYear(),m:d.getMonth()};
+  calFocus=!!focus;renderAll();
+}
+function shiftMonth(n){
+  var d=new Date(view.y,view.m+n,1),now=new Date();
+  if(d.getFullYear()*12+d.getMonth()>now.getFullYear()*12+now.getMonth())return;
+  view={y:d.getFullYear(),m:d.getMonth()};renderCal();
+}
+
+/* ---------- events ---------- */
+$("weeAdd").addEventListener("click",addWee);
+$("drinkAdd").addEventListener("click",addDrink);
+$("nDry").addEventListener("click",function(){setNight("dry");});
+$("nWet").addEventListener("click",function(){setNight("wet");});
+$("nClear").addEventListener("click",function(){
+  var d=getDay(selected);if(!d.night)return;d.night=null;pruneDay(selected);override=null;sfx("remove");save();renderAll();
+});
+$("todayBtn").addEventListener("click",function(){today=todayKey();selectDay(today,false);});
+$("prev").addEventListener("click",function(){shiftMonth(-1);});
+$("next").addEventListener("click",function(){shiftMonth(1);});
+$("soundBtn").addEventListener("click",function(){muted=!muted;saveMuted();renderSound();if(!muted)sfx("pop");});
+$("weeList").addEventListener("click",function(e){
+  var b=e.target.closest("[data-del-wee]");if(!b)return;
+  var d=getDay(selected);d.wees.splice(+b.getAttribute("data-del-wee"),1);pruneDay(selected);
+  override=null;sfx("remove");save();renderAll();
+});
+$("drinkList").addEventListener("click",function(e){
+  var b=e.target.closest("[data-del-drink]");if(!b)return;
+  var d=getDay(selected);d.drinks.splice(+b.getAttribute("data-del-drink"),1);pruneDay(selected);
+  override=null;sfx("remove");save();renderAll();
+});
+$("cal").addEventListener("click",function(e){
+  var b=e.target.closest("[data-date]");if(b){sfx("pop");selectDay(b.getAttribute("data-date"),true);}
+});
+$("cal").addEventListener("keydown",function(e){
+  var b=e.target.closest("[data-date]");if(!b)return;
+  var k=b.getAttribute("data-date"),n=null;
+  switch(e.key){
+    case "ArrowLeft":n=addDays(k,-1);break;
+    case "ArrowRight":n=addDays(k,1);break;
+    case "ArrowUp":n=addDays(k,-7);break;
+    case "ArrowDown":n=addDays(k,7);break;
+    case "Home":n=addDays(k,-((parseKey(k).getDay()+6)%7));break;
+    case "End":n=addDays(k,6-((parseKey(k).getDay()+6)%7));break;
+    case "PageUp":case "PageDown":
+      var d=parseKey(k),t=new Date(d.getFullYear(),d.getMonth()+(e.key==="PageUp"?-1:1),1);
+      var last=new Date(t.getFullYear(),t.getMonth()+1,0).getDate();
+      t.setDate(Math.min(d.getDate(),last));n=keyOf(t);break;
+    default:return;
+  }
+  e.preventDefault();
+  if(n>today)n=today;
+  selectDay(n,true);
+});
+// size buttons
+$("sizes").innerHTML=SIZES.map(function(z){
+  return '<button type="button" class="size" data-size="'+z.id+'" aria-pressed="'+(z.id===size)+'">'+z.emoji+' '+esc(z.label)+'</button>';
+}).join("");
+$("sizes").addEventListener("click",function(e){
+  var b=e.target.closest("[data-size]");if(!b)return;
+  size=b.getAttribute("data-size");
+  Array.prototype.forEach.call($("sizes").children,function(c){c.setAttribute("aria-pressed",String(c===b));});
+});
+// roll over at midnight if page left open
+setInterval(function(){
+  var t=todayKey();
+  if(t!==today){var wasToday=selected===today;today=t;if(wasToday)selected=t;
+    var d=parseKey(selected);view={y:d.getFullYear(),m:d.getMonth()};renderAll();}
+},60000);
+
+/* ---------- init ---------- */
+$("weeTime").value=nowTime();$("drinkTime").value=nowTime();
+renderSound();renderAll();
+})();
+</script>
+</body>
+</html>
