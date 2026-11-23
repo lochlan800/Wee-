@@ -432,7 +432,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
     <ol class="tl-track" id="tlTrack"></ol>
     <div class="tl-band" id="tlBand" hidden><span class="tl-band-l">Night</span><span class="tl-band-m" id="tlBandMark"></span></div>
     <section class="tl-nightsec" id="tlNightSec" aria-labelledby="tlNightLbl">
-      <h3 class="tl-nhead" id="tlNightLbl"></h3>
+      <h3 class="tl-nhead" id="tlNightLbl" tabindex="-1"></h3>
       <div class="tl-night" id="tlNightCtl" role="group" aria-labelledby="tlNightLbl">
         <button class="mini txt" id="tlNDry" type="button" aria-pressed="false"></button>
         <button class="mini txt" id="tlNWet" type="button" aria-pressed="false"></button>
@@ -1365,12 +1365,12 @@ function renderDay() {
   var live = inProgress(nk);           // the night is still going: only not-dry can be logged
   var nd = getDay(nk);
   var title;
-  if (live) title = discreet ? "Night check · " + dowShort(nk) + " (now)" : dowLong(nk) + " night (now) — log it in the morning";
+  if (live) title = discreet ? "Night check · " + dowShort(nk) + " (now)" : dowLong(nk) + " night (now)" + (nd.night ? "" : " — log it in the morning");
   else if (discreet) title = "Night check · " + dowShort(nk);
   else title = isToday ? "Last night (" + dowShort(nk) + "): dry?" : dowShort(nk) + " night: dry?";
   $("nightTitle").textContent = title;
   $("nDry").disabled = live;
-  $("nightNote").hidden = !live;
+  $("nightNote").hidden = !live || !!nd.night;
   $("nightNote").textContent = discreet ? "Yes can be logged in the morning." : "Dry can be logged in the morning.";
 
   var dryBtn = $("nDry"), wetBtn = $("nWet");
@@ -1730,7 +1730,9 @@ function nightStatusPart(d) {
 }
 
 function lastNightChipText() {
-  var n = getDay(addDays(today, -1)).night;
+  var y = addDays(today, -1);
+  if (lateNight()) return discreet ? "Night check · " + dowShort(y) + " (now)" : dowLong(y) + " night (now)";
+  var n = getDay(y).night;
   if (discreet) return "Night check: " + (n === "dry" ? "●" : n === "wet" ? "○" : "–");
   return "Last night: " + (n === "dry" ? "✓ Dry" : n === "wet" ? "○ Not dry" : "–");
 }
@@ -1741,20 +1743,20 @@ function renderTlNight(d) {
   var readOnly = isToday;
   var live = inProgress(selected);
   var lastBtn = $("tlLastNight");
-  lastBtn.hidden = !isToday || lateNight();
+  lastBtn.hidden = !isToday;
   lastBtn.textContent = lastNightChipText();
   lastBtn.setAttribute("aria-label", lastNightChipText() + ". Open " + dowLong(addDays(today, -1)) + " night.");
 
   if (isToday) {
     $("tlNightLbl").textContent = discreet ? "Tonight — log it tomorrow" : "Tonight — log it tomorrow morning";
   } else if (live) {
-    $("tlNightLbl").textContent = discreet ? "Night check · " + dowShort(selected) + " (now)" : dowShort(selected) + " night (now) — log it in the morning";
+    $("tlNightLbl").textContent = discreet ? "Night check · " + dowShort(selected) + " (now)" : dowShort(selected) + " night (now)" + (d.night ? "" : " — log it in the morning");
   } else {
     $("tlNightLbl").textContent = discreet ? "Night check · " + dowShort(selected) : dowShort(selected) + " night";
   }
   $("tlNightCtl").hidden = readOnly;
   $("tlNDry").disabled = live;
-  $("tlNightNote").hidden = !live;
+  $("tlNightNote").hidden = !live || !!d.night;
   $("tlNightNote").textContent = discreet ? "Yes can be logged in the morning." : "Dry can be logged in the morning.";
   $("tlNDry").textContent = discreet ? "● Yes" : "✓ Dry";
   $("tlNWet").textContent = discreet ? "○ No" : "○ Not dry";
@@ -2458,7 +2460,7 @@ $("quickNight").addEventListener("click", function () {
   if (selected !== today) selectDay(today, {});
   $("nightCard").scrollIntoView({ behavior: isReduced() ? "auto" : "smooth", block: "start" });
   var yesterdayNight = getDay(addDays(today, -1)).night;
-  var target = (lateNight() || yesterdayNight === "wet") ? $("nWet") : $("nDry");
+  var target = lateNight() ? $("nightTitle") : (yesterdayNight === "wet" ? $("nWet") : $("nDry"));
   target.focus({ preventScroll: true });
 });
 $("nDry").addEventListener("click", function () { setNight("dry"); });
@@ -2584,7 +2586,7 @@ $("tlLastNight").addEventListener("click", function () {
   selectDay(addDays(today, -1), {});
   $("tlScroll").scrollTop = $("tlScroll").scrollHeight;     // jump to that night's section
   var answered = getDay(selected).night === "wet" ? $("tlNWet") : $("tlNDry");
-  answered.focus({ preventScroll: true });                  // keep focus inside the dialog
+  (lateNight() ? $("tlNightLbl") : answered).focus({ preventScroll: true });   // keep focus inside the dialog
 });
 $("tlNightTime").addEventListener("change", function () { setNightTime(this.value); });
 $("tlNightTimeClear").addEventListener("click", function () { setNightTime(""); });
