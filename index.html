@@ -203,6 +203,7 @@ input[aria-invalid="true"]{border-color:var(--sel)}
 .night .em{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:var(--cell);border:1px solid var(--line)}
 .night.dry .em{color:var(--dry)}
 .night.nd .em{color:var(--nd)}
+.night[disabled]{opacity:.45;cursor:not-allowed}
 .night[aria-pressed="true"].dry{background:var(--dry-bg);border-color:var(--dry);box-shadow:0 0 14px var(--dry-glow-c)}
 .night[aria-pressed="true"].nd{background:var(--nd-bg);border-color:var(--nd)}
 [data-discreet="1"] .night .em{color:var(--ink)}
@@ -437,6 +438,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
         <button class="mini txt" id="tlNWet" type="button" aria-pressed="false"></button>
         <button class="mini" id="tlNClear" type="button" aria-label="Clear night answer">✕</button>
       </div>
+      <p class="tl-sub" id="tlNightNote" hidden></p>
       <div class="tl-ntime" id="tlNightTimeRow" hidden>
         <label for="tlNightTime" id="tlNightTimeLbl">What time? (optional)</label>
         <input type="time" id="tlNightTime">
@@ -534,6 +536,7 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
           <button class="night dry" id="nDry" type="button" aria-pressed="false"></button>
           <button class="night nd" id="nWet" type="button" aria-pressed="false"></button>
         </div>
+        <p class="legend" id="nightNote" hidden></p>
         <div class="row" id="nightTimeRow" hidden>
           <label for="nightTime" id="nightTimeLbl">What time? (optional)</label>
           <input type="time" id="nightTime">
@@ -748,6 +751,12 @@ function sanitizeDrink(x) {
   if (!(ml >= ML_MIN && ml <= ML_MAX)) ml = LEGACY_ML[x.s] || 250;   // migrate old sizes
   return { t: x.t, ml: ml };
 }
+/* A small fingerprint of the old v1 payload, used to notice later changes to it. */
+function sigOf(str) {
+  var h = 5381;
+  for (var i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0;
+  return str.length + ":" + (h >>> 0).toString(16);
+}
 function sanitize(raw) {
   var out = { v: 6, days: {}, stickers: {}, maxLevel: 1, goalMl: DEFAULT_GOAL, lastMl: 250 };
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return out;
@@ -785,6 +794,7 @@ function sanitize(raw) {
       if (isValidKey(raw.stickers[id])) out.stickers[id] = raw.stickers[id];
     });
   }
+  if (typeof raw.legacySig === "string" && raw.legacySig.length < 40) out.legacySig = raw.legacySig;
   var ml = Math.floor(Number(raw.maxLevel));
   if (ml >= 1) out.maxLevel = Math.min(ml, MAX_LEVEL);
   var goal = Math.round(Number(raw.goalMl));
@@ -859,7 +869,10 @@ function load(quiet) {
     var parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("bad shape");
     var result = sanitize(parsed);
-    if (fromLegacy) migrated = true;       // first run on v2: copy the migrated data across
+    if (fromLegacy) {                      // first run on v2: copy the migrated data across
+      migrated = true;
+      result.legacySig = sigOf(raw);
+    }
     return result;
   } catch (err) {
     if (!quiet) {
@@ -914,6 +927,7 @@ var chartMode = "week";
 var lastXp = 0;
 var touched = { weeTime: false, drinkTime: false, tlTime: false };
 var tabTarget = null;
+var renderedLate = false;       // lateNight() as of the last render
 var toastAction = null;
 var dialogAction = null;
 var tlType = "drink";
@@ -947,13 +961,11 @@ function goal() { return goalFor(selected); }
 /* Which record the night card edits: today asks about last night (yesterday's record);
    a past day D asks about the night that started on D. Tonight can't be answered yet. */
 function lateNight() { return new Date().getHours() < 5; }
-/* Before 5 AM the night that started yesterday evening is still going. */
+/* Before 5 AM the night that started yesterday evening is still going:
+   not-dry can be logged right away, dry waits for the morning. */
 function inProgress(k) { return lateNight() && k === addDays(today, -1); }
 function nightKeyRaw() { return selected === today ? addDays(today, -1) : selected; }
-function nightKey() {
-  var k = nightKeyRaw();
-  return inProgress(k) ? null : k;     // null: nothing to answer yet
-}
+function nightKey() { return nightKeyRaw(); }
 function dowShort(k) { return parseKey(k).toLocaleDateString(undefined, { weekday: "short" }); }
 function dowLong(k) { return parseKey(k).toLocaleDateString(undefined, { weekday: "long" }); }
 /* Compact time for calendar previews: on-the-hour times drop ":00" ("12 PM"). */
@@ -1231,7 +1243,7 @@ function autoMessage() {
   var ml = mlOf(d.drinks);
   var hour = new Date().getHours();
   var nkey = nightKey();
-  var night = nkey ? getDay(nkey).night : null;
+  var night = getDay(nkey).night;
 
   if (ml >= goal()) return "Hydration on point 💧";
   if (night) {
@@ -1241,7 +1253,7 @@ function autoMessage() {
     }
     return "No stress, it happens. New night, fresh start.";
   }
-  if (isToday && nkey === null) {
+  if (isToday && inProgress(nkey) && !night) {
     return discreet ? "Check in this morning." : "Tonight's still going. Log it in the morning.";
   }
   if (isToday) {
@@ -1267,8 +1279,8 @@ function renderCoach() {
   var ml = mlOf(d.drinks);
   var nightChip;
   var nkey = nightKey();
-  var nrec = getDay(nkey || nightKeyRaw());
-  if (nkey === null) nightChip = "Night in progress";
+  var nrec = getDay(nkey);
+  if (inProgress(nkey) && !nrec.night) nightChip = "Night in progress";
   else if (discreet) nightChip = nrec.night ? "Night logged" : "Night not logged";
   else nightChip = nrec.night === "dry" ? "Dry night" : nrec.night === "wet" ? "Not dry" : "Night not logged";
   $("chips").innerHTML =
@@ -1299,7 +1311,7 @@ function renderCoach() {
   var label;
   if (discreet) label = tn === "dry" ? "Night ●" : tn === "wet" ? "Night ○" : "Night check";
   else label = tn === "dry" ? "Last night ✓" : tn === "wet" ? "Last night ○" : "Last night?";
-  $("quickNight").textContent = lateNight() ? "Night in progress" : label;
+  $("quickNight").textContent = (lateNight() && !tn) ? "Night in progress" : label;
 }
 
 function recapText() {
@@ -1349,16 +1361,17 @@ function renderDay() {
   $("todayBtn").hidden = isToday;
   $("tlBtn").textContent = isToday ? "Today's timeline" : "Day timeline";
 
-  var nk = nightKeyRaw();
-  var editable = nightKey() !== null;
+  var nk = nightKey();
+  var live = inProgress(nk);           // the night is still going: only not-dry can be logged
   var nd = getDay(nk);
   var title;
-  if (!editable) title = discreet ? "Night check · " + dowShort(nk) + " — log it in the morning" : "Tonight (" + dowShort(nk) + ") — log it in the morning";
+  if (live) title = discreet ? "Night check · " + dowShort(nk) + " (now)" : dowLong(nk) + " night (now) — log it in the morning";
   else if (discreet) title = "Night check · " + dowShort(nk);
   else title = isToday ? "Last night (" + dowShort(nk) + "): dry?" : dowShort(nk) + " night: dry?";
   $("nightTitle").textContent = title;
-  $("nightBtns").hidden = !editable;
-  $("nClear").hidden = !editable;
+  $("nDry").disabled = live;
+  $("nightNote").hidden = !live;
+  $("nightNote").textContent = discreet ? "Yes can be logged in the morning." : "Dry can be logged in the morning.";
 
   var dryBtn = $("nDry"), wetBtn = $("nWet");
   if (discreet) {
@@ -1371,8 +1384,8 @@ function renderDay() {
   dryBtn.setAttribute("aria-pressed", String(nd.night === "dry"));
   wetBtn.setAttribute("aria-pressed", String(nd.night === "wet"));
   $("nClear").disabled = !nd.night;
-  $("nightCard").classList.toggle("prompt", isToday && editable && !nd.night);
-  $("nightTimeRow").hidden = !editable || nd.night !== "wet";
+  $("nightCard").classList.toggle("prompt", isToday && !live && !nd.night);
+  $("nightTimeRow").hidden = nd.night !== "wet";
   $("nightTimeLbl").textContent = discreet ? "Time (optional)" : "What time? (optional)";
   if (document.activeElement !== $("nightTime")) $("nightTime").value = nd.nightTime || "";
   $("nightTimeClear").disabled = !nd.nightTime;
@@ -1703,7 +1716,7 @@ var ROW_H = 44;
 /* One short line for the sheet header: which night, how it went, and its time. */
 function nightStatusPart(d) {
   if (selected === today) return "Tonight: log tomorrow";
-  if (inProgress(selected)) return dowShort(selected) + " night: in progress";
+  if (inProgress(selected) && !d.night) return dowShort(selected) + " night: in progress";
   var t = d.nightTime ? prettyTime(d.nightTime) : "";
   var label = dowShort(selected) + " night: ";
   if (discreet) {
@@ -1725,7 +1738,8 @@ function lastNightChipText() {
 /* The night section sits at the bottom of the track. For today it is read-only. */
 function renderTlNight(d) {
   var isToday = selected === today;
-  var readOnly = isToday || inProgress(selected);
+  var readOnly = isToday;
+  var live = inProgress(selected);
   var lastBtn = $("tlLastNight");
   lastBtn.hidden = !isToday || lateNight();
   lastBtn.textContent = lastNightChipText();
@@ -1733,12 +1747,15 @@ function renderTlNight(d) {
 
   if (isToday) {
     $("tlNightLbl").textContent = discreet ? "Tonight — log it tomorrow" : "Tonight — log it tomorrow morning";
-  } else if (readOnly) {
-    $("tlNightLbl").textContent = discreet ? "Night check · " + dowShort(selected) + " — log it in the morning" : dowShort(selected) + " night — log it in the morning";
+  } else if (live) {
+    $("tlNightLbl").textContent = discreet ? "Night check · " + dowShort(selected) + " (now)" : dowShort(selected) + " night (now) — log it in the morning";
   } else {
     $("tlNightLbl").textContent = discreet ? "Night check · " + dowShort(selected) : dowShort(selected) + " night";
   }
   $("tlNightCtl").hidden = readOnly;
+  $("tlNDry").disabled = live;
+  $("tlNightNote").hidden = !live;
+  $("tlNightNote").textContent = discreet ? "Yes can be logged in the morning." : "Dry can be logged in the morning.";
   $("tlNDry").textContent = discreet ? "● Yes" : "✓ Dry";
   $("tlNWet").textContent = discreet ? "○ No" : "○ Not dry";
   $("tlNDry").setAttribute("aria-label", discreet ? "Night check yes" : "Dry night");
@@ -1963,6 +1980,7 @@ function closeTimeline() {
 }
 
 function renderAll() {
+  renderedLate = lateNight();
   renderTop();
   renderDay();
   renderCal();
@@ -2159,11 +2177,13 @@ function quickAdd(kind) {
 function setNight(value) {
   var nk = nightKey();
   if (!nk || nk >= today) return;    // tonight can't be answered yet
+  if (value === "dry" && inProgress(nk)) return;   // dry waits until the night is over
   var d = getDay(nk, true);
   if (d.night === value) return;     // already chosen; use Clear to remove
   var before = streaks();
   d.night = value;
   if (value === "dry") delete d.nightTime;     // a time only belongs to a not-dry night
+  if (value === "wet" && inProgress(nk) && !d.nightTime) d.nightTime = nowTime();   // it just happened
 
   if (value === "dry") {
     var after = streaks();
@@ -2423,6 +2443,7 @@ function refreshToday() {
 }
 function refreshClock() {
   refreshToday();
+  if (lateNight() !== renderedLate) renderAll();     // the in-progress night just started or ended
   renderTimes();
 }
 
@@ -2436,7 +2457,8 @@ $("quickDrink").addEventListener("click", function () { quickAdd("drink"); });
 $("quickNight").addEventListener("click", function () {
   if (selected !== today) selectDay(today, {});
   $("nightCard").scrollIntoView({ behavior: isReduced() ? "auto" : "smooth", block: "start" });
-  var target = lateNight() ? $("nightTitle") : (getDay(addDays(today, -1)).night === "wet" ? $("nWet") : $("nDry"));
+  var yesterdayNight = getDay(addDays(today, -1)).night;
+  var target = (lateNight() || yesterdayNight === "wet") ? $("nWet") : $("nDry");
   target.focus({ preventScroll: true });
 });
 $("nDry").addEventListener("click", function () { setNight("dry"); });
@@ -2669,6 +2691,21 @@ setInterval(refreshClock, 30000);
   awardStickers();                                           // silently catch up
   data.maxLevel = Math.max(data.maxLevel || 1, levelFromXp(xpTotal()));
   if (migrated || JSON.stringify(data.stickers) + data.maxLevel !== before) save();
+  // if the old v1 key changed after it was migrated, say so once; it is never merged
+  try {
+    var oldRaw = localStorage.getItem(LEGACY_KEY);
+    if (oldRaw !== null) {
+      var sig = sigOf(oldRaw);
+      if (!data.legacySig) {
+        data.legacySig = sig;
+        save();
+      } else if (data.legacySig !== sig) {
+        data.legacySig = sig;
+        save();
+        if (!loadNotice) loadNotice = "Found changes from an older version of the app. They weren't merged.";
+      }
+    }
+  } catch (e) {}
   $("goalInput").value = data.goalMl;
   $("mlInput").value = data.lastMl;
   $("tlMl").value = data.lastMl;
