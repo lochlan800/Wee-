@@ -166,16 +166,18 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:10p
 .err:empty{display:none}
 
 /* ---------- day bar (the only blurred surface) ---------- */
-.daybar{position:sticky;top:6px;z-index:20;margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px;border-color:var(--g1);background:var(--card-solid)}
+.daybar{position:sticky;top:6px;z-index:20;margin-top:14px;display:flex;flex-wrap:nowrap;gap:8px;align-items:center;justify-content:space-between;padding:6px 12px;min-height:56px;border-color:var(--g1);background:var(--card-solid)}
 @supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
   .daybar{background:var(--card);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 }
-.daybar h2{margin:0;font-size:1.05rem}
+.card.daybar{padding:6px 12px}
+.daybar h2{margin:0;flex:1;min-width:0;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .daybar.past{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),0 10px 30px var(--shadow-c)}
 .pastbanner{background:var(--accent);color:var(--accent-ink);border-radius:16px;padding:10px 14px;font-weight:700;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .pastbanner .btn{background:var(--accent-ink);color:var(--accent);box-shadow:none}
-.daybar small{display:block;color:var(--muted);font-weight:400}
-.daybar .acts{display:flex;gap:8px;flex-wrap:wrap}
+.daybar .acts{display:flex;flex:none;gap:8px}
+.daybar .btn{padding:8px 12px;font-size:.875rem}
+@media (max-width:599px){ .daybar.past #tlBtn{display:none} }
 
 /* ---------- layout ---------- */
 .main{display:grid;gap:14px;grid-template-columns:1fr;margin-top:14px}
@@ -1253,18 +1255,23 @@ function autoMessage() {
   var night = getDay(nkey).night;
 
   if (ml >= goalFor(today)) return "Hydration on point 💧";
-  if (night) {
+  if (night && (hour < 12 || ml <= 0)) {
     if (discreet) return "Night logged. Nice and consistent.";
     if (night === "dry") {
       return s.cur >= 2 ? s.cur + "-night streak 🔥 keep it going" : "Dry night logged. Solid.";
     }
     return "No stress, it happens. New night, fresh start.";
   }
-  if (inProgress(nkey)) {
-    return discreet ? "Check in this morning." : "Tonight's still going. Log it in the morning.";
+  if (!night) {
+    if (inProgress(nkey)) {
+      return discreet ? "Check in this morning." : "Tonight's still going. Log it in the morning.";
+    }
+    if (discreet) return hour < 12 ? "Morning. Quick night check?" : "Check in whenever you're ready.";
+    return hour < 12 ? "Morning. Last night: dry?" : "Check in when you're ready: last night?";
   }
-  if (discreet) return hour < 12 ? "Morning. Quick night check?" : "Check in whenever you're ready.";
-  return hour < 12 ? "Morning. Last night: dry?" : "Check in when you're ready: last night?";
+  // night answered, afternoon, some water logged: nudge on today's water
+  if (ml >= goalFor(today) / 2) return "Halfway to the water goal. Keep it rolling.";
+  return "Good start. Keep the water coming.";
 }
 
 /* =========================================================
@@ -1359,14 +1366,14 @@ function renderDay() {
   var isToday = selected === today;
   var words = W();
 
-  $("dayTitle").innerHTML = (isToday ? "Editing: Today" : "Editing " + esc(shortDate(selected)) + " — not today") +
-    "<small>" + esc(longDate(selected)) + "</small>";
+  $("dayTitle").textContent = isToday ? "Today · " + shortDate(selected) : shortDate(selected) + " · not today";
   $("todayBtn").hidden = isToday;
   $("todayBtn").className = isToday ? "btn ghost" : "btn alt";
   $("dayBar").classList.toggle("past", !isToday);
   $("pastBanner").hidden = isToday;
   $("pastBannerText").textContent = "Editing " + shortDate(selected) + " — not today";
-  $("tlBtn").textContent = isToday ? "Today's timeline" : "Day timeline";
+  $("tlBtn").textContent = "Timeline";
+  $("tlBtn").setAttribute("aria-label", isToday ? "Today's timeline" : "Timeline for " + longDate(selected));
 
   var nk = nightKey();
   var live = inProgress(nk);           // the night is still going: only not-dry can be logged
@@ -1980,11 +1987,12 @@ function openTimeline() {
 }
 function onTimelineClosed() {
   hideToast(true);
-  // opened from today (e.g. via the Last night chip): the page goes back to today
-  if (tlStartDay === today && selected !== today) selectDay(today, {});
+  // the sheet is the past-day editor: closing it always puts the page back on today
+  var openedOn = tlStartDay;
+  if (selected !== today) selectDay(today, {});
   tlStartDay = null;
   $("tlErr").textContent = "";
-  var btn = $("cal").querySelector('[data-date="' + selected + '"]');
+  var btn = $("cal").querySelector('[data-date="' + openedOn + '"]') || $("cal").querySelector('[data-date="' + selected + '"]');
   if (tlReturn && tlReturn.closest && tlReturn.closest("#cal") && btn) btn.focus();
   else if (tlReturn && document.body.contains(tlReturn) && tlReturn.focus) tlReturn.focus();
   else if (btn) btn.focus();
@@ -2106,7 +2114,13 @@ function commit(ev) {
   var forToday = selected === today;
   override = forToday ? (text || null) : null;
   renderAll();
-  if (!forToday && text) showToast(text);
+  if (!forToday && (text || ev.quiet !== true)) {
+    var note = ["Added to " + shortDate(selected)];
+    if (won.length) note.push("Achievement unlocked: " + won.map(function (b) { return b.name; }).join(", "));
+    if (leveled) note.push("Level " + reached);
+    if (delta > 0 && !ev.quiet) note.push("+" + delta + " XP");
+    if (!ev.quiet) showToast(note.join(" · "));
+  }
   newStickers = {};
   if (text) announce(text);
 
@@ -2145,6 +2159,7 @@ function readMl(input, errEl) {
 }
 
 function addPee(forcedTime, external) {
+  refreshToday();                          // a log just after midnight belongs to the new day
   var d = getDay(selected, true);
   d.wees.push(forcedTime || chosenTime("weeTime"));
   d.wees.sort();
@@ -2153,6 +2168,7 @@ function addPee(forcedTime, external) {
 }
 
 function addDrink(time, ml, external) {
+  refreshToday();
   var d = getDay(selected, true);
   var before = mlOf(d.drinks);
   if (!d.drinks.length) d.goalMl = data.goalMl;     // the day keeps the goal it started with
@@ -2186,12 +2202,14 @@ function addDrinkFromCard() {
 }
 
 function quickAdd(kind) {
+  refreshToday();
   if (selected !== today) selectDay(today, {});
   if (kind === "pee") addPee(nowTime(), true);
   else addDrink(nowTime(), data.lastMl, true);
 }
 
 function setNight(value) {
+  refreshToday();
   var nk = nightKey();
   if (!nk || nk >= today) return;    // tonight can't be answered yet
   if (value === "dry" && inProgress(nk)) return;   // dry waits until the night is over
@@ -2217,6 +2235,7 @@ function setNight(value) {
 }
 
 function setNightTime(value) {
+  refreshToday();
   var nk = nightKey();
   if (!nk || nk >= today) return;
   var d = getDay(nk, true);
@@ -2244,6 +2263,7 @@ function renderSoon() {
 }
 
 function clearNight() {
+  refreshToday();
   var nk = nightKey();
   if (!nk) return;
   var d = getDay(nk);
