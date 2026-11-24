@@ -171,6 +171,9 @@ header.top{display:flex;align-items:center;justify-content:space-between;gap:10p
   .daybar{background:var(--card);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 }
 .daybar h2{margin:0;font-size:1.05rem}
+.daybar.past{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),0 10px 30px var(--shadow-c)}
+.pastbanner{background:var(--accent);color:var(--accent-ink);border-radius:16px;padding:10px 14px;font-weight:700;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.pastbanner .btn{background:var(--accent-ink);color:var(--accent);box-shadow:none}
 .daybar small{display:block;color:var(--muted);font-weight:400}
 .daybar .acts{display:flex;gap:8px;flex-wrap:wrap}
 
@@ -524,12 +527,16 @@ canvas#fx{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none
     <h2 id="dayTitle"></h2>
     <div class="acts">
       <button class="btn ghost" id="tlBtn" type="button"></button>
-      <button class="btn ghost" id="todayBtn" type="button" hidden>Jump to today</button>
+      <button class="btn ghost" id="todayBtn" type="button" hidden>Back to today</button>
     </div>
   </section>
 
   <div class="main">
     <div class="col">
+      <div class="pastbanner" id="pastBanner" role="status" hidden>
+        <span id="pastBannerText"></span>
+        <button class="btn" id="backBanner" type="button">Back to today</button>
+      </div>
       <section class="card" id="nightCard" aria-labelledby="nightTitle">
         <h2 id="nightTitle" tabindex="-1">Last night: dry?</h2>
         <div class="night-btns" id="nightBtns">
@@ -932,6 +939,7 @@ var toastAction = null;
 var dialogAction = null;
 var tlType = "drink";
 var tlReturn = null;
+var tlStartDay = null;          // the day selected when the sheet opened
 
 function getDay(k, create) {
   var d = data.days[k];
@@ -1236,33 +1244,27 @@ function announce(text) {
 /* =========================================================
    Coach messages
    ========================================================= */
+/* The dashboard always describes TODAY, whichever day is being edited below it. */
 function autoMessage() {
-  var d = getDay(selected);
-  var isToday = selected === today;
   var s = streaks();
-  var ml = mlOf(d.drinks);
+  var ml = mlOf(getDay(today).drinks);
   var hour = new Date().getHours();
-  var nkey = nightKey();
+  var nkey = addDays(today, -1);            // "last night" is the night that started yesterday
   var night = getDay(nkey).night;
 
-  if (ml >= goal()) return "Hydration on point 💧";
+  if (ml >= goalFor(today)) return "Hydration on point 💧";
   if (night) {
     if (discreet) return "Night logged. Nice and consistent.";
     if (night === "dry") {
-      return isToday && s.cur >= 2 ? s.cur + "-night streak 🔥 keep it going" : "Dry night logged. Solid.";
+      return s.cur >= 2 ? s.cur + "-night streak 🔥 keep it going" : "Dry night logged. Solid.";
     }
     return "No stress, it happens. New night, fresh start.";
   }
-  if (isToday && inProgress(nkey) && !night) {
+  if (inProgress(nkey)) {
     return discreet ? "Check in this morning." : "Tonight's still going. Log it in the morning.";
   }
-  if (isToday) {
-    if (discreet) return hour < 12 ? "Morning. Quick night check?" : "Check in whenever you're ready.";
-    return hour < 12 ? "Morning. Last night: dry?" : "Check in when you're ready: last night?";
-  }
-  if (ml >= goal() / 2) return "Halfway to the water goal. Keep it rolling.";
-  if (ml > 0) return "Good start. Keep the water coming.";
-  return "Fill in this day to keep your stats accurate.";
+  if (discreet) return hour < 12 ? "Morning. Quick night check?" : "Check in whenever you're ready.";
+  return hour < 12 ? "Morning. Last night: dry?" : "Check in when you're ready: last night?";
 }
 
 /* =========================================================
@@ -1275,21 +1277,21 @@ function setArc(id, circumference, fraction) {
 
 function renderCoach() {
   $("coach").textContent = override || autoMessage();
-  var d = getDay(selected);
+  var d = getDay(today);
   var ml = mlOf(d.drinks);
   var nightChip;
-  var nkey = nightKey();
+  var nkey = addDays(today, -1);
   var nrec = getDay(nkey);
   if (inProgress(nkey) && !nrec.night) nightChip = "Night in progress";
   else if (discreet) nightChip = nrec.night ? "Night logged" : "Night not logged";
   else nightChip = nrec.night === "dry" ? "Dry night" : nrec.night === "wet" ? "Not dry" : "Night not logged";
   $("chips").innerHTML =
     '<span class="chip">' + plural(d.wees.length, W().pee) + '</span>' +
-    '<span class="chip">' + fmtMl(ml) + ' / ' + fmtMl(goal()) + '</span>' +
+    '<span class="chip">' + fmtMl(ml) + ' / ' + fmtMl(goalFor(today)) + '</span>' +
     '<span class="chip">' + esc(nightChip) + '</span>';
 
   var info = levelView();
-  setArc("arcWater", 326.7, ml / goal());
+  setArc("arcWater", 326.7, ml / goalFor(today));
   setArc("arcXp", 251.3, info.pct / 100);
   $("lvN").textContent = info.level;
   $("lvTitle").textContent = "Lvl " + info.level + " · " + info.title;
@@ -1301,7 +1303,7 @@ function renderCoach() {
     $("xpBarWrap").hidden = false;
     $("xpBar").style.setProperty("--p", info.pct + "%");
   }
-  $("ring").setAttribute("aria-label", "Outer ring: water, " + fmtMl(ml) + " of " + fmtMl(goal()) + ". Inner ring: XP. Level " + info.level + ".");
+  $("ring").setAttribute("aria-label", "Outer ring: water today, " + fmtMl(ml) + " of " + fmtMl(goalFor(today)) + ". Inner ring: XP. Level " + info.level + ".");
   lastXp = info.xp;
 
   $("quickPee").textContent = W().quick;
@@ -1357,8 +1359,13 @@ function renderDay() {
   var isToday = selected === today;
   var words = W();
 
-  $("dayTitle").innerHTML = (isToday ? "Editing: Today" : "Editing") + "<small>" + esc(longDate(selected)) + "</small>";
+  $("dayTitle").innerHTML = (isToday ? "Editing: Today" : "Editing " + esc(shortDate(selected)) + " — not today") +
+    "<small>" + esc(longDate(selected)) + "</small>";
   $("todayBtn").hidden = isToday;
+  $("todayBtn").className = isToday ? "btn ghost" : "btn alt";
+  $("dayBar").classList.toggle("past", !isToday);
+  $("pastBanner").hidden = isToday;
+  $("pastBannerText").textContent = "Editing " + shortDate(selected) + " — not today";
   $("tlBtn").textContent = isToday ? "Today's timeline" : "Day timeline";
 
   var nk = nightKey();
@@ -1390,7 +1397,9 @@ function renderDay() {
   if (document.activeElement !== $("nightTime")) $("nightTime").value = nd.nightTime || "";
   $("nightTimeClear").disabled = !nd.nightTime;
 
-  $("weeTitle").innerHTML = '<span class="dotk pee" aria-hidden="true"></span>' + esc(words.section);
+  var addTo = isToday ? "" : " — add to " + shortDate(selected);
+  $("weeTitle").innerHTML = '<span class="dotk pee" aria-hidden="true"></span>' + esc(words.section + addTo);
+  $("drinkTitle").innerHTML = '<span class="dotk drink" aria-hidden="true"></span>' + esc("Water" + addTo);
   $("weeAdd").textContent = words.log;
   $("keyPee").textContent = words.key;
   $("tlTypePee").textContent = words.Pee;
@@ -1961,6 +1970,7 @@ function renderTlForm() {
 
 function openTimeline() {
   tlReturn = document.activeElement;
+  tlStartDay = selected;
   renderTlForm();
   openDlg($("tl"));
   if (!touched.tlTime) $("tlTime").value = nowTime();
@@ -1970,6 +1980,9 @@ function openTimeline() {
 }
 function onTimelineClosed() {
   hideToast(true);
+  // opened from today (e.g. via the Last night chip): the page goes back to today
+  if (tlStartDay === today && selected !== today) selectDay(today, {});
+  tlStartDay = null;
   $("tlErr").textContent = "";
   var btn = $("cal").querySelector('[data-date="' + selected + '"]');
   if (tlReturn && tlReturn.closest && tlReturn.closest("#cal") && btn) btn.focus();
@@ -2090,8 +2103,10 @@ function commit(ev) {
   if (delta > 0 && !ev.quiet) parts.push("+" + delta + " XP");
   var text = parts.join(" ");
 
-  override = text || null;
+  var forToday = selected === today;
+  override = forToday ? (text || null) : null;
   renderAll();
+  if (!forToday && text) showToast(text);
   newStickers = {};
   if (text) announce(text);
 
@@ -2467,6 +2482,7 @@ $("nDry").addEventListener("click", function () { setNight("dry"); });
 $("nWet").addEventListener("click", function () { setNight("wet"); });
 $("nClear").addEventListener("click", clearNight);
 $("todayBtn").addEventListener("click", function () { selectDay(today, {}); });
+$("backBanner").addEventListener("click", function () { selectDay(today, {}); });
 $("tlBtn").addEventListener("click", openTimeline);
 $("prev").addEventListener("click", function () { shiftMonth(-1); });
 $("next").addEventListener("click", function () { shiftMonth(1); });
@@ -2662,10 +2678,31 @@ window.addEventListener("resize", function () {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(function () { sizeCanvas(); renderChart(); renderTimeline(); }, 150);
 });
+/* After 10+ minutes away the page starts over on today, so a forgotten past-day
+   selection can't swallow the next log. */
+var hiddenAt = 0;
+function markHidden() { if (!hiddenAt) hiddenAt = Date.now(); }
+function resetToToday() {
+  if (isTlOpen()) closeTimeline();
+  selected = today;
+  view = monthOf(today);
+  override = null;
+  tlExpanded = [];
+  hideToast(true);
+  renderAll();
+}
+function checkReturn() {
+  if (hiddenAt && Date.now() - hiddenAt >= 10 * 60 * 1000) resetToToday();
+  hiddenAt = 0;
+  refreshClock();
+}
 document.addEventListener("visibilitychange", function () {
-  if (!document.hidden) refreshClock();
+  if (document.hidden) markHidden();
+  else checkReturn();
 });
-window.addEventListener("focus", refreshClock);
+window.addEventListener("pagehide", markHidden);
+window.addEventListener("pageshow", checkReturn);        // also covers the back/forward cache
+window.addEventListener("focus", checkReturn);
 window.addEventListener("storage", function (e) {
   if (e.key === STORE_KEY || e.key === null) {
     data = load(true);
